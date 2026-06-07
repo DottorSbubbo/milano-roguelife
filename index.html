@@ -2097,7 +2097,7 @@ showScreen('title');
     let keyedPixels = 0;
     for (let i = 0; i < data.length; i += 4) {
       const r = data[i], g = data[i + 1], b = data[i + 2];
-      if (r < 80 && g > 180 && b < 80) { data[i + 3] = 0; keyedPixels++; }
+      if (g > r && g - b > 50) { data[i + 3] = 0; keyedPixels++; }
     }
     console.log(`[title-canvas] frame col=${col} row=${row}: ${keyedPixels} px resi trasparenti su ${data.length / 4}`);
     const out = document.createElement('canvas');
