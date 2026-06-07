@@ -29,6 +29,13 @@ body {
 }
 #header h1 { font-size: 12px; letter-spacing: 6px; color: #cc2222; text-transform: uppercase; }
 #turn-info  { font-size: 10px; color: #333; letter-spacing: 3px; }
+#hud-stats { display: flex; gap: 10px; align-items: center; }
+#hud-level, #hud-gold {
+  font-size: 10px; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;
+  padding: 5px 12px; border-radius: 3px; white-space: nowrap;
+}
+#hud-level { color: #d4a830; background: rgba(55,40,8,0.55); border: 1px solid rgba(140,100,20,0.3); }
+#hud-gold  { color: #fde68a; background: rgba(80,55,15,0.4);  border: 1px solid rgba(180,140,40,0.3); }
 
 /* ── SPEED BAR ── */
 #speed-bar {
@@ -642,12 +649,95 @@ body {
   margin-top: 6px; transition: all 0.12s;
 }
 #restart-btn:hover { background: #111120; border-color: #2a2a44; color: #6a6a9a; }
+
+/* ── PROGRESS OVERLAY (vittoria / game over) ── */
+#progress-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(2,2,5,0.94);
+  align-items: center; justify-content: center; z-index: 110;
+  font-family: 'Courier New', monospace;
+}
+#progress-overlay.on { display: flex; }
+#progress-box {
+  display: flex; gap: 30px; align-items: flex-start; justify-content: center;
+  max-width: 920px; width: 100%; padding: 0 24px; max-height: 90vh;
+}
+#progress-main {
+  display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center;
+  flex: 1; min-width: 300px; max-width: 380px;
+}
+#progress-title { font-size: 38px; letter-spacing: 9px; font-weight: bold; text-transform: uppercase; }
+#progress-title.win  { color: #166534; text-shadow: 0 0 40px rgba(22,163,74,0.4); }
+#progress-title.lose { color: #7f1d1d; text-shadow: 0 0 40px rgba(220,38,38,0.3); }
+#progress-sub { font-size: 12px; color: #6a6a9a; letter-spacing: 1.5px; line-height: 1.8; }
+#progress-sub strong { color: #d4a830; font-size: 15px; }
+.progress-section-lbl {
+  font-size: 10px; letter-spacing: 3px; color: #555580; text-transform: uppercase; margin-top: 4px;
+}
+.progress-section-lbl.dead-lbl { color: #7a3a3a; }
+.surv-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
+.surv-card, .dead-card {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 7px 14px; border-radius: 3px; font-size: 11px; letter-spacing: 1px;
+}
+.surv-card {
+  background: rgba(22,101,52,0.16); border: 1px solid rgba(22,163,74,0.28); color: #9adbb0;
+}
+.surv-name, .dead-name {
+  font-weight: bold; min-width: 0; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; margin-right: 10px;
+}
+.surv-level { color: #d4a830; font-size: 10px; letter-spacing: 2px; flex-shrink: 0; }
+.dead-card {
+  background: rgba(80,20,20,0.16); border: 1px solid rgba(140,40,40,0.28);
+  color: #9a6a6a; opacity: 0.75; text-decoration: line-through;
+}
+.dead-tag { font-size: 9px; letter-spacing: 2px; color: #7a3a3a; text-decoration: none; }
+#progress-gold {
+  font-size: 13px; letter-spacing: 2px; color: #fde68a;
+  background: rgba(80,55,15,0.4); border: 1px solid rgba(180,140,40,0.35);
+  padding: 9px 20px; border-radius: 3px;
+}
+#progress-continue-btn, #progress-restart-btn {
+  padding: 10px 34px; background: #0a0a18; border: 1px solid #1e1e30;
+  color: #3a3a5a; font-family: 'Courier New', monospace;
+  font-size: 11px; letter-spacing: 3px; cursor: pointer; border-radius: 2px;
+  margin-top: 4px; transition: all 0.12s;
+}
+#progress-continue-btn:hover, #progress-restart-btn:hover { background: #111120; border-color: #2a2a44; color: #6a6a9a; }
+
+#levelup-panel {
+  display: none; flex-direction: column; gap: 12px;
+  background: rgba(10,10,20,0.6); border: 1px solid rgba(212,168,48,0.25);
+  border-radius: 4px; padding: 18px; min-width: 250px; max-width: 290px;
+  max-height: 80vh; overflow-y: auto;
+}
+#levelup-panel.visible { display: flex; }
+.levelup-title {
+  font-size: 13px; letter-spacing: 4px; color: #d4a830; text-align: center;
+  font-weight: bold; padding-bottom: 6px; border-bottom: 1px solid rgba(212,168,48,0.18);
+}
+.levelup-card { padding-top: 4px; }
+.levelup-card + .levelup-card { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; }
+.levelup-name { font-size: 11px; letter-spacing: 1px; color: #cfcfe8; margin-bottom: 7px; }
+.levelup-lvl  { color: #d4a830; font-size: 10px; letter-spacing: 2px; }
+.levelup-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px 14px; }
+.levelup-stat {
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 10px; color: #6a6a90; letter-spacing: 1px;
+}
+.levelup-stat.increased { color: #4ade80; font-weight: bold; }
+.lu-plus { color: #4ade80; font-size: 9px; margin-left: 3px; }
 </style>
 </head>
 <body>
 
 <div id="header">
   <h1>Milano Roguelife</h1>
+  <div id="hud-stats">
+    <span id="hud-level">LIVELLO 1</span>
+    <span id="hud-gold">GOLD 0</span>
+  </div>
   <span id="turn-info">TURNO 1</span>
 </div>
 
@@ -681,6 +771,20 @@ body {
     <div id="ov-title"></div>
     <div id="ov-sub"></div>
     <button id="restart-btn" onclick="restartGame()">NUOVA BATTAGLIA</button>
+  </div>
+</div>
+
+<div id="progress-overlay">
+  <div id="progress-box">
+    <div id="progress-main">
+      <div id="progress-title"></div>
+      <div id="progress-sub"></div>
+      <div id="progress-survivors"></div>
+      <div id="progress-gold"></div>
+      <button id="progress-continue-btn" onclick="continueRun()">CONTINUA</button>
+      <button id="progress-restart-btn" onclick="restartGame()">NUOVA RUN</button>
+    </div>
+    <div id="levelup-panel"></div>
   </div>
 </div>
 
@@ -1634,12 +1738,190 @@ function checkEnd() {
 
 function endBattle(win) {
   B.phase = 'END';
+  if (runState) {
+    if (win) showVictoryScreen();
+    else showGameOverScreen();
+    return;
+  }
   document.getElementById('ov-title').textContent = win ? 'VITTORIA' : 'SCONFITTA';
   document.getElementById('ov-title').className = win ? 'win' : 'lose';
   document.getElementById('ov-sub').textContent = win
     ? `Turni impiegati: ${turnNum}`
     : 'Tutti i tuoi Rot sono caduti.';
   document.getElementById('overlay').classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════
+// PROGRESSIONE DELLA RUN
+// ═══════════════════════════════════════════════════
+
+let runState = null; // { level, gold, enemyCount, battlesWon, roster:[ROT...] }
+
+const STAT_LABELS = { hp:'HP', atk:'ATK', spAtk:'SP.ATK', def:'DEF', spDef:'SP.DEF', spd:'SPD' };
+
+function updateHud() {
+  const lvlEl  = document.getElementById('hud-level');
+  const goldEl = document.getElementById('hud-gold');
+  if (!runState) return;
+  lvlEl.textContent  = `LIVELLO ${runState.level}`;
+  goldEl.textContent = `GOLD ${runState.gold}`;
+}
+
+// 1 turno = 6 gold, 2-3 turni = 4 gold, 4+ turni = 3 gold; bonus +2% per livello
+function calcGoldReward(turns, level) {
+  const base = turns === 1 ? 6 : (turns <= 3 ? 4 : 3);
+  return Math.round(base * (1 + level * 0.02));
+}
+
+function pickRandomDefs(count, exclude = []) {
+  const allKeys = Object.keys(ROT_DEFS);
+  const picked = [];
+  while (picked.length < count) {
+    const def = ROT_DEFS[allKeys[Math.floor(Math.random() * allKeys.length)]];
+    if (!exclude.includes(def) && !picked.includes(def)) picked.push(def);
+  }
+  return picked;
+}
+
+// Applica gold + level up ai sopravvissuti, rimuove i caduti per sempre
+function applyVictoryProgression() {
+  const goldEarned = calcGoldReward(turnNum, runState.level);
+  runState.gold += goldEarned;
+
+  const survivors = runState.roster.filter(r => r.isAlive);
+  const dead      = runState.roster.filter(r => !r.isAlive);
+  runState.roster = survivors;
+
+  const levelUps = [];
+  for (const rot of survivors) {
+    const oldStats = { ...rot.stats };
+    rot.level += 1;
+    const newStats = {
+      hp:    rot.def.base.hp    + rot.level,
+      atk:   rot.def.base.atk   + rot.level,
+      spAtk: rot.def.base.spAtk + rot.level,
+      def:   rot.def.base.def   + rot.level,
+      spDef: rot.def.base.spDef + rot.level,
+      spd:   rot.def.base.spd   + rot.level,
+    };
+    const hpGain = newStats.hp - oldStats.hp;
+    rot.stats = newStats;
+    rot.maxHp = newStats.hp;
+    rot.curHp = Math.min(rot.maxHp, rot.curHp + hpGain);
+    levelUps.push({ rot, oldStats, newStats });
+  }
+
+  runState.level += 1;
+  runState.battlesWon += 1;
+
+  return { goldEarned, survivors, dead, levelUps };
+}
+
+function renderLevelUpPanel(levelUps) {
+  const panel = document.getElementById('levelup-panel');
+  if (!levelUps.length) {
+    panel.classList.remove('visible');
+    panel.innerHTML = '';
+    return;
+  }
+  panel.classList.add('visible');
+  panel.innerHTML = `<div class="levelup-title">LEVEL UP!</div>` + levelUps.map(({ rot, oldStats, newStats }) => `
+    <div class="levelup-card">
+      <div class="levelup-name">${rot.def.name} <span class="levelup-lvl">→ LIV ${rot.level}</span></div>
+      <div class="levelup-stats">
+        ${Object.keys(STAT_LABELS).map(s => {
+          const inc = newStats[s] > oldStats[s];
+          return `<div class="levelup-stat ${inc ? 'increased' : ''}">
+            <span class="lu-lbl">${STAT_LABELS[s]}</span>
+            <span class="lu-val">${newStats[s]}${inc ? '<span class="lu-plus">▲</span>' : ''}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+  `).join('');
+}
+
+function showVictoryScreen() {
+  const { goldEarned, survivors, dead, levelUps } = applyVictoryProgression();
+  updateHud();
+
+  const title = document.getElementById('progress-title');
+  title.textContent = 'VITTORIA';
+  title.className = 'win';
+
+  document.getElementById('progress-sub').innerHTML =
+    `Turni impiegati: ${turnNum} — Livello raggiunto: <strong>${runState.level}</strong>`;
+
+  const survHtml = survivors.map(r =>
+    `<div class="surv-card"><span class="surv-name">${r.def.name}</span><span class="surv-level">LIV ${r.level}</span></div>`
+  ).join('');
+  const deadHtml = dead.map(r =>
+    `<div class="dead-card"><span class="dead-name">${r.def.name}</span><span class="dead-tag">PERSO PER SEMPRE</span></div>`
+  ).join('');
+  document.getElementById('progress-survivors').innerHTML = `
+    <div class="progress-section-lbl">ROT SOPRAVVISSUTI</div>
+    <div class="surv-list">${survHtml || '<div class="surv-card">Nessuno...</div>'}</div>
+    ${dead.length ? `<div class="progress-section-lbl dead-lbl">ROT PERSI</div><div class="surv-list">${deadHtml}</div>` : ''}
+  `;
+
+  const goldEl = document.getElementById('progress-gold');
+  goldEl.style.display = '';
+  goldEl.textContent = `+${goldEarned} GOLD  •  totale: ${runState.gold}`;
+
+  document.getElementById('progress-continue-btn').style.display = '';
+  document.getElementById('progress-restart-btn').style.display = 'none';
+
+  renderLevelUpPanel(levelUps);
+  document.getElementById('progress-overlay').classList.add('on');
+}
+
+function showGameOverScreen() {
+  const title = document.getElementById('progress-title');
+  title.textContent = 'GAME OVER';
+  title.className = 'lose';
+
+  document.getElementById('progress-sub').innerHTML =
+    `Tutti i tuoi ROT sono caduti.<br>Record: <strong>${runState.battlesWon}</strong> battaglie sopravvissute`;
+  document.getElementById('progress-survivors').innerHTML = '';
+  document.getElementById('progress-gold').textContent = '';
+  document.getElementById('progress-gold').style.display = 'none';
+
+  document.getElementById('progress-continue-btn').style.display = 'none';
+  document.getElementById('progress-restart-btn').style.display = '';
+
+  renderLevelUpPanel([]);
+  document.getElementById('progress-overlay').classList.add('on');
+}
+
+function continueRun() {
+  document.getElementById('progress-overlay').classList.remove('on');
+  runState.enemyCount = Math.min(3, runState.enemyCount + 1);
+  startNextBattle();
+}
+
+function startNextBattle() {
+  turnNum = 1;
+  const lvl = runState.level;
+  runState.roster.forEach(r => {
+    r.action = null;
+    r.isAlive = r.curHp > 0;
+    r.stages = { atk:0, spAtk:0, def:0, spDef:0, spd:0 };
+    r.statuses = [];
+    r.moves.forEach(m => { if (m.curPp !== Infinity) m.curPp = m.pp; });
+  });
+  const enemyDefs = pickRandomDefs(runState.enemyCount);
+  B = {
+    player: runState.roster,
+    enemy:  enemyDefs.map(def => mkRot(def, lvl, false)),
+    phase: 'ROT_SELECT', current: null, selMove: null,
+    assigned: {}, actedUids: new Set(),
+  };
+  B.tokenWidth = calibrateTokenWidth();
+  document.getElementById('overlay').classList.remove('on');
+  document.getElementById('progress-overlay').classList.remove('on');
+  clearLog();
+  log(`Battaglia ${runState.battlesWon + 1} — Livello ${lvl} — ${B.enemy.length} nemici`, 'info');
+  render();
 }
 
 // ═══════════════════════════════════════════════════
@@ -2024,29 +2306,31 @@ function confirmStarter() {
   ov.style.transition = 'opacity 0.45s';
   ov.style.opacity = '0';
   ov.style.pointerEvents = 'none';
-  setTimeout(() => { ov.style.display = 'none'; startBattle1v1(starterDef); }, 460);
+  setTimeout(() => { ov.style.display = 'none'; startRun(starterDef); }, 460);
 }
 
-function startBattle1v1(starterDef) {
-  const allKeys = Object.keys(ROT_DEFS).filter(k => ROT_DEFS[k] !== starterDef);
-  const enemyDef = ROT_DEFS[allKeys[Math.floor(Math.random() * allKeys.length)]];
-  turnNum = 1;
+function startRun(starterDef) {
   const lvl = 1;
-  B = {
-    player: [mkRot(starterDef, lvl, true)],
-    enemy:  [mkRot(enemyDef,   lvl, false)],
-    phase: 'ROT_SELECT', current: null, selMove: null,
-    assigned: {}, actedUids: new Set(),
+  const companions = pickRandomDefs(2, [starterDef]);
+  runState = {
+    level: lvl,
+    gold: 0,
+    enemyCount: 1,
+    battlesWon: 0,
+    roster: [
+      mkRot(starterDef,    lvl, true),
+      mkRot(companions[0], lvl, true),
+      mkRot(companions[1], lvl, true),
+    ],
   };
-  B.tokenWidth = calibrateTokenWidth();
-  document.getElementById('overlay').classList.remove('on');
-  clearLog();
-  log(`${starterDef.name} vs ${enemyDef.name} — Livello ${lvl}`, 'info');
-  render();
+  updateHud();
+  startNextBattle();
 }
 
 function restartGame() {
   document.getElementById('overlay').classList.remove('on');
+  document.getElementById('progress-overlay').classList.remove('on');
+  runState = null;
   const ov = document.getElementById('intro-overlay');
   ov.style.display = '';
   ov.style.opacity = '1';
