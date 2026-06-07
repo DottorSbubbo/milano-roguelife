@@ -1,0 +1,2154 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Milano Roguelife — Battle</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: #030306;
+  color: #e0e0e0;
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ── HEADER ── */
+#header {
+  background: rgba(5,5,10,0.95);
+  border-bottom: 1px solid #111;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+#header h1 { font-size: 12px; letter-spacing: 6px; color: #cc2222; text-transform: uppercase; }
+#turn-info  { font-size: 10px; color: #333; letter-spacing: 3px; }
+
+/* ── SPEED BAR ── */
+#speed-bar {
+  background: rgba(4,4,8,0.9);
+  border-bottom: 1px solid #0f0f18;
+  padding: 5px 20px;
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; min-height: 30px;
+}
+#speed-bar-label {
+  font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: bold;
+  color: #d4a830; background: rgba(55,40,8,0.75);
+  padding: 7px 14px; border-radius: 3px;
+  border: 1px solid rgba(140,100,20,0.35); white-space: nowrap; flex-shrink: 0;
+}
+#speed-tokens { display: flex; gap: 6px; flex-wrap: wrap; }
+.spd-token {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 3px 8px; border: 1px solid #1a1a28; border-radius: 2px;
+  font-size: 9px; letter-spacing: 1px; transition: opacity 0.4s; white-space: nowrap;
+  flex-shrink: 0;
+}
+.spd-token.acted { opacity: 0.15; }
+.spd-token.player-spd { background: rgba(22,163,74,0.10); border-color: #1a5c32; color: #4aaa70; }
+.spd-token.enemy-spd  { background: rgba(220,38,38,0.10);  border-color: #5c1a1a; color: #bb4444; }
+.spd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* ══ STAGE ══ */
+#stage {
+  flex: 1;
+  position: relative; overflow: hidden;
+  display: flex; align-items: flex-end; justify-content: center;
+  background:
+    radial-gradient(ellipse 90% 25% at 50% 88%, rgba(50,35,10,0.45) 0%, transparent 100%),
+    linear-gradient(to bottom, #020204 0%, #05050d 50%, #08080f 75%, #0a0a12 100%);
+}
+#stage::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 80px;
+  background: linear-gradient(to top, rgba(30,22,8,0.5) 0%, rgba(20,15,5,0.2) 40%, transparent 100%);
+  pointer-events: none; z-index: 0;
+}
+#stage::after {
+  content: ''; position: absolute; bottom: 52px; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(90,65,25,0.2) 10%, rgba(160,120,50,0.5) 35%,
+    rgba(200,155,65,0.65) 50%, rgba(160,120,50,0.5) 65%,
+    rgba(90,65,25,0.2) 90%, transparent 100%);
+  box-shadow: 0 0 18px rgba(180,130,50,0.18), 0 1px 40px rgba(120,85,25,0.12);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── ROT ROW — single horizontal baseline ── */
+#rot-row {
+  display: flex; align-items: flex-end;
+  width: 100%; max-width: 960px;
+  padding: 0 48px 54px;
+  position: relative; z-index: 1;
+}
+.team-grp { display: flex; align-items: flex-end; gap: 24px; flex: 1; }
+#enemy-group  { justify-content: flex-end; }
+#player-group { justify-content: flex-start; }
+.stage-center {
+  width: 80px; flex-shrink: 0;
+  display: flex; align-items: flex-end; justify-content: center; padding-bottom: 4px;
+}
+.stage-center-line { width: 1px; height: 40px; background: linear-gradient(to top, rgba(80,60,20,0.3), transparent); }
+
+/* ── ROT CARD ── */
+.rot-card {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  width: 96px; transition: transform 0.18s ease, opacity 0.4s; cursor: default;
+}
+.rot-card.dead { opacity: 0.15; pointer-events: none; }
+
+/* ROT states */
+.rot-card.rot-clickable         { cursor: pointer; }
+.rot-card.rot-clickable:hover   { transform: translateY(-4px); }
+.rot-card.rot-clickable:hover .rot-sprite { box-shadow: 0 0 0 2px rgba(255,255,255,0.25), 0 0 14px rgba(255,255,255,0.08); }
+
+.rot-card.rot-selected          { transform: translateY(-14px); }
+.rot-card.rot-selected .rot-sprite { box-shadow: 0 0 0 2px rgba(147,197,253,0.9), 0 0 24px rgba(59,130,246,0.5) !important; }
+.rot-card.rot-selected .rot-name-lbl { color: #3b82f6; }
+
+.rot-card.rot-assigned {
+  opacity: 0.45;
+  pointer-events: none;
+  cursor: default;
+}
+.rot-card.rot-assigned .rot-sprite { box-shadow: inset 0 3px 0 rgba(22,163,74,0.7); }
+
+/* Assigned label (top of card) */
+.rot-assigned-lbl {
+  font-size: 7px; letter-spacing: 1px; text-transform: uppercase;
+  color: #16a34a; text-align: center; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 96px;
+  height: 10px; line-height: 10px;
+}
+
+.rot-name-lbl {
+  font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+  color: #2a2a40; text-align: center; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; max-width: 96px; transition: color 0.2s;
+}
+
+/* HP bar */
+.hp-row { width: 96px; display: flex; align-items: center; gap: 5px; }
+.hp-bar-wrap {
+  flex: 1; height: 5px; background: rgba(255,255,255,0.04);
+  border-radius: 3px; overflow: hidden; border: 1px solid rgba(255,255,255,0.04);
+}
+.hp-fill { height: 100%; border-radius: 3px; transition: width 0.55s ease, background-color 0.55s; }
+.hp-fill.high { background: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.4); }
+.hp-fill.mid  { background: #d97706; box-shadow: 0 0 6px rgba(217,119,6,0.4); }
+.hp-fill.low  { background: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
+.hp-nums { font-size: 7px; color: #252535; white-space: nowrap; flex-shrink: 0; }
+
+/* Sprite */
+.rot-sprite {
+  width: 96px; height: 106px; border-radius: 6px 6px 2px 2px;
+  border: 1px solid rgba(255,255,255,0.05);
+  position: relative; display: flex; align-items: center; justify-content: center;
+  overflow: hidden; transition: box-shadow 0.15s;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.06) 0%, transparent 60%);
+}
+.enemy-card .rot-sprite  { box-shadow: inset -2px 0 0 rgba(0,0,0,0.3); }
+.player-card .rot-sprite { box-shadow: inset 2px 0 0 rgba(0,0,0,0.3); }
+.rot-sprite::after {
+  content: ''; position: absolute; bottom: -12px; left: 50%; transform: translateX(-50%);
+  width: 70%; height: 12px;
+  background: radial-gradient(ellipse at center top, rgba(0,0,0,0.35) 0%, transparent 70%);
+  pointer-events: none;
+}
+.rot-sprite-lbl {
+  font-size: 8px; font-weight: bold; text-align: center; padding: 0 6px;
+  line-height: 1.35; word-break: break-word;
+  text-shadow: 0 1px 6px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.6);
+  position: relative; z-index: 1;
+}
+.type-chip {
+  position: absolute; bottom: 5px; right: 5px;
+  font-size: 7px; padding: 1px 4px; border-radius: 2px;
+  letter-spacing: 1px; text-transform: uppercase; font-weight: bold; opacity: 0.9;
+}
+
+/* Targeting */
+.rot-card.targetable .rot-sprite {
+  cursor: crosshair;
+  animation: tgt-pulse 0.85s ease-in-out infinite alternate;
+}
+@keyframes tgt-pulse {
+  from { box-shadow: 0 0 0 2px rgba(250,204,21,0.7),  0 0 10px rgba(250,204,21,0.2); }
+  to   { box-shadow: 0 0 0 2px rgba(254,240,138,0.95), 0 0 28px rgba(250,204,21,0.45); }
+}
+
+.eff-badge {
+  position: absolute; top: 5px; left: 5px;
+  font-size: 11px; font-weight: bold; padding: 3px 0; border-radius: 3px; z-index: 2;
+  width: 46px; text-align: center;
+}
+.eff-badge.super  { background: #16a34a; color: #fff; box-shadow: 0 0 10px rgba(22,163,74,0.55); }
+.eff-badge.resist { background: #dc2626; color: #fff; box-shadow: 0 0 10px rgba(220,38,38,0.55); }
+
+.status-badges { position: absolute; top: 4px; right: 4px; display: flex; flex-direction: column; gap: 3px; z-index: 2; }
+.sbadge {
+  min-width: 22px; height: 22px; border-radius: 3px;
+  font-size: 9px; font-weight: bold; letter-spacing: 0.5px;
+  display: flex; align-items: center; justify-content: center; padding: 0 4px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sbadge:hover { filter: brightness(1.25); }
+.sbadge.selected { border-color: rgba(255,255,255,0.85); box-shadow: 0 0 8px rgba(255,255,255,0.45); }
+.sbadge.AVVELENATO    { background: #6d28d9; color: #ede9fe; }
+.sbadge.BRUCIATO      { background: #b45309; color: #fef3c7; }
+.sbadge.FERITE        { background: #991b1b; color: #fecaca; }
+.sbadge.STRAFATTO     { background: #1e3a5f; color: #bfdbfe; }
+.sbadge.BURNOUT       { background: #1d4ed8; color: #bfdbfe; }
+.sbadge.COLLASSO      { background: #374151; color: #e5e7eb; }
+.sbadge.TASCHE-BUCATE { background: #854d0e; color: #fef3c7; }
+
+/* ── ITEMS & DRUGS ── */
+.item-chip {
+  position: absolute; bottom: 5px; left: 4px;
+  font-size: 6px; padding: 1px 4px; border-radius: 2px;
+  text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;
+  background: rgba(80,55,15,0.88); color: #fde68a;
+  cursor: pointer; border: 1px solid rgba(180,130,40,0.4); z-index: 2;
+}
+.item-chip:hover { filter: brightness(1.3); }
+.drug-badges { position: absolute; bottom: 4px; right: 4px; display: flex; flex-direction: column; gap: 3px; z-index: 2; }
+.drug-badge {
+  min-width: 22px; height: 22px; border-radius: 3px;
+  font-size: 8px; font-weight: bold; letter-spacing: 0.5px;
+  display: flex; align-items: center; justify-content: center; padding: 0 3px;
+  cursor: pointer; border: 1.5px solid rgba(180,130,40,0.4);
+  background: rgba(80,50,10,0.75); color: #fde68a;
+  transition: filter 0.15s;
+}
+.drug-badge:hover { filter: brightness(1.25); }
+.spd-token.item-zoccoli { border-style: dashed; opacity: 0.65; }
+
+.rot-sprite.hit-flash { animation: hit-anim 0.3s; }
+@keyframes hit-anim {
+  0%   { filter: brightness(4) saturate(0); transform: translateX(-3px); }
+  30%  { transform: translateX(3px); }
+  60%  { transform: translateX(0); }
+  100% { filter: brightness(1) saturate(1); }
+}
+
+/* ── INFO PANEL ── */
+#info-panel {
+  display: none;
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 230px; z-index: 10;
+  background: rgba(3,3,8,0.97);
+  border-right: 1px solid #1a1a2e;
+  padding: 36px 16px 16px;
+  flex-direction: column; gap: 10px;
+  overflow-y: auto;
+}
+#info-panel.open { display: flex; }
+#info-close {
+  position: absolute; top: 10px; right: 10px;
+  background: none; border: 1px solid #252535;
+  color: #3a3a5a; font-size: 10px; letter-spacing: 1px;
+  cursor: pointer; border-radius: 2px; padding: 2px 7px;
+  font-family: 'Courier New', monospace; transition: all 0.12s;
+}
+#info-close:hover { color: #aaa; border-color: #4a4a6a; }
+/* shared text-shadow for readability on any bg */
+.info-panel * { text-shadow: 0 0 4px #000, 0 1px 3px #000; }
+
+.info-title {
+  font-size: 14px; font-weight: bold; letter-spacing: 2px;
+  text-transform: uppercase; color: #ffffff; line-height: 1.4;
+}
+.info-badge {
+  display: inline-block; font-size: 10px; padding: 3px 9px;
+  border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold;
+}
+.info-section {
+  font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+  color: #aaaacc; border-top: 1px solid #222230; padding-top: 8px; margin-top: 2px;
+}
+.info-stat-grid {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px 10px;
+}
+.info-stat { display: flex; flex-direction: column; gap: 2px; }
+.info-stat-lbl { font-size: 9px; color: #aaaacc; letter-spacing: 2px; text-transform: uppercase; }
+.info-stat-val { font-size: 15px; color: #ffffff; font-weight: bold; }
+.info-text { font-size: 11px; color: #ddddee; line-height: 1.7; }
+.info-move-box {
+  background: rgba(255,255,255,0.04); border: 1px solid #222230;
+  border-radius: 3px; padding: 8px 10px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.info-move-name { font-size: 12px; font-weight: bold; color: #ffffff; letter-spacing: 1px; text-transform: uppercase; }
+.info-move-meta { font-size: 10px; color: #aaaacc; letter-spacing: 1px; }
+
+/* ── BATTLE LOG ── */
+#battle-log {
+  background: #f4f4f0;
+  border-top: 2px solid #ddd;
+  padding: 6px 18px;
+  height: 68px; overflow-y: auto;
+  font-size: 10px; line-height: 1.7;
+  flex-shrink: 0;
+  scrollbar-width: thin; scrollbar-color: #bbb #f4f4f0;
+}
+.lg         { color: #bbb; }
+.lg.info    { color: #334155; }
+.lg.dmg     { color: #b91c1c; }
+.lg.heal    { color: #15803d; }
+.lg.status  { color: #6d28d9; }
+.lg.super   { color: #b45309; }
+.lg.resist  { color: #6b7280; }
+.lg.sep     { color: #9ca3af; border-top: 1px solid #e5e7eb; margin-top: 2px; padding-top: 2px; }
+.lg.crit    { color: #d97706; font-weight: bold; }
+.log-link   { cursor: pointer; border-bottom: 1px dotted currentColor; opacity: 0.8; transition: opacity 0.1s; }
+.log-link:hover { opacity: 1; }
+
+/* ══════════════════════════════════════
+   ACTION PANEL — new 3-zone horizontal layout
+══════════════════════════════════════ */
+#action-panel {
+  background: #f8f8f5;
+  border-top: 2px solid #ddd;
+  padding: 0;
+  flex-shrink: 0;
+  min-height: 96px;
+  display: flex;
+  align-items: stretch;
+}
+
+/* LEFT — phase label */
+#panel-left {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-right: 1px solid #e5e7eb;
+  padding: 0 16px;
+  text-align: center;
+}
+#phase-lbl {
+  font-size: 12px;
+  letter-spacing: 3px;
+  color: #1f2937;
+  text-transform: uppercase;
+  font-weight: bold;
+  line-height: 1.2;
+}
+#phase-sub {
+  font-size: 8px;
+  color: #9ca3af;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* CENTER — move buttons */
+#panel-center {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 20px;
+  overflow: hidden;
+}
+
+/* RIGHT — back + avvia */
+#panel-right {
+  flex: 0 0 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 16px;
+  border-left: 1px solid #e5e7eb;
+}
+
+/* Move buttons */
+.move-btn {
+  padding: 10px 20px;
+  border: 1.5px solid #d1d5db;
+  background: #ffffff;
+  color: #111827;
+  font-family: 'Courier New', monospace;
+  font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+  cursor: pointer; border-radius: 4px;
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  min-width: 130px;
+  transition: all 0.12s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+.move-btn:hover:not(:disabled) { background: #f3f4f6; border-color: #6b7280; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+.move-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.move-btn-name { color: #111827; font-size: 12px; font-weight: bold; letter-spacing: 1px; }
+.move-btn-sub  { font-size: 9px; color: #6b7280; }
+
+/* Back button */
+#back-btn {
+  padding: 6px 0;
+  background: #f9fafb;
+  border: 1.5px solid #d1d5db;
+  color: #6b7280;
+  font-family: 'Courier New', monospace;
+  font-size: 9px; letter-spacing: 2px; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+  transition: all 0.12s;
+}
+#back-btn:hover { background: #f3f4f6; border-color: #9ca3af; color: #374151; }
+
+/* Execute button */
+#execute-btn {
+  padding: 9px 0;
+  background: #dc2626;
+  border: 1.5px solid #b91c1c;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+  cursor: pointer; border-radius: 3px;
+  transition: all 0.12s;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.3);
+}
+#execute-btn:hover { background: #b91c1c; box-shadow: 0 3px 12px rgba(220,38,38,0.4); }
+
+/* ══ INTRO OVERLAY ══ */
+#intro-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  font-family: 'Courier New', monospace;
+}
+.intro-screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background-color: transparent !important;
+}
+.intro-screen.hidden { display: none; }
+
+/* ── Screen 1: Title ── */
+#screen-title {
+  background: url('background/back%20start.png') center/cover no-repeat;
+  background-color: transparent !important;
+}
+.title-dim {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.08) 35%, rgba(0,0,0,0.78) 100%);
+}
+.title-content {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center; gap: 52px;
+  background: transparent !important;
+}
+
+/* ── Screen 2: Intro ── */
+#screen-intro {
+  background: radial-gradient(ellipse at 50% 40%, #080812 0%, #030306 70%);
+  gap: 0;
+}
+.intro-city {
+  font-size: clamp(18px, 4vw, 38px);
+  letter-spacing: 8px; text-transform: uppercase; font-weight: bold; color: #cc2222;
+  text-shadow: 0 0 30px rgba(200,40,40,0.55), 0 2px 6px rgba(0,0,0,0.95);
+  margin-bottom: 14px;
+}
+.intro-metro {
+  font-size: clamp(12px, 2.5vw, 22px);
+  letter-spacing: 5px; text-transform: uppercase; color: #e0e0e0;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.95); margin-bottom: 30px;
+}
+.intro-flavor {
+  font-size: 10px; letter-spacing: 2px; color: #4a4a6a;
+  text-align: center; max-width: 440px; line-height: 2.4; text-transform: uppercase;
+  margin-bottom: 52px;
+}
+
+/* ── Screen 3: Starter ── */
+#screen-starter {
+  background: radial-gradient(ellipse at 50% 20%, #07070f 0%, #030306 65%);
+  gap: 22px;
+}
+.starter-heading {
+  font-size: 11px; letter-spacing: 8px; text-transform: uppercase; color: #d4a830;
+}
+#starter-rots-row { display: flex; gap: 36px; align-items: center; justify-content: center; }
+.starter-card {
+  display: flex; flex-direction: column; align-items: center; gap: 7px;
+  cursor: pointer; transition: transform 0.18s;
+}
+.starter-card:hover { transform: translateY(-8px); }
+.starter-card:hover .starter-sprite {
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.22), 0 0 18px rgba(255,255,255,0.07);
+}
+.starter-card.selected .starter-sprite {
+  box-shadow: 0 0 0 3px rgba(147,197,253,0.95), 0 0 32px rgba(59,130,246,0.55) !important;
+}
+.starter-sprite {
+  width: 164px; height: 188px; border-radius: 8px 8px 3px 3px;
+  border: 1px solid rgba(255,255,255,0.07);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 55%);
+  transition: box-shadow 0.15s;
+}
+.starter-sprite-lbl {
+  font-size: 11px; font-weight: bold; text-align: center; padding: 0 10px;
+  line-height: 1.4; word-break: break-word;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.95), 0 0 24px rgba(0,0,0,0.7); z-index: 1;
+}
+.starter-type-chip {
+  position: absolute; bottom: 7px; right: 7px;
+  font-size: 7px; padding: 2px 6px; border-radius: 2px; letter-spacing: 1px; font-weight: bold; opacity: 0.9;
+}
+.starter-card-name {
+  font-size: 8px; letter-spacing: 1px; text-transform: uppercase; color: #2a2a40; text-align: center;
+}
+#screen-starter { overflow-y: auto; padding: 22px 20px; }
+#starter-info-panel {
+  width: 574px; max-width: 92vw;
+  background: rgba(3,3,8,0.97); border: 1px solid #1a1a2e; border-radius: 6px;
+  display: flex; flex-direction: column; overflow: hidden;
+  opacity: 0; transition: opacity 0.2s; pointer-events: none;
+}
+#starter-info-panel.visible { opacity: 1; pointer-events: auto; }
+
+.sip-header {
+  padding: 16px 22px 14px;
+  border-bottom: 1px solid #10101c;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+}
+.sip-name {
+  font-size: 15px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase;
+  line-height: 1.2;
+}
+.sip-type-badge {
+  font-size: 9px; padding: 4px 12px; border-radius: 2px;
+  letter-spacing: 2px; text-transform: uppercase; font-weight: bold; flex-shrink: 0;
+}
+.sip-section-lbl {
+  font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #2a2a48;
+  padding: 10px 22px 4px;
+}
+.sip-stats-grid {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px;
+  padding: 4px 22px 16px;
+}
+.sip-stat-cell {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  padding: 10px 4px; background: rgba(255,255,255,0.025); border-radius: 3px;
+  border: 1px solid rgba(255,255,255,0.04);
+}
+.sip-stat-lbl { font-size: 8px; color: #4a4a88; letter-spacing: 1px; text-transform: uppercase; }
+.sip-stat-num { font-size: 22px; color: #ffffff; font-weight: bold; line-height: 1; }
+.sip-move-section { padding: 8px 22px 18px; }
+.sip-move-lbl { font-size: 8px; letter-spacing: 4px; text-transform: uppercase; color: #2a2a48; margin-bottom: 8px; }
+.sip-move-box {
+  background: rgba(255,255,255,0.025); border: 1px solid #1e1e38; border-radius: 4px;
+  padding: 13px 16px; display: flex; flex-direction: column; gap: 10px;
+}
+.sip-move-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sip-move-name { font-size: 13px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+.sip-chips { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.sip-chip {
+  font-size: 8px; padding: 3px 9px; border-radius: 2px;
+  letter-spacing: 1px; text-transform: uppercase; font-weight: bold;
+}
+.sip-chip.cat { background: rgba(255,255,255,0.07); color: #7777aa; }
+.sip-chip.pow { background: rgba(212,168,48,0.12); color: #d4a830; border: 1px solid rgba(212,168,48,0.22); }
+.sip-chip.utility { background: rgba(100,100,180,0.12); color: #8888cc; border: 1px solid rgba(100,100,180,0.2); }
+.sip-move-desc {
+  font-size: 10px; color: #5a5a8a; letter-spacing: 0.5px; line-height: 1.9;
+  border-top: 1px solid #10101c; padding-top: 10px;
+}
+
+/* shared intro buttons */
+.intro-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 11px; letter-spacing: 5px; text-transform: uppercase;
+  padding: 12px 42px; border-radius: 2px; cursor: pointer;
+  border: 1px solid #cc2222; background: transparent; color: #cc2222;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.intro-btn:hover:not(:disabled) {
+  background: #cc2222; color: #fff; box-shadow: 0 0 24px rgba(200,40,40,0.4);
+}
+.intro-btn:disabled { opacity: 0.22; cursor: default; border-color: #333; color: #333; }
+
+/* ── START button: sempre visibile e grande ── */
+#screen-title .intro-btn {
+  border: 2px solid rgba(255,255,255,0.8);
+  color: #fff;
+  font-size: 14px;
+  letter-spacing: 7px;
+  padding: 15px 58px;
+  text-shadow: 0 0 14px rgba(255,220,180,0.55), 0 1px 4px rgba(0,0,0,0.9);
+  box-shadow: 0 0 22px rgba(220,60,30,0.3), 0 3px 14px rgba(0,0,0,0.65);
+  transition: none;
+}
+
+/* ── Flame keyframes ── */
+@keyframes flamma {
+  0%   { box-shadow: 0 0 6px 2px #ff4400, 0 0 18px 5px #ff7700, 0 0 40px 10px #ffaa00, 0 0 75px 14px rgba(255,80,0,0.55), 0 0 130px 22px rgba(255,40,0,0.2), inset 0 0 14px 4px rgba(255,90,0,0.4), inset 0 0 28px 7px rgba(255,160,0,0.18); border-color: #ff6600; }
+  12%  { box-shadow: 0 0 10px 4px #ff1100, 0 0 26px 7px #ffcc00, 0 0 55px 13px #ff5500, 0 0 100px 20px rgba(255,30,0,0.62), 0 0 170px 30px rgba(255,20,0,0.28), inset 0 0 22px 6px rgba(255,210,0,0.48), inset 0 0 42px 10px rgba(255,90,0,0.22); border-color: #ffee00; }
+  25%  { box-shadow: 0 0 7px 2px #ff8800, 0 0 16px 4px #ff3300, 0 0 34px 8px #ffee00, 0 0 65px 12px rgba(255,110,0,0.5), 0 0 110px 19px rgba(255,55,0,0.22), inset 0 0 10px 3px rgba(255,60,0,0.32), inset 0 0 22px 5px rgba(255,190,0,0.14); border-color: #ff3300; }
+  38%  { box-shadow: 0 0 13px 5px #ff0000, 0 0 32px 8px #ff9900, 0 0 62px 15px #ffbb00, 0 0 115px 22px rgba(255,15,0,0.65), 0 0 185px 34px rgba(255,30,0,0.3), inset 0 0 28px 8px rgba(255,130,0,0.52), inset 0 0 50px 12px rgba(255,210,0,0.25); border-color: #ffaa00; }
+  50%  { box-shadow: 0 0 5px 1px #ff5500, 0 0 14px 3px #ffee00, 0 0 30px 7px #ff2200, 0 0 58px 11px rgba(255,130,0,0.48), 0 0 98px 17px rgba(255,65,0,0.2), inset 0 0 8px 2px rgba(255,210,0,0.3), inset 0 0 18px 4px rgba(255,70,0,0.14); border-color: #ff1100; }
+  62%  { box-shadow: 0 0 11px 4px #ff2200, 0 0 28px 7px #ff8800, 0 0 50px 12px #ffdd00, 0 0 92px 17px rgba(255,50,0,0.58), 0 0 150px 26px rgba(255,35,0,0.25), inset 0 0 20px 5px rgba(255,100,0,0.44), inset 0 0 38px 9px rgba(255,175,0,0.2); border-color: #ff8800; }
+  75%  { box-shadow: 0 0 8px 3px #ff6600, 0 0 20px 5px #ff1100, 0 0 42px 9px #ffcc00, 0 0 80px 15px rgba(255,95,0,0.52), 0 0 132px 23px rgba(255,45,0,0.23), inset 0 0 16px 4px rgba(255,185,0,0.36), inset 0 0 32px 8px rgba(255,55,0,0.17); border-color: #ffcc00; }
+  88%  { box-shadow: 0 0 14px 5px #ff3300, 0 0 34px 9px #ffbb00, 0 0 68px 16px #ff5500, 0 0 120px 23px rgba(255,20,0,0.6), 0 0 190px 35px rgba(255,25,0,0.27), inset 0 0 26px 7px rgba(255,140,0,0.5), inset 0 0 46px 11px rgba(255,220,0,0.23); border-color: #ff5500; }
+  100% { box-shadow: 0 0 6px 2px #ff4400, 0 0 18px 5px #ff7700, 0 0 40px 10px #ffaa00, 0 0 75px 14px rgba(255,80,0,0.55), 0 0 130px 22px rgba(255,40,0,0.2), inset 0 0 14px 4px rgba(255,90,0,0.4), inset 0 0 28px 7px rgba(255,160,0,0.18); border-color: #ff6600; }
+}
+
+@keyframes flamma-txt {
+  0%   { text-shadow: 0 0 8px #fff, 0 0 20px #ff8800, 0 0 40px #ff4400; color: #fff; }
+  18%  { text-shadow: 0 0 12px #ffff00, 0 0 28px #ffcc00, 0 0 55px #ff7700; color: #ffff88; }
+  36%  { text-shadow: 0 0 6px #fff, 0 0 16px #ff5500, 0 0 34px #ff1100; color: #fff; }
+  54%  { text-shadow: 0 0 14px #ffee00, 0 0 32px #ffaa00, 0 0 62px #ff5500; color: #ffffaa; }
+  72%  { text-shadow: 0 0 7px #fff, 0 0 18px #ff6600, 0 0 38px #ff2200; color: #fff; }
+  90%  { text-shadow: 0 0 11px #ffcc00, 0 0 25px #ff9900, 0 0 50px #ff6600; color: #ffff77; }
+  100% { text-shadow: 0 0 8px #fff, 0 0 20px #ff8800, 0 0 40px #ff4400; color: #fff; }
+}
+
+#screen-title .intro-btn:hover {
+  background: transparent;
+  animation: flamma 0.48s ease-in-out infinite, flamma-txt 0.39s ease-in-out infinite;
+}
+
+/* ── OVERLAY ── */
+#overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(2,2,5,0.92);
+  align-items: center; justify-content: center; z-index: 100;
+}
+#overlay.on { display: flex; }
+#ov-box { text-align: center; display: flex; flex-direction: column; gap: 14px; align-items: center; }
+#ov-title { font-size: 48px; letter-spacing: 12px; font-weight: bold; text-transform: uppercase; }
+#ov-title.win  { color: #166534; text-shadow: 0 0 40px rgba(22,163,74,0.4); }
+#ov-title.lose { color: #7f1d1d; text-shadow: 0 0 40px rgba(220,38,38,0.3); }
+#ov-sub { font-size: 12px; color: #2a2a40; letter-spacing: 2px; }
+#restart-btn {
+  padding: 9px 30px; background: #0a0a18; border: 1px solid #1e1e30;
+  color: #3a3a5a; font-family: 'Courier New', monospace;
+  font-size: 11px; letter-spacing: 3px; cursor: pointer; border-radius: 2px;
+  margin-top: 6px; transition: all 0.12s;
+}
+#restart-btn:hover { background: #111120; border-color: #2a2a44; color: #6a6a9a; }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>Milano Roguelife</h1>
+  <span id="turn-info">TURNO 1</span>
+</div>
+
+<div id="speed-bar">
+  <div id="speed-bar-label">VELOCITÀ</div>
+  <div id="speed-tokens"></div>
+</div>
+
+<div id="stage">
+  <div id="info-panel">
+    <button id="info-close" onclick="closeInfo()">✕</button>
+    <div id="info-content"></div>
+  </div>
+  <div id="rot-row">
+    <div class="team-grp" id="player-group"></div>
+    <div class="stage-center"><div class="stage-center-line"></div></div>
+    <div class="team-grp" id="enemy-group"></div>
+  </div>
+</div>
+
+<div id="battle-log"></div>
+
+<div id="action-panel">
+  <div id="panel-left"></div>
+  <div id="panel-center"></div>
+  <div id="panel-right"></div>
+</div>
+
+<div id="overlay">
+  <div id="ov-box">
+    <div id="ov-title"></div>
+    <div id="ov-sub"></div>
+    <button id="restart-btn" onclick="restartGame()">NUOVA BATTAGLIA</button>
+  </div>
+</div>
+
+<!-- ════ INTRO OVERLAY ════ -->
+<div id="intro-overlay">
+
+  <!-- Screen 1: Title -->
+  <div id="screen-title" class="intro-screen">
+    <div class="title-dim"></div>
+    <div class="title-content">
+      <canvas id="title-canvas" style="display:block; margin:0 auto; background:transparent;"></canvas>
+      <button class="intro-btn" onclick="showScreen('intro')">START</button>
+    </div>
+  </div>
+
+  <!-- Screen 2: Intro -->
+  <div id="screen-intro" class="intro-screen hidden">
+    <div class="intro-city">BENVENUTO A MILANO</div>
+    <div class="intro-metro">LA METRO STA CHIUDENDO</div>
+    <div class="intro-flavor">SCEGLI I TUOI ROT<br>E SOPRAVVIVI IL PIÙ A LUNGO POSSIBILE</div>
+    <button class="intro-btn" onclick="showScreen('starter')">CONTINUA</button>
+  </div>
+
+  <!-- Screen 3: Starter select -->
+  <div id="screen-starter" class="intro-screen hidden">
+    <div class="starter-heading">SCEGLI IL TUO STARTER</div>
+    <div id="starter-rots-row"></div>
+    <div id="starter-info-panel"></div>
+    <button class="intro-btn" id="btn-conferma" disabled onclick="confirmStarter()">CONFERMA</button>
+  </div>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// TYPE DATA
+// ═══════════════════════════════════════════════════
+
+const TYPE_COLORS = {
+  NORMIE: { bg:'#374151', text:'#d1d5db' },
+  SCHIZO: { bg:'#4c1d95', text:'#ddd6fe' },
+  PSYCHO: { bg:'#7f1d1d', text:'#fecaca' },
+  TROLL:  { bg:'#14532d', text:'#bbf7d0' },
+  CRYPTO: { bg:'#78350f', text:'#fde68a' },
+  MOG:    { bg:'#1e3a8a', text:'#bfdbfe' },
+  VAPE:   { bg:'#164e63', text:'#a5f3fc' },
+  BASED:  { bg:'#7c2d12', text:'#fed7aa' },
+};
+
+const TYPE_CHART = {
+  NORMIE: { beats:['SCHIZO'], loses:['PSYCHO'] },
+  SCHIZO: { beats:['PSYCHO'], loses:['NORMIE'] },
+  PSYCHO: { beats:['NORMIE'], loses:['SCHIZO'] },
+  MOG:    { beats:['CRYPTO'], loses:['VAPE']   },
+  CRYPTO: { beats:['TROLL'],  loses:['MOG']    },
+  TROLL:  { beats:['VAPE'],   loses:['CRYPTO'] },
+  VAPE:   { beats:['MOG'],    loses:['TROLL']  },
+  BASED:  { beats:[],         loses:[]         },
+};
+
+function typeMult(atkType, defType) {
+  // BASED: nessun moltiplicatore in attacco né debolezze/resistenze in difesa
+  if (atkType === 'BASED' || defType === 'BASED') return 1;
+  const atkChart = TYPE_CHART[atkType];
+  const defChart = TYPE_CHART[defType];
+  let mult = 1;
+  // Super efficace: il tipo attaccante batte il tipo difensore
+  if (atkChart && atkChart.beats.includes(defType)) mult *= 2;
+  // Resistenza: stesso tipo OPPURE il tipo difensore batte il tipo attaccante
+  if (defType === atkType || (defChart && defChart.beats.includes(atkType))) mult *= 0.5;
+  return mult;
+}
+
+// ═══════════════════════════════════════════════════
+// ROT DEFINITIONS
+// ═══════════════════════════════════════════════════
+
+const ROT_DEFS = {
+  MIKEY: {
+    id:1, name:'MIKEY TREMBOLONE', type:'MOG',
+    base:{ hp:50, atk:80, spAtk:30, def:60, spDef:30, spd:50 },
+    uniqueMove:{ name:'SIRINGONE', type:'MOG', cat:'PHYSICAL', power:50, pp:10,
+      status:{ type:'AVVELENATO', chance:0.30 }, target:'ENEMY' }
+  },
+  CRYPTOBISMOL: {
+    id:2, name:'CRYPTOBISMOL', type:'CRYPTO',
+    base:{ hp:40, atk:30, spAtk:80, def:30, spDef:60, spd:60 },
+    uniqueMove:{ name:'REDDIT', type:'CRYPTO', cat:'SPECIAL', power:50, pp:10,
+      status:{ type:'TASCHE BUCATE', chance:0.30 }, target:'ENEMY' }
+  },
+  BIG_MAC: {
+    id:3, name:'BIG MAC', type:'NORMIE',
+    base:{ hp:90, atk:40, spAtk:60, def:60, spDef:40, spd:10 },
+    uniqueMove:{ name:'MENU LARGE', type:'NORMIE', cat:'SPECIAL', power:50, pp:10,
+      status:{ type:'COLLASSO', chance:0.30 }, target:'ENEMY' }
+  },
+  CHEESECAKE: {
+    id:4, name:'CHEESECAKE', type:'VAPE',
+    base:{ hp:50, atk:40, spAtk:60, def:40, spDef:50, spd:60 },
+    uniqueMove:{ name:'SVAPO DIESEL', type:'VAPE', cat:'SPECIAL', power:50, pp:10,
+      status:{ type:'STRAFATTO', chance:0.30 }, target:'ENEMY' }
+  },
+  LINO_STAGNO: {
+    id:5, name:'LINO STAGNO', type:'SCHIZO',
+    base:{ hp:60, atk:30, spAtk:50, def:70, spDef:70, spd:20 },
+    uniqueMove:{ name:'NO VAX', type:'SCHIZO', cat:'UTILITY', power:0, pp:10,
+      effect:'cleanse', target:'ALLY_ALL' }
+  },
+  TROLLO: {
+    id:6, name:'TROLLO', type:'TROLL',
+    base:{ hp:50, atk:60, spAtk:50, def:40, spDef:40, spd:60 },
+    uniqueMove:{ name:'RAGE BAIT', type:'TROLL', cat:'PHYSICAL', power:50, pp:10,
+      status:{ type:'BURNOUT', chance:0.30 }, target:'ENEMY' }
+  },
+  ELONIO: {
+    id:7, name:'ELONIO MUSCHIO', type:'PSYCHO',
+    base:{ hp:50, atk:70, spAtk:50, def:40, spDef:40, spd:50 },
+    uniqueMove:{ name:'FIRED!', type:'PSYCHO', cat:'PHYSICAL', power:50, pp:10,
+      status:{ type:'BRUCIATO', chance:0.30 }, target:'ENEMY' }
+  },
+  BRASATO: {
+    id:8, name:'BRASATO', type:'BASED',
+    base:{ hp:60, atk:80, spAtk:30, def:50, spDef:30, spd:50 },
+    uniqueMove:{ name:'MANNAIA MANNAGGIA', type:'BASED', cat:'PHYSICAL', power:40, pp:10,
+      status:{ type:'FERITE', chance:1.0 }, target:'ENEMY' }
+  },
+  MOG_MOB: {
+    id:9, name:'MOG MOB', type:'MOG',
+    base:{ hp:50, atk:80, spAtk:30, def:70, spDef:30, spd:40 },
+    uniqueMove:{ name:'CRIMSON MENTONE', type:'MOG', cat:'UTILITY', power:0, pp:10,
+      effect:'stage', stages:[
+        { stat:'def', delta:-2, team:'ALLY' }, { stat:'spDef', delta:-2, team:'ALLY' },
+        { stat:'atk', delta:2,  team:'ALLY' }, { stat:'spAtk', delta:2,  team:'ALLY' }
+      ], target:'SELF' }
+  },
+  LOGAN_FRAUD: {
+    id:10, name:'LOGAN FRAUD', type:'CRYPTO',
+    base:{ hp:40, atk:30, spAtk:70, def:30, spDef:50, spd:80 },
+    uniqueMove:{ name:'RUGPULL', type:'CRYPTO', cat:'SPECIAL', power:15, pp:10,
+      status:null, target:'ENEMY' }
+  },
+  POKE_MON: {
+    id:11, name:'POKE MON', type:'NORMIE',
+    base:{ hp:70, atk:30, spAtk:50, def:50, spDef:60, spd:40 },
+    uniqueMove:{ name:'TREDICESIMA', type:'NORMIE', cat:'UTILITY', power:0, pp:10,
+      effect:'heal', healPct:0.25, target:'ALLY_ALL' }
+  },
+  SVAPO_KINK: {
+    id:12, name:'SVAPO KINK', type:'VAPE',
+    base:{ hp:50, atk:30, spAtk:70, def:40, spDef:60, spd:50 },
+    uniqueMove:{ name:'SOFFOCOTTO', type:'VAPE', cat:'SPECIAL', power:30, pp:10,
+      status:null, target:'ENEMY_ALL' }
+  },
+  FRANCO: {
+    id:13, name:'FRANCO', type:'SCHIZO',
+    base:{ hp:60, atk:40, spAtk:60, def:40, spDef:40, spd:60 },
+    uniqueMove:{ name:'RICICLAGGIO', type:'SCHIZO', cat:'SPECIAL', power:30, pp:10,
+      status:{ type:'RANDOM', chance:0.50 }, target:'ENEMY' }
+  },
+  USBATTI: {
+    id:14, name:'USBATTI', type:'TROLL',
+    base:{ hp:40, atk:80, spAtk:30, def:30, spDef:30, spd:90 },
+    uniqueMove:{ name:'USB-C', type:'TROLL', cat:'PHYSICAL', power:80, pp:10,
+      recoil:20, status:null, target:'ENEMY' }
+  },
+  SEAO: {
+    id:15, name:'SEAO', type:'PSYCHO',
+    base:{ hp:60, atk:50, spAtk:70, def:50, spDef:50, spd:20 },
+    uniqueMove:{ name:'EVASIONE FISCALE', type:'PSYCHO', cat:'PHYSICAL', power:40, pp:10,
+      status:null, target:'ENEMY_ALL' }
+  },
+  GIANNI: {
+    id:16, name:'GIANNI IL PIZZAIOLO', type:'BASED',
+    base:{ hp:70, atk:60, spAtk:40, def:60, spDef:50, spd:20 },
+    uniqueMove:{ name:'CHIACCHIERE DA BAR', type:'BASED', cat:'UTILITY', power:0, pp:10,
+      effect:'stage', stages:[
+        { stat:'def', delta:1, team:'ALLY' }, { stat:'spDef', delta:1, team:'ALLY' }
+      ], target:'SELF' }
+  },
+};
+
+// ATTACCO base: type:null → nessun STAB, nessun moltiplicatore tipo
+const BASE_ATCK = { name:'ATTACCO', type:null, cat:'PHYSICAL', power:25, pp:Infinity, status:null, target:'ENEMY' };
+
+// ═══════════════════════════════════════════════════
+// ITEMS & DRUGS
+// ═══════════════════════════════════════════════════
+
+const ITEM_DEFS = {
+  ZOCCOLI_DI_LEGNO: {
+    name: 'ZOCCOLI DI LEGNO',
+    short: 'ZOCCOLI',
+    rarity: 'comune',
+    desc: 'Il ROT attacca sempre per ultimo in assoluto, indipendentemente dalla velocità. Nella barra velocità appare sempre in ultima posizione.',
+    color: '#fde68a',
+  },
+};
+
+const DRUG_DEFS = {
+  SABBIONE: {
+    name: 'SABBIONE',
+    short: 'SAB',
+    rarity: 'comune',
+    desc: 'Abbassa permanentemente la velocità del ROT di 1 punto.',
+    color: '#fde68a',
+    apply: (rot) => { rot.stats.spd = Math.max(1, rot.stats.spd - 1); },
+  },
+};
+
+function giveDrug(rot, drugKey) {
+  const drug = DRUG_DEFS[drugKey];
+  if (!drug) return;
+  drug.apply(rot);
+  rot.drugs.push(drugKey);
+}
+
+// ═══════════════════════════════════════════════════
+// BATTLE STATE
+// ═══════════════════════════════════════════════════
+
+let B = null;
+let turnNum = 1;
+
+function mkRot(def, level, isPlayer) {
+  const s = {
+    hp:    def.base.hp    + level,
+    atk:   def.base.atk   + level,
+    spAtk: def.base.spAtk + level,
+    def:   def.base.def   + level,
+    spDef: def.base.spDef + level,
+    spd:   def.base.spd   + level,
+  };
+  return {
+    uid: Math.random().toString(36).slice(2,8),
+    def, level, isPlayer,
+    maxHp: s.hp, curHp: s.hp,
+    stats: s,
+    stages: { atk:0, spAtk:0, def:0, spDef:0, spd:0 },
+    statuses: [],
+    drugs: [],
+    item: null,
+    moves: [
+      { ...BASE_ATCK, curPp: Infinity },
+      { ...def.uniqueMove, curPp: def.uniqueMove.pp },
+    ],
+    isAlive: true,
+    action: null,
+    lastMove: null,
+  };
+}
+
+function effStat(rot, s) {
+  const stage = rot.stages[s] || 0;
+  return Math.max(1, Math.floor(rot.stats[s] * (1 + stage * 0.15)));
+}
+
+// ZOCCOLI DI LEGNO: il ROT va sempre per ultimo (velocità effettiva = -∞ per il sort)
+function spdForSort(rot) {
+  if (rot.item === 'ZOCCOLI_DI_LEGNO') return -Infinity;
+  return effStat(rot, 'spd');
+}
+
+function calcDmg(atk, def, move) {
+  const lvl = atk.level;
+  const pow = move.power;
+  const a = move.cat === 'PHYSICAL' ? effStat(atk,'atk') : effStat(atk,'spAtk');
+  const d = move.cat === 'PHYSICAL' ? effStat(def,'def') : effStat(def,'spDef');
+  let dmg = ((2 * lvl / 5 + 2) * pow * a / d) / 50 + 2;
+  // STAB: solo mosse tipizzate
+  const stab = move.type !== null && move.type === atk.def.type;
+  if (stab) dmg *= 1.5;
+  // Type effectiveness: solo mosse tipizzate
+  const tm = move.type !== null ? typeMult(move.type, def.def.type) : 1;
+  dmg *= tm;
+  // Critico: 10%, moltiplicatore x1.5 dopo tutti gli altri
+  const crit = Math.random() < 0.10;
+  if (crit) dmg *= 1.5;
+  // FERITE: ogni stack del bersaglio aumenta il danno subito del 10%
+  const ferite = def.statuses.find(s => s.type === 'FERITE');
+  if (ferite) dmg *= (1 + ferite.stacks * 0.10);
+  return { dmg: Math.max(1, Math.floor(dmg)), stab, tm, crit };
+}
+
+function takeDmg(rot, amount) {
+  rot.curHp = Math.max(0, rot.curHp - amount);
+  if (rot.curHp === 0) rot.isAlive = false;
+}
+
+function addStatus(rot, type) {
+  const ex = rot.statuses.find(s => s.type === type);
+  if (type === 'BRUCIATO') {
+    if (ex) { if (ex.stacks < 3) { ex.stacks++; return true; } return false; }
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  if (type === 'AVVELENATO') {
+    if (ex) return false;
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  if (type === 'FERITE') {
+    if (ex) { if (ex.stacks < 5) { ex.stacks++; return true; } return false; }
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  if (type === 'STRAFATTO') {
+    if (ex) return false;
+    rot.statuses.push({ type, stacks: 1, turns: 3 }); return true;
+  }
+  if (type === 'BURNOUT') {
+    if (ex) return false;
+    rot.statuses.push({ type, stacks: 1, turns: 5 }); return true;
+  }
+  if (type === 'COLLASSO') {
+    if (ex) return false;
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  if (type === 'TASCHE BUCATE') {
+    if (ex) return false;
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  return false;
+}
+
+function endTurnStatuses(rot) {
+  const logs = [];
+  const toRemove = [];
+  for (const st of rot.statuses) {
+    if (st.type === 'AVVELENATO') {
+      const d = Math.max(1, Math.floor(rot.maxHp * 0.10));
+      takeDmg(rot, d);
+      logs.push({ parts:[
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' è ' },
+        { text: 'AVVELENATO', onclick: () => showStatusInfo('AVVELENATO') },
+        { text: `! -${d} HP` }
+      ], cls:'status' });
+    }
+    if (st.type === 'BRUCIATO') {
+      const d = 5 * st.stacks;
+      takeDmg(rot, d);
+      logs.push({ parts:[
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' brucia (' },
+        { text: 'BRUCIATO', onclick: () => showStatusInfo('BRUCIATO') },
+        { text: ` x${st.stacks})! -${d} HP` }
+      ], cls:'dmg' });
+    }
+    if (st.type === 'STRAFATTO') {
+      st.turns--;
+      if (st.turns <= 0) {
+        toRemove.push(st);
+        logs.push({ parts:[
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' non è più ' },
+          { text: 'STRAFATTO', onclick: () => showStatusInfo('STRAFATTO') },
+          { text: '.' }
+        ], cls:'info' });
+      }
+    }
+    if (st.type === 'BURNOUT') {
+      st.turns--;
+      if (st.turns <= 0) {
+        toRemove.push(st);
+        logs.push({ parts:[
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' non è più in ' },
+          { text: 'BURNOUT', onclick: () => showStatusInfo('BURNOUT') },
+          { text: '.' }
+        ], cls:'info' });
+      }
+    }
+  }
+  rot.statuses = rot.statuses.filter(s => !toRemove.includes(s));
+  return logs;
+}
+
+// ═══════════════════════════════════════════════════
+// INFO PANEL
+// ═══════════════════════════════════════════════════
+
+const STATUS_COLORS = {
+  AVVELENATO:    '#ede9fe',
+  BRUCIATO:      '#fef3c7',
+  FERITE:        '#fecaca',
+  STRAFATTO:     '#bfdbfe',
+  BURNOUT:       '#bfdbfe',
+  COLLASSO:      '#e5e7eb',
+  'TASCHE BUCATE': '#fef3c7',
+};
+
+const STATUS_INFO = {
+  AVVELENATO: {
+    effect:    'Infligge il 10% degli HP massimi ogni fine turno.',
+    duration:  'Permanente',
+    stackable: 'No — applicabile una sola volta per bersaglio',
+  },
+  BRUCIATO: {
+    effect:    'Infligge 5 HP × numero di stack ogni fine turno.',
+    duration:  'Permanente',
+    stackable: 'Sì — fino a 3 stack',
+  },
+  FERITE: {
+    effect:    'Ogni stack aumenta del 10% il danno subito dal bersaglio. Con 5 stack: +50% danno subito.',
+    duration:  'Permanente',
+    stackable: 'Sì — fino a 5 stack',
+  },
+  STRAFATTO: {
+    effect:    '50% di probabilità di mancare ogni attacco.',
+    duration:  '3 turni',
+    stackable: 'No',
+  },
+  BURNOUT: {
+    effect:    'Non può usare la stessa mossa due volte di fila. Il consumo PP è doppio.',
+    duration:  '5 turni',
+    stackable: 'No',
+  },
+  COLLASSO: {
+    effect:    'Salta il turno. Ogni turno c\'è il 50% di probabilità di svegliarsi.',
+    duration:  'Variabile',
+    stackable: 'No',
+  },
+  'TASCHE BUCATE': {
+    effect:    'Perde Gold ogni fine turno (sistema gold in sviluppo).',
+    duration:  'Permanente',
+    stackable: 'No',
+  },
+};
+
+const RANDOM_STATUSES = ['AVVELENATO', 'BRUCIATO', 'STRAFATTO', 'FERITE', 'BURNOUT'];
+
+let activeBadge = null; // { uid, type }
+
+function openInfo(html) {
+  document.getElementById('info-content').innerHTML = html;
+  document.getElementById('info-panel').classList.add('open');
+}
+function closeInfo() {
+  document.getElementById('info-panel').classList.remove('open');
+  activeBadge = null;
+  document.querySelectorAll('.sbadge.selected').forEach(b => b.classList.remove('selected'));
+}
+document.addEventListener('click', e => {
+  const p = document.getElementById('info-panel');
+  if (p && p.classList.contains('open') && !p.contains(e.target)) closeInfo();
+});
+
+function showRotInfo(rotDef) {
+  const tc   = TYPE_COLORS[rotDef.type] || { bg:'#333', text:'#aaa' };
+  const b    = rotDef.base;
+  const um   = rotDef.uniqueMove;
+  const umTc = TYPE_COLORS[um.type] || { bg:'#333', text:'#aaa' };
+  openInfo(`
+    <div class="info-title" style="color:${tc.text}">${rotDef.name}</div>
+    <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${rotDef.type}</span>
+    <div class="info-section">STAT BASE</div>
+    <div class="info-stat-grid">
+      <div class="info-stat"><span class="info-stat-lbl">HP</span><span class="info-stat-val">${b.hp}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">ATK</span><span class="info-stat-val">${b.atk}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SP.ATK</span><span class="info-stat-val">${b.spAtk}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">DEF</span><span class="info-stat-val">${b.def}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SP.DEF</span><span class="info-stat-val">${b.spDef}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SPD</span><span class="info-stat-val">${b.spd}</span></div>
+    </div>
+  `);
+}
+
+function showMoveInfo(move) {
+  const tc    = move.type ? (TYPE_COLORS[move.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const ppTxt = move.curPp === Infinity ? '∞' : `${move.curPp}/${move.pp}`;
+  openInfo(`
+    <div class="info-title" style="color:${tc.text}">${move.name}</div>
+    <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${move.type || 'NEUTRO'}</span>
+    <div class="info-section">DATI</div>
+    <div class="info-stat-grid">
+      <div class="info-stat"><span class="info-stat-lbl">CAT</span><span class="info-stat-val" style="font-size:8px">${move.cat}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">POT</span><span class="info-stat-val">${move.power}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">PP</span><span class="info-stat-val">${ppTxt}</span></div>
+    </div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${
+      move.effect === 'heal'    ? `Cura tutti gli alleati del ${Math.round((move.healPct||0)*100)}% degli HP massimi dell\'utilizzatore.`
+    : move.effect === 'cleanse' ? 'Rimuove tutti gli status dagli alleati.'
+    : move.effect === 'stage'   ? 'Modifica le stat della squadra.'
+    : move.status               ? `${move.status.chance * 100}% di probabilità di infliggere ${move.status.type === 'RANDOM' ? 'uno status casuale' : move.status.type} al bersaglio.`
+    : 'Nessun effetto secondario.'
+    }</div>
+  `);
+}
+
+function showStatusInfo(statusType) {
+  const info = STATUS_INFO[statusType];
+  if (!info) return;
+  openInfo(`
+    <div class="info-title" style="color:${STATUS_COLORS[statusType] || '#fff'}">${statusType}</div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${info.effect}</div>
+    <div class="info-section">DURATA</div>
+    <div class="info-text">${info.duration}</div>
+    <div class="info-section">STACKABILE</div>
+    <div class="info-text">${info.stackable}</div>
+  `);
+}
+
+function showItemInfo(itemKey) {
+  const item = ITEM_DEFS[itemKey];
+  if (!item) return;
+  openInfo(`
+    <div class="info-title" style="color:${item.color}">${item.name}</div>
+    <span class="info-badge" style="background:rgba(80,55,15,0.9);color:${item.color}">OGGETTO ${item.rarity.toUpperCase()}</span>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${item.desc}</div>
+  `);
+}
+
+function showDrugInfo(drugKey) {
+  const drug = DRUG_DEFS[drugKey];
+  if (!drug) return;
+  openInfo(`
+    <div class="info-title" style="color:${drug.color}">${drug.name}</div>
+    <span class="info-badge" style="background:rgba(80,55,15,0.9);color:${drug.color}">DRUG ${drug.rarity.toUpperCase()}</span>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${drug.desc}</div>
+  `);
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+
+function initBattle() {
+  turnNum = 1;
+  const lvl = 5;
+  B = {
+    player: [ mkRot(ROT_DEFS.MIKEY, lvl, true), mkRot(ROT_DEFS.BRASATO, lvl, true), mkRot(ROT_DEFS.POKE_MON, lvl, true) ],
+    enemy:  [ mkRot(ROT_DEFS.TROLLO, lvl, false), mkRot(ROT_DEFS.CHEESECAKE, lvl, false), mkRot(ROT_DEFS.LOGAN_FRAUD, lvl, false) ],
+    phase: 'ROT_SELECT',   // ROT_SELECT | MOVE_SELECT | TARGET_SELECT | READY | EXEC | END
+    current: null,         // ROT in fase di selezione
+    selMove: null,         // mossa selezionata
+    assigned: {},          // uid → { move, targets }
+    actedUids: new Set(),  // ROT che hanno già agito questo turno
+  };
+  // Demo items/drugs
+  B.player.find(r => r.def === ROT_DEFS.BRASATO).item = 'ZOCCOLI_DI_LEGNO';
+  giveDrug(B.enemy.find(r => r.def === ROT_DEFS.CHEESECAKE), 'SABBIONE');
+
+  B.tokenWidth = calibrateTokenWidth();
+  document.getElementById('overlay').classList.remove('on');
+  clearLog();
+  log('Battaglia iniziata! Livello ' + lvl, 'info');
+  render();
+}
+
+function calibrateTokenWidth() {
+  const tmp = document.createElement('div');
+  tmp.style.cssText = 'position:absolute;visibility:hidden;top:-9999px;left:-9999px;display:flex;';
+  document.body.appendChild(tmp);
+  for (const rot of [...B.player, ...B.enemy]) {
+    const tok = document.createElement('div');
+    tok.className = 'spd-token player-spd';
+    tok.innerHTML = `<div class="spd-dot"></div><span>${rot.def.name.split(' ')[0]}</span>`;
+    tmp.appendChild(tok);
+  }
+  const w = Math.max(...Array.from(tmp.children).map(t => t.offsetWidth));
+  document.body.removeChild(tmp);
+  return w;
+}
+
+// ═══════════════════════════════════════════════════
+// PLANNING PHASE — nuovo flusso manuale
+// ═══════════════════════════════════════════════════
+
+function startPlanningPhase() {
+  // Reset assegnazioni per il nuovo turno
+  B.player.forEach(r => r.action = null);
+  B.enemy.forEach(r => r.action = null);
+  B.assigned = {};
+  B.current = null;
+  B.selMove = null;
+  B.actedUids = new Set();
+  B.phase = 'ROT_SELECT';
+  render();
+}
+
+// Step 1 → 2: giocatore clicca un ROT alleato
+function onPlayerRotClick(rot) {
+  if (B.phase !== 'ROT_SELECT') return;
+  if (!rot.isAlive) return;
+  B.current = rot;
+  B.selMove = null;
+  B.phase = 'MOVE_SELECT';
+  render();
+}
+
+// Step 2 → 3: giocatore clicca una mossa
+function onMoveClick(move) {
+  if (B.phase !== 'MOVE_SELECT' || !B.current) return;
+  B.selMove = move;
+  if (move.target === 'ALLY_ALL') {
+    autoAssignTarget(B.player.filter(r => r.isAlive));
+  } else if (move.target === 'ENEMY_ALL') {
+    autoAssignTarget(B.enemy.filter(r => r.isAlive));
+  } else if (move.target === 'SELF') {
+    autoAssignTarget([B.current]);
+  } else {
+    B.phase = 'TARGET_SELECT';
+    render();
+  }
+}
+
+function autoAssignTarget(targets) {
+  closeInfo();
+  B.assigned[B.current.uid] = { move: B.selMove, targets };
+  B.current.action = { move: B.selMove, targets };
+  B.current = null;
+  B.selMove = null;
+  const unassigned = B.player.filter(r => r.isAlive && !B.assigned[r.uid]);
+  B.phase = unassigned.length === 0 ? 'READY' : 'ROT_SELECT';
+  render();
+}
+
+// Step 3 → avanti: giocatore clicca il bersaglio
+function onTargetClick(targetRot) {
+  if (B.phase !== 'TARGET_SELECT') return;
+  closeInfo();
+  // Assegna azione al ROT corrente
+  B.assigned[B.current.uid] = { move: B.selMove, targets: [targetRot] };
+  B.current.action = { move: B.selMove, targets: [targetRot] };
+  B.current = null;
+  B.selMove = null;
+  // Tutti i ROT vivi assegnati?
+  const unassigned = B.player.filter(r => r.isAlive && !B.assigned[r.uid]);
+  B.phase = unassigned.length === 0 ? 'READY' : 'ROT_SELECT';
+  render();
+}
+
+// Pulsante INDIETRO
+function canGoBack() {
+  if (B.phase === 'MOVE_SELECT' || B.phase === 'TARGET_SELECT' || B.phase === 'READY') return true;
+  if (B.phase === 'ROT_SELECT') return B.player.some(r => r.isAlive && B.assigned[r.uid]);
+  return false;
+}
+
+function goBack() {
+  if (B.phase === 'TARGET_SELECT') {
+    // Torna a selezione mossa per il ROT corrente
+    B.selMove = null;
+    B.phase = 'MOVE_SELECT';
+  } else if (B.phase === 'MOVE_SELECT') {
+    // Deseleziona ROT, torna a SCEGLI ROT
+    B.current = null;
+    B.phase = 'ROT_SELECT';
+  } else if (B.phase === 'READY' || B.phase === 'ROT_SELECT') {
+    // Annulla l'ultima assegnazione, torna a selezione mossa per quell'ROT
+    const assignedRots = B.player.filter(r => r.isAlive && B.assigned[r.uid]);
+    if (assignedRots.length > 0) {
+      const last = assignedRots[assignedRots.length - 1];
+      delete B.assigned[last.uid];
+      last.action = null;
+      B.current = last;
+      B.selMove = null;
+      B.phase = 'MOVE_SELECT';
+    } else {
+      B.phase = 'ROT_SELECT';
+    }
+  }
+  render();
+}
+
+// ═══════════════════════════════════════════════════
+// AI
+// ═══════════════════════════════════════════════════
+
+function planAI() {
+  const players  = B.player.filter(r => r.isAlive);
+  const enemies  = B.enemy.filter(r => r.isAlive);
+  for (const e of enemies) {
+    const avail = e.moves.filter(m => m.curPp === Infinity || m.curPp > 0);
+    const move  = avail[Math.floor(Math.random() * avail.length)];
+    let targets;
+    if (move.target === 'ALLY_ALL')  targets = enemies.slice();
+    else if (move.target === 'SELF') targets = [e];
+    else if (move.target === 'ENEMY_ALL') targets = players.slice();
+    else targets = [players[Math.floor(Math.random() * players.length)]];
+    e.action = { move, targets };
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// EXECUTION
+// ═══════════════════════════════════════════════════
+
+async function executePhase() {
+  if (B.phase !== 'READY') return;
+  B.phase = 'EXEC';
+  planAI();
+
+  const actors = [
+    ...B.player.filter(r => r.isAlive && r.action),
+    ...B.enemy.filter(r => r.isAlive && r.action),
+  ].sort((a,b) => {
+    const sa = effStat(a,'spd'), sb = effStat(b,'spd');
+    if (sa !== sb) return sb - sa;
+    return a.isPlayer ? -1 : 1;
+  });
+  B.speedOrder = actors;
+
+  log(`━━━ TURNO ${turnNum} ━━━`, 'sep');
+  renderSpeedBar(actors);
+  render();
+  await wait(400);
+
+  for (const rot of actors) {
+    if (!rot.isAlive) continue;
+    const { move, targets } = rot.action;
+
+    // ── COLLASSO: 50% di probabilità di saltare il turno ──
+    const collasso = rot.statuses.find(s => s.type === 'COLLASSO');
+    if (collasso) {
+      if (Math.random() < 0.5) {
+        rot.statuses = rot.statuses.filter(s => s !== collasso);
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' si sveglia dal ' },
+          { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+          { text: '!' }
+        ], 'info');
+        render(); await wait(400);
+      } else {
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' è in ' },
+          { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+          { text: ' e salta il turno!' }
+        ], 'status');
+        render(); await wait(500);
+        const colTok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
+        if (colTok) colTok.classList.add('acted');
+        await wait(250);
+        continue;
+      }
+    }
+
+    const isUtility = !!move.effect;
+    const alive = targets.filter(t => t.isAlive);
+    if (!alive.length && !isUtility) continue;
+
+    // ── STRAFATTO: 50% miss (solo attacchi con power) ──
+    if (move.power > 0) {
+      const strafatto = rot.statuses.find(s => s.type === 'STRAFATTO');
+      if (strafatto && Math.random() < 0.5) {
+        if (move.curPp !== Infinity) move.curPp--;
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' è ' },
+          { text: 'STRAFATTO', onclick: () => showStatusInfo('STRAFATTO') },
+          { text: ' e manca l\'attacco!' }
+        ], 'status');
+        render(); await wait(500);
+        const missedTok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
+        if (missedTok) missedTok.classList.add('acted');
+        await wait(250);
+        continue;
+      }
+    }
+
+    // ── BURNOUT: non può ripetere la stessa mossa ──
+    const burnout = rot.statuses.find(s => s.type === 'BURNOUT');
+    if (burnout && rot.lastMove?.name === move.name) {
+      if (move.curPp !== Infinity) move.curPp--;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' è in ' },
+        { text: 'BURNOUT', onclick: () => showStatusInfo('BURNOUT') },
+        { text: ' e non può ripetere la stessa mossa!' }
+      ], 'status');
+      render(); await wait(500);
+      const burnTok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
+      if (burnTok) burnTok.classList.add('acted');
+      await wait(250);
+      continue;
+    }
+    rot.lastMove = move;
+
+    if (move.curPp !== Infinity) move.curPp--;
+    if (burnout && move.curPp !== Infinity && move.curPp > 0) move.curPp--;
+
+    // ── HEAL ──
+    if (move.effect === 'heal') {
+      const healAmt = Math.floor(rot.maxHp * move.healPct);
+      const healTeam = rot.isPlayer ? B.player : B.enemy;
+      const healTargets = move.target === 'ALLY_ALL' ? healTeam.filter(r => r.isAlive) : [rot];
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const tgt of healTargets) {
+        tgt.curHp = Math.min(tgt.maxHp, tgt.curHp + healAmt);
+        logRich([
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ` recupera ${healAmt} HP!` }
+        ], 'info');
+      }
+      render(); await wait(600);
+
+    // ── CLEANSE ──
+    } else if (move.effect === 'cleanse') {
+      const cleansTeam = rot.isPlayer ? B.player : B.enemy;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const tgt of cleansTeam.filter(r => r.isAlive)) {
+        tgt.statuses = [];
+        logRich([
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ' viene purificato!' }
+        ], 'info');
+      }
+      render(); await wait(600);
+
+    // ── STAGE ──
+    } else if (move.effect === 'stage') {
+      const allyTeam  = rot.isPlayer ? B.player : B.enemy;
+      const enemyTeam = rot.isPlayer ? B.enemy  : B.player;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const stg of move.stages) {
+        const team = stg.team === 'ALLY' ? allyTeam : enemyTeam;
+        for (const r of team.filter(r => r.isAlive)) {
+          r.stages[stg.stat] = Math.max(-3, Math.min(3, (r.stages[stg.stat] || 0) + stg.delta));
+        }
+      }
+      render(); await wait(600);
+
+    // ── DANNO ──
+    } else if (move.power > 0) {
+      for (const tgt of alive) {
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' usa ' },
+          { text: move.name, onclick: () => showMoveInfo(move) },
+          { text: '!' }
+        ], 'info');
+
+        const res = calcDmg(rot, tgt, move);
+        if (res.tm === 2)   log('Super efficace!', 'super');
+        if (res.tm === 0.5) log('Non molto efficace...', 'resist');
+        if (res.crit)       log('CRITICO!', 'crit');
+
+        takeDmg(tgt, res.dmg);
+        logRich([
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ` subisce ${res.dmg} danni!` }
+        ], 'dmg');
+
+        flashHit(tgt.uid);
+        render();
+        await wait(600);
+
+        if (move.status && Math.random() < move.status.chance) {
+          const stType = move.status.type === 'RANDOM'
+            ? RANDOM_STATUSES[Math.floor(Math.random() * RANDOM_STATUSES.length)]
+            : move.status.type;
+          const ok = addStatus(tgt, stType);
+          if (ok) {
+            const st = tgt.statuses.find(s => s.type === stType);
+            logRich([
+              { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+              { text: stType === 'FERITE' ? ' ha ' : ' è ' },
+              { text: stType, onclick: () => showStatusInfo(stType) },
+              { text: `${st&&st.stacks>1?' (x'+st.stacks+')':''}!` }
+            ], 'status');
+            render();
+            await wait(350);
+          }
+        }
+
+        if (!tgt.isAlive) {
+          logRich([
+            { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+            { text: ' è KO!' }
+          ], 'dmg');
+          render();
+          await wait(500);
+          if (checkEnd()) return;
+        }
+      }
+
+      // Recoil
+      if (move.recoil && rot.isAlive) {
+        takeDmg(rot, move.recoil);
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ` subisce ${move.recoil} danni di recoil!` }
+        ], 'dmg');
+        render(); await wait(400);
+        if (!rot.isAlive) {
+          logRich([
+            { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+            { text: ' è KO per il recoil!' }
+          ], 'dmg');
+          render(); await wait(500);
+          if (checkEnd()) return;
+        }
+      }
+    }
+
+    const tok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
+    if (tok) tok.classList.add('acted');
+    await wait(250);
+  }
+
+  log('— status di fine turno —', 'sep');
+  const allAlive = [...B.player, ...B.enemy].filter(r => r.isAlive);
+  for (const rot of allAlive) {
+    const entries = endTurnStatuses(rot);
+    for (const e of entries) {
+      logRich(e.parts, e.cls);
+      render();
+      await wait(380);
+    }
+    if (!rot.isAlive) {
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' è KO per gli status!' }
+      ], 'dmg');
+      render();
+      await wait(500);
+      if (checkEnd()) return;
+    }
+  }
+
+  turnNum++;
+  document.getElementById('turn-info').textContent = `TURNO ${turnNum}`;
+  startPlanningPhase();
+}
+
+function checkEnd() {
+  const pa = B.player.filter(r => r.isAlive).length;
+  const ea = B.enemy.filter(r => r.isAlive).length;
+  if (pa === 0) { endBattle(false); return true; }
+  if (ea === 0) { endBattle(true);  return true; }
+  return false;
+}
+
+function endBattle(win) {
+  B.phase = 'END';
+  document.getElementById('ov-title').textContent = win ? 'VITTORIA' : 'SCONFITTA';
+  document.getElementById('ov-title').className = win ? 'win' : 'lose';
+  document.getElementById('ov-sub').textContent = win
+    ? `Turni impiegati: ${turnNum}`
+    : 'Tutti i tuoi Rot sono caduti.';
+  document.getElementById('overlay').classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+
+function render() {
+  if (!B) return;
+  renderGroup('player-group', B.player, true);
+  renderGroup('enemy-group',  B.enemy,  false);
+  renderPanel();
+  if (B.phase !== 'EXEC') {
+    const ordered = [...B.player, ...B.enemy]
+      .filter(r => r.isAlive)
+      .sort((a,b) => {
+        const sa = spdForSort(a), sb = spdForSort(b);
+        if (sa !== sb) return sb - sa;
+        return a.isPlayer ? -1 : 1;
+      });
+    renderSpeedBar(ordered);
+  }
+}
+
+function renderGroup(id, rots, isPlayer) {
+  const container = document.getElementById(id);
+  container.innerHTML = '';
+  for (const rot of rots) container.appendChild(mkCard(rot, isPlayer));
+}
+
+function mkCard(rot, isPlayer) {
+  const tc = TYPE_COLORS[rot.def.type] || { bg:'#1a1a2a', text:'#aaa' };
+  const pct = rot.curHp / rot.maxHp;
+  const hpCls = pct > 0.5 ? 'high' : pct > 0.25 ? 'mid' : 'low';
+
+  const inPlanning  = B.phase !== 'EXEC' && B.phase !== 'END';
+  const isSelected  = inPlanning && isPlayer && B.current?.uid === rot.uid;
+  const isAssigned  = inPlanning && isPlayer && !!B.assigned?.[rot.uid];
+  const assignedAct = inPlanning && isPlayer ? B.assigned?.[rot.uid] : null;
+
+  // Cliccabilità
+  const isClickableForSelect = inPlanning && isPlayer && B.phase === 'ROT_SELECT' && rot.isAlive && !isAssigned;
+  const targetable = inPlanning && B.phase === 'TARGET_SELECT' && !isPlayer && rot.isAlive;
+
+  // Effectiveness badge durante targeting
+  let effHtml = '';
+  if (targetable && B.selMove?.type) {
+    const m = typeMult(B.selMove.type, rot.def.type);
+    if (m === 2)   effHtml = '<div class="eff-badge super">2×</div>';
+    if (m === 0.5) effHtml = '<div class="eff-badge resist">x0.5</div>';
+  }
+
+  const sbHtml = rot.statuses.map(s => {
+    const lbl = s.type === 'AVVELENATO'    ? 'V'
+              : s.type === 'BRUCIATO'      ? `B${s.stacks}`
+              : s.type === 'FERITE'        ? `F${s.stacks}`
+              : s.type === 'STRAFATTO'     ? `ST`
+              : s.type === 'BURNOUT'       ? `BU${s.turns||''}`
+              : s.type === 'COLLASSO'      ? `ZZ`
+              : s.type === 'TASCHE BUCATE' ? `TB`
+              : '?';
+    const sel = activeBadge?.uid === rot.uid && activeBadge?.type === s.type ? ' selected' : '';
+    const cls = s.type.replace(/\s+/g, '-');
+    return `<span class="sbadge ${cls}${sel}" data-type="${s.type}" title="${s.type}">${lbl}</span>`;
+  }).join('');
+
+  const div = document.createElement('div');
+  div.className = [
+    'rot-card',
+    isPlayer ? 'player-card' : 'enemy-card',
+    !rot.isAlive         ? 'dead'           : '',
+    targetable           ? 'targetable'     : '',
+    isSelected           ? 'rot-selected'   : '',
+    isAssigned           ? 'rot-assigned'   : '',
+    isClickableForSelect ? 'rot-clickable'  : '',
+  ].filter(Boolean).join(' ');
+
+  // Label assegnazione (sopra nome)
+  const assignLbl = isAssigned
+    ? `<div class="rot-assigned-lbl">✓ ${assignedAct.move.name}</div>`
+    : `<div class="rot-assigned-lbl"></div>`;
+
+  const itemHtml = rot.item
+    ? `<span class="item-chip" data-item="${rot.item}">${ITEM_DEFS[rot.item]?.short || rot.item}</span>`
+    : '';
+  const drugHtml = rot.drugs.map(d =>
+    `<span class="drug-badge" data-drug="${d}">${DRUG_DEFS[d]?.short || d}</span>`
+  ).join('');
+
+  div.innerHTML = `
+    ${assignLbl}
+    <div class="rot-name-lbl">${rot.def.name}</div>
+    <div class="hp-row">
+      <div class="hp-bar-wrap">
+        <div class="hp-fill ${hpCls}" style="width:${Math.max(0, pct*100).toFixed(1)}%"></div>
+      </div>
+      <div class="hp-nums">${rot.curHp}</div>
+    </div>
+    <div class="rot-sprite" id="spr-${rot.uid}" style="background:${tc.bg}">
+      ${effHtml}
+      <div class="rot-sprite-lbl" style="color:${tc.text}">${rot.def.name}</div>
+      <span class="type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${rot.def.type}</span>
+      <div class="status-badges">${sbHtml}</div>
+      ${drugHtml ? `<div class="drug-badges">${drugHtml}</div>` : ''}
+      ${itemHtml}
+    </div>
+  `;
+
+  if (targetable) {
+    div.querySelector('.rot-sprite').addEventListener('click', () => onTargetClick(rot));
+  } else if (isClickableForSelect) {
+    div.addEventListener('click', () => onPlayerRotClick(rot));
+  }
+
+  div.querySelectorAll('.sbadge').forEach(badge => {
+    badge.addEventListener('click', e => {
+      e.stopPropagation();
+      activeBadge = { uid: rot.uid, type: badge.dataset.type };
+      showStatusInfo(badge.dataset.type);
+    });
+  });
+
+  div.querySelectorAll('.item-chip').forEach(chip => {
+    chip.addEventListener('click', e => { e.stopPropagation(); showItemInfo(chip.dataset.item); });
+  });
+
+  div.querySelectorAll('.drug-badge').forEach(badge => {
+    badge.addEventListener('click', e => { e.stopPropagation(); showDrugInfo(badge.dataset.drug); });
+  });
+
+  return div;
+}
+
+function renderPanel() {
+  const left   = document.getElementById('panel-left');
+  const center = document.getElementById('panel-center');
+  const right  = document.getElementById('panel-right');
+
+  left.innerHTML   = '';
+  center.innerHTML = '';
+  right.innerHTML  = '';
+
+  // ── LEFT: testo di fase ──
+  const phaseMap = {
+    ROT_SELECT:    { lbl: 'SCEGLI ROT',       sub: 'clicca su un alleato' },
+    MOVE_SELECT:   { lbl: 'SCEGLI MOSSA',     sub: B.current?.def.name || '' },
+    TARGET_SELECT: { lbl: 'SCEGLI BERSAGLIO', sub: B.selMove?.name || '' },
+    READY:         { lbl: 'PRONTO',           sub: 'tutti assegnati' },
+    EXEC:          { lbl: 'ESECUZIONE',        sub: '' },
+    END:           { lbl: '',                  sub: '' },
+  };
+  const ph = phaseMap[B.phase] || { lbl: '', sub: '' };
+  left.innerHTML = `
+    <div id="phase-lbl">${ph.lbl}</div>
+    ${ph.sub ? `<div id="phase-sub">${ph.sub}</div>` : ''}
+  `;
+
+  // ── CENTER: bottoni mossa (solo in MOVE_SELECT) ──
+  if (B.phase === 'MOVE_SELECT' && B.current) {
+    for (const move of B.current.moves) {
+      const tc       = move.type ? (TYPE_COLORS[move.type] || { bg:'#333' }) : { bg:'#9ca3af' };
+      const ppTxt    = move.curPp === Infinity ? '∞' : `${move.curPp}/${move.pp}`;
+      const depleted = move.curPp !== Infinity && move.curPp <= 0;
+      const btn = document.createElement('button');
+      btn.className = 'move-btn';
+      btn.disabled  = depleted;
+      btn.innerHTML = `
+        <span class="move-btn-name">${move.name}</span>
+        <span class="move-btn-sub" style="color:${tc.bg}">${move.type || 'NEUTRO'} · ${move.cat} · PP ${ppTxt}</span>
+      `;
+      btn.addEventListener('mouseenter', () => showMoveInfo(move));
+      btn.addEventListener('click', () => onMoveClick(move));
+      center.appendChild(btn);
+    }
+  }
+
+  // ── RIGHT: INDIETRO + AVVIA TURNO ──
+  if (canGoBack()) {
+    const backBtn = document.createElement('button');
+    backBtn.id = 'back-btn';
+    backBtn.textContent = '← INDIETRO';
+    backBtn.addEventListener('click', goBack);
+    right.appendChild(backBtn);
+  }
+
+  if (B.phase === 'READY') {
+    const execBtn = document.createElement('button');
+    execBtn.id = 'execute-btn';
+    execBtn.textContent = 'AVVIA TURNO ▶';
+    execBtn.addEventListener('click', executePhase);
+    right.appendChild(execBtn);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// SPEED BAR
+// ═══════════════════════════════════════════════════
+
+function renderSpeedBar(ordered) {
+  const wrap = document.getElementById('speed-tokens');
+  wrap.innerHTML = '';
+  for (const rot of ordered) {
+    const tc = TYPE_COLORS[rot.def.type] || { bg:'#333' };
+    const tok = document.createElement('div');
+    tok.className = `spd-token ${rot.isPlayer ? 'player-spd' : 'enemy-spd'}${rot.item === 'ZOCCOLI_DI_LEGNO' ? ' item-zoccoli' : ''}`;
+    tok.dataset.uid = rot.uid;
+    tok.innerHTML = `
+      <div class="spd-dot" style="background:${tc.bg}"></div>
+      <span>${rot.def.name.split(' ')[0]}</span>
+    `;
+    wrap.appendChild(tok);
+  }
+  wrap.querySelectorAll('.spd-token').forEach(t => t.style.width = B.tokenWidth + 'px');
+}
+
+// ═══════════════════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════════════════
+
+function log(txt, cls='') {
+  const el = document.getElementById('battle-log');
+  const d = document.createElement('div');
+  d.className = 'lg ' + cls;
+  d.textContent = '> ' + txt;
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function logRich(parts, cls='') {
+  const el = document.getElementById('battle-log');
+  const d = document.createElement('div');
+  d.className = 'lg ' + cls;
+  d.appendChild(document.createTextNode('> '));
+  for (const p of parts) {
+    if (p.onclick) {
+      const span = document.createElement('span');
+      span.className = 'log-link';
+      span.textContent = p.text;
+      span.addEventListener('click', e => { e.stopPropagation(); p.onclick(); });
+      d.appendChild(span);
+    } else {
+      d.appendChild(document.createTextNode(p.text));
+    }
+  }
+  el.appendChild(d);
+  el.scrollTop = el.scrollHeight;
+}
+
+function clearLog() { document.getElementById('battle-log').innerHTML = ''; }
+
+// ═══════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════
+
+function wait(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+function flashHit(uid) {
+  const el = document.getElementById('spr-' + uid);
+  if (!el) return;
+  el.classList.remove('hit-flash');
+  void el.offsetWidth;
+  el.classList.add('hit-flash');
+  setTimeout(() => el.classList.remove('hit-flash'), 300);
+}
+
+// ═══════════════════════════════════════════════════
+// START
+// ═══════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════
+// INTRO / SCREEN MANAGEMENT
+// ═══════════════════════════════════════════════════
+
+let selectedStarterKey = null;
+
+
+function showScreen(name) {
+  document.querySelectorAll('.intro-screen').forEach(s => s.classList.add('hidden'));
+  const el = document.getElementById('screen-' + name);
+  if (el) el.classList.remove('hidden');
+  if (name === 'starter') buildStarterScreen();
+}
+
+function buildStarterScreen() {
+  selectedStarterKey = null;
+  document.getElementById('btn-conferma').disabled = true;
+  const panel = document.getElementById('starter-info-panel');
+  panel.classList.remove('visible');
+  panel.innerHTML = '';
+
+  const allKeys = Object.keys(ROT_DEFS);
+  const picked = [];
+  while (picked.length < 3) {
+    const k = allKeys[Math.floor(Math.random() * allKeys.length)];
+    if (!picked.includes(k)) picked.push(k);
+  }
+
+  const row = document.getElementById('starter-rots-row');
+  row.innerHTML = '';
+  for (const key of picked) {
+    const def = ROT_DEFS[key];
+    const tc  = TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' };
+    const card = document.createElement('div');
+    card.className = 'starter-card';
+    card.dataset.key = key;
+    card.innerHTML = `
+      <div class="starter-sprite" style="background:${tc.bg}">
+        <div class="starter-sprite-lbl" style="color:${tc.text}">${def.name}</div>
+        <span class="starter-type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${def.type}</span>
+      </div>
+      <div class="starter-card-name">${def.name}</div>
+    `;
+    card.addEventListener('mouseenter', () => renderStarterInfo(key));
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.starter-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedStarterKey = key;
+      document.getElementById('btn-conferma').disabled = false;
+      renderStarterInfo(key);
+    });
+    row.appendChild(card);
+  }
+}
+
+function renderStarterInfo(key) {
+  const def  = ROT_DEFS[key];
+  const tc   = TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' };
+  const b    = def.base;
+  const um   = def.uniqueMove;
+  const umTc = um.type ? (TYPE_COLORS[um.type] || { bg:'#333', text:'#aaa' }) : { bg:'#303045', text:'#8888bb' };
+
+  const umDesc =
+    um.effect === 'heal'    ? `Cura tutti gli alleati del ${Math.round((um.healPct||0)*100)}% degli HP massimi dell'utilizzatore.`
+  : um.effect === 'cleanse' ? 'Rimuove tutti gli status da tutti gli alleati in campo.'
+  : um.effect === 'stage'   ? 'Modifica le stat della squadra (ATK, SP.ATK, DEF, SP.DEF).'
+  : um.status               ? `${um.status.chance * 100}% di probabilità di infliggere ${um.status.type === 'RANDOM' ? 'uno status casuale' : um.status.type} al bersaglio.${um.recoil ? ` Il lanciatore subisce ${um.recoil} danni di recoil.` : ''}`
+  : um.recoil               ? `Attacco potente. Il lanciatore subisce ${um.recoil} danni di recoil.`
+  : 'Nessun effetto secondario.';
+
+  const powChip = um.power > 0
+    ? `<span class="sip-chip pow">POT ${um.power}</span>`
+    : `<span class="sip-chip utility">UTILITY</span>`;
+
+  const panel = document.getElementById('starter-info-panel');
+  panel.classList.add('visible');
+  panel.innerHTML = `
+    <div class="sip-header">
+      <span class="sip-name" style="color:${tc.text}">${def.name}</span>
+      <span class="sip-type-badge" style="background:${tc.bg};color:${tc.text}">${def.type}</span>
+    </div>
+
+    <div class="sip-section-lbl">STAT BASE</div>
+    <div class="sip-stats-grid">
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">HP</span><span class="sip-stat-num">${b.hp}</span></div>
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">ATK</span><span class="sip-stat-num">${b.atk}</span></div>
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">SP.ATK</span><span class="sip-stat-num">${b.spAtk}</span></div>
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">DEF</span><span class="sip-stat-num">${b.def}</span></div>
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">SP.DEF</span><span class="sip-stat-num">${b.spDef}</span></div>
+      <div class="sip-stat-cell"><span class="sip-stat-lbl">SPD</span><span class="sip-stat-num">${b.spd}</span></div>
+    </div>
+
+    <div class="sip-move-section">
+      <div class="sip-move-lbl">MOSSA UNICA</div>
+      <div class="sip-move-box">
+        <div class="sip-move-top">
+          <span class="sip-move-name">${um.name}</span>
+          <div class="sip-chips">
+            <span class="sip-chip" style="background:${umTc.bg};color:${umTc.text}">${um.type || 'NEUTRO'}</span>
+            <span class="sip-chip cat">${um.cat}</span>
+            ${powChip}
+          </div>
+        </div>
+        <div class="sip-move-desc">${umDesc}</div>
+      </div>
+    </div>
+  `;
+}
+
+function confirmStarter() {
+  if (!selectedStarterKey) return;
+  const starterDef = ROT_DEFS[selectedStarterKey];
+  const ov = document.getElementById('intro-overlay');
+  ov.style.transition = 'opacity 0.45s';
+  ov.style.opacity = '0';
+  ov.style.pointerEvents = 'none';
+  setTimeout(() => { ov.style.display = 'none'; startBattle1v1(starterDef); }, 460);
+}
+
+function startBattle1v1(starterDef) {
+  const allKeys = Object.keys(ROT_DEFS).filter(k => ROT_DEFS[k] !== starterDef);
+  const enemyDef = ROT_DEFS[allKeys[Math.floor(Math.random() * allKeys.length)]];
+  turnNum = 1;
+  const lvl = 1;
+  B = {
+    player: [mkRot(starterDef, lvl, true)],
+    enemy:  [mkRot(enemyDef,   lvl, false)],
+    phase: 'ROT_SELECT', current: null, selMove: null,
+    assigned: {}, actedUids: new Set(),
+  };
+  B.tokenWidth = calibrateTokenWidth();
+  document.getElementById('overlay').classList.remove('on');
+  clearLog();
+  log(`${starterDef.name} vs ${enemyDef.name} — Livello ${lvl}`, 'info');
+  render();
+}
+
+function restartGame() {
+  document.getElementById('overlay').classList.remove('on');
+  const ov = document.getElementById('intro-overlay');
+  ov.style.display = '';
+  ov.style.opacity = '1';
+  ov.style.pointerEvents = '';
+  showScreen('title');
+}
+
+// ─── avvio ───
+showScreen('title');
+</script>
+
+<script>
+// Animazione logo titolo: spritesheet 4000x5720, 5 colonne, frame 800x440 (13 righe = 65 frame).
+// Gli ultimi 14 frame non fanno parte del loop (sfumano in una variante "PARMA"/celle vuote) → si usano solo i primi 51.
+// Lo sfondo del PNG è verde chroma-key "cotto" nei pixel (non alpha) → si rende trasparente via codice
+// dopo ogni drawImage, iterando i pixel con getImageData, una sola volta per frame (poi si riusano le copie elaborate).
+(function () {
+  const canvas = document.getElementById('title-canvas');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const FRAME_W = 800, FRAME_H = 440, COLS = 5;
+  const TOTAL_FRAMES = 65, IGNORED_TRAILING_FRAMES = 14;
+  const LOOP_FRAMES = TOTAL_FRAMES - IGNORED_TRAILING_FRAMES;
+  const FPS = 12;
+  const FRAME_DURATION = 1000 / FPS;
+  const DISPLAY_W = 480; // dimensione del logo a schermo (CSS px)
+
+  // La risoluzione interna del canvas viene impostata sulla dimensione visualizzata × devicePixelRatio,
+  // così non avviene alcuna scalatura aggiuntiva da parte del compositor (che produrrebbe moiré sul testo pixel-art).
+  const dpr = window.devicePixelRatio || 1;
+  const displayH = Math.round(DISPLAY_W * FRAME_H / FRAME_W);
+  canvas.style.width = DISPLAY_W + 'px';
+  canvas.style.height = displayH + 'px';
+  canvas.width = Math.round(DISPLAY_W * dpr);
+  canvas.height = Math.round(displayH * dpr);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+
+  const offscreen = document.createElement('canvas');
+  offscreen.width = FRAME_W;
+  offscreen.height = FRAME_H;
+  const offCtx = offscreen.getContext('2d');
+
+  function chromaKeyedFrame(col, row) {
+    offCtx.clearRect(0, 0, FRAME_W, FRAME_H);
+    offCtx.drawImage(img, col * FRAME_W, row * FRAME_H, FRAME_W, FRAME_H, 0, 0, FRAME_W, FRAME_H);
+    const imageData = offCtx.getImageData(0, 0, FRAME_W, FRAME_H);
+    const data = imageData.data;
+    let keyedPixels = 0;
+    for (let i = 0; i < data.length; i += 4) {
+      const r = data[i], g = data[i + 1], b = data[i + 2];
+      if (r < 80 && g > 180 && b < 80) { data[i + 3] = 0; keyedPixels++; }
+    }
+    console.log(`[title-canvas] frame col=${col} row=${row}: ${keyedPixels} px resi trasparenti su ${data.length / 4}`);
+    const out = document.createElement('canvas');
+    out.width = FRAME_W;
+    out.height = FRAME_H;
+    out.getContext('2d').putImageData(imageData, 0, 0);
+    return out;
+  }
+
+  const img = new Image();
+  img.src = 'spritesheet/MILANO ROGUE LIFE.png';
+  img.onerror = (e) => console.error('[title-canvas] errore caricamento spritesheet', e);
+  img.onload = () => {
+    console.log(`[title-canvas] spritesheet caricato: ${img.naturalWidth}x${img.naturalHeight}, costruisco ${LOOP_FRAMES} frame...`);
+    const frames = [];
+    for (let f = 0; f < LOOP_FRAMES; f++) {
+      frames.push(chromaKeyedFrame(f % COLS, Math.floor(f / COLS)));
+    }
+    console.log(`[title-canvas] ${frames.length} frame pronti, canvas ${canvas.width}x${canvas.height} (CSS ${canvas.style.width} x ${canvas.style.height}), avvio animazione`);
+    let frame = 0;
+    let lastTime = 0;
+    function tick(timestamp) {
+      if (timestamp - lastTime >= FRAME_DURATION) {
+        lastTime = timestamp;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.drawImage(frames[frame], 0, 0, canvas.width, canvas.height);
+        if (frame === 0) console.log('[title-canvas] disegnato frame 0 (loop completato)');
+        frame = (frame + 1) % LOOP_FRAMES;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  };
+})();
+</script>
+<script>
+// Live reload: controlla Last-Modified ogni secondo e ricarica se il file è cambiato.
+// Richiede un server HTTP (es. python3 -m http.server 8080) — non funziona con file://
+(function () {
+  if (location.protocol === 'file:') return;
+  const url = location.href.split('?')[0];
+  let lastMod = null;
+  setInterval(async () => {
+    try {
+      const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+      const mod = res.headers.get('last-modified') || res.headers.get('etag');
+      if (lastMod === null) { lastMod = mod; return; }
+      if (mod && mod !== lastMod) location.reload();
+    } catch {}
+  }, 1000);
+})();
+</script>
+</body>
+</html>
