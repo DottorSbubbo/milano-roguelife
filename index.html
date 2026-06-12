@@ -4553,12 +4553,16 @@ const LOST_TRACKS = ['music/lost1.mp3', 'music/lost2.mp3'];
 let musicMode = null; // 'intro' | 'battle' | 'lost'
 let lastBattleTrack = null;
 let musicUnlocked = false;
+let introStarted = false;
 
-const musicA = new Audio();
+// Istanza unica e dedicata per intro.mp3, per evitare avvii multipli sovrapposti
+const introAudio = new Audio('music/intro.mp3');
+introAudio.loop = true;
+introAudio.volume = MUSIC_VOLUME;
+
 const musicB = new Audio();
-musicA.volume = 0;
 musicB.volume = 0;
-let activeMusic = musicA;
+let activeMusic = introAudio;
 let inactiveMusic = musicB;
 
 // Dissolvenza incrociata fluida tra il brano attivo e il nuovo brano
@@ -4594,10 +4598,24 @@ function crossfadeTo(src, { loop = false, onEnded = null } = {}) {
   inactiveMusic = outgoing;
 }
 
+// Avvia (o riavvia) intro.mp3 da zero su un'unica istanza, senza sovrapposizioni
+function startIntroAudio() {
+  introAudio.pause();
+  introAudio.currentTime = 0;
+  introAudio.volume = MUSIC_VOLUME;
+  introAudio.play().catch(err => console.log('errore audio:', err));
+}
+
 function playIntroMusic() {
   if (musicMode === 'intro') return;
   musicMode = 'intro';
-  crossfadeTo('music/intro.mp3', { loop: true });
+  if (!introStarted) {
+    introStarted = true;
+    activeMusic = introAudio;
+    startIntroAudio();
+  } else {
+    crossfadeTo('music/intro.mp3', { loop: true });
+  }
 }
 
 function pickRandomBattleTrack() {
@@ -4635,9 +4653,8 @@ function startMusicWithAutoplayFallback() {
   const unlock = () => {
     if (musicUnlocked) return;
     musicUnlocked = true;
-    if (activeMusic.paused) {
-      musicMode = null; // forza playIntroMusic() a ripartire da zero dentro il gesto utente
-      playIntroMusic();
+    if (introAudio.paused) {
+      startIntroAudio();
     }
     document.removeEventListener('click', unlock);
     document.removeEventListener('keydown', unlock);
