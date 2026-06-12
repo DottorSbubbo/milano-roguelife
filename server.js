@@ -17,6 +17,9 @@ const MIME_TYPES = {
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
   '.md': 'text/markdown; charset=utf-8',
+  '.mp3': 'audio/mpeg',
+  '.wav': 'audio/wav',
+  '.ogg': 'audio/ogg',
 };
 
 const server = http.createServer((req, res) => {
@@ -30,18 +33,42 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  fs.readFile(filePath, (err, data) => {
-    if (err) {
+  fs.stat(filePath, (statErr, stat) => {
+    if (statErr || !stat.isFile()) {
       res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
       res.end('404 - Non trovato: ' + urlPath);
       return;
     }
+
     const ext = path.extname(filePath).toLowerCase();
+    const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+    const range = req.headers.range;
+
+    // Supporto Range request, richiesto da alcuni browser per la riproduzione audio/video
+    if (range) {
+      const match = /bytes=(\d*)-(\d*)/.exec(range);
+      const start = match[1] ? parseInt(match[1], 10) : 0;
+      const end = match[2] ? parseInt(match[2], 10) : stat.size - 1;
+      const chunkSize = end - start + 1;
+
+      res.writeHead(206, {
+        'Content-Type': contentType,
+        'Content-Length': chunkSize,
+        'Content-Range': `bytes ${start}-${end}/${stat.size}`,
+        'Accept-Ranges': 'bytes',
+        'Cache-Control': 'no-store',
+      });
+      fs.createReadStream(filePath, { start, end }).pipe(res);
+      return;
+    }
+
     res.writeHead(200, {
-      'Content-Type': MIME_TYPES[ext] || 'application/octet-stream',
+      'Content-Type': contentType,
+      'Content-Length': stat.size,
+      'Accept-Ranges': 'bytes',
       'Cache-Control': 'no-store',
     });
-    res.end(data);
+    fs.createReadStream(filePath).pipe(res);
   });
 });
 

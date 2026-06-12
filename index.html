@@ -4552,6 +4552,7 @@ const LOST_TRACKS = ['music/lost1.mp3', 'music/lost2.mp3'];
 
 let musicMode = null; // 'intro' | 'battle' | 'lost'
 let lastBattleTrack = null;
+let musicUnlocked = false;
 
 const musicA = new Audio();
 const musicB = new Audio();
@@ -4571,7 +4572,7 @@ function crossfadeTo(src, { loop = false, onEnded = null } = {}) {
   try { incoming.currentTime = 0; } catch {}
   incoming.volume = 0;
   incoming.onended = onEnded;
-  incoming.play().catch(() => {});
+  incoming.play().catch(err => console.log('errore audio:', err));
 
   const steps = 30;
   const stepTime = MUSIC_FADE_MS / steps;
@@ -4625,19 +4626,26 @@ function playLostMusic() {
   crossfadeTo(track, { loop: false });
 }
 
-// L'autoplay senza interazione utente può essere bloccato dal browser:
-// si tenta subito, e al primo click o movimento del mouse si (ri)avvia/riprende intro.mp3.
+// L'autoplay senza interazione utente è bloccato dal browser finché non c'è un gesto
+// dell'utente (click, tasto, tocco). Si tenta subito; se fallisce, al primo gesto valido
+// si rilancia playIntroMusic() forzando un nuovo tentativo di play() dentro il gesto stesso.
 function startMusicWithAutoplayFallback() {
   playIntroMusic();
 
   const unlock = () => {
-    playIntroMusic();
-    activeMusic.play().catch(() => {});
+    if (musicUnlocked) return;
+    musicUnlocked = true;
+    if (activeMusic.paused) {
+      musicMode = null; // forza playIntroMusic() a ripartire da zero dentro il gesto utente
+      playIntroMusic();
+    }
     document.removeEventListener('click', unlock);
-    document.removeEventListener('mousemove', unlock);
+    document.removeEventListener('keydown', unlock);
+    document.removeEventListener('touchend', unlock);
   };
   document.addEventListener('click', unlock);
-  document.addEventListener('mousemove', unlock);
+  document.addEventListener('keydown', unlock);
+  document.addEventListener('touchend', unlock);
 }
 
 // ─── avvio ───
