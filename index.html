@@ -4568,7 +4568,7 @@ function crossfadeTo(src, { loop = false, onEnded = null } = {}) {
   incoming.pause();
   incoming.src = src;
   incoming.loop = loop;
-  incoming.currentTime = 0;
+  try { incoming.currentTime = 0; } catch {}
   incoming.volume = 0;
   incoming.onended = onEnded;
   incoming.play().catch(() => {});
@@ -4626,22 +4626,18 @@ function playLostMusic() {
 }
 
 // L'autoplay senza interazione utente può essere bloccato dal browser:
-// se la prima play() viene rifiutata, riprova al primo click/tasto dell'utente.
+// si tenta subito, e al primo click o movimento del mouse si (ri)avvia/riprende intro.mp3.
 function startMusicWithAutoplayFallback() {
   playIntroMusic();
-  const retry = () => {
+
+  const unlock = () => {
+    playIntroMusic();
     activeMusic.play().catch(() => {});
-    document.removeEventListener('click', retry);
-    document.removeEventListener('keydown', retry);
-    document.removeEventListener('touchstart', retry);
-    document.removeEventListener('pointerdown', retry);
-    document.removeEventListener('mousemove', retry);
+    document.removeEventListener('click', unlock);
+    document.removeEventListener('mousemove', unlock);
   };
-  document.addEventListener('click', retry);
-  document.addEventListener('keydown', retry);
-  document.addEventListener('touchstart', retry);
-  document.addEventListener('pointerdown', retry);
-  document.addEventListener('mousemove', retry);
+  document.addEventListener('click', unlock);
+  document.addEventListener('mousemove', unlock);
 }
 
 // ─── avvio ───
