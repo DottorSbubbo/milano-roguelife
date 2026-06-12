@@ -46,7 +46,7 @@ Esempio: NORMIE resiste le mosse tipo NORMIE e le mosse tipo SCHIZO (perché NOR
 ## 16 ROT — Stat Base e Mosse
 
 ### Formula danno (stile Pokémon)
-`Danno = ((2×Livello/5 + 2) × Potenza × Attacco/Difesa) / 50 + 2`
+`Danno = ((2×Livello/5 + 2) × Potenza × Attacco/Difesa) / 50 + 2) × 3`
 
 ### Critico
 - Probabilità base: **10%**
@@ -381,8 +381,20 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ### Permadeath
 - Rot morto in battaglia = **perso per sempre** con tutti i suoi upgrade
-- HP si resettano al 100% ad ogni nuova battaglia
 - Game over se tutti e 3 i Rot muoiono
+
+### Reset ad ogni battaglia
+- HP ripristinati al 100%
+- PP di tutte le mosse ripristinati a 10
+- Tutti gli status negativi e positivi rimossi
+- Tutti i modificatori di stadio azzerati
+- **Scudo azzerato** — lo scudo persiste tra i turni della stessa battaglia ma si azzera all'inizio di ogni nuova battaglia
+- Solo stat base permanenti, oggetti e drugs rimangono
+
+### Sistema scudo
+- Lo scudo è una barra blu sopra la barra HP verde, stesse dimensioni
+- Il danno rimuove prima lo scudo prima di intaccare gli HP
+- Lo scudo persiste tra i turni ma si azzera tra le battaglie
 
 ---
 
@@ -476,6 +488,23 @@ Si apre dopo ogni vittoria. 4 sezioni indipendenti con tasto reroll indipendente
 - In alto a destra: pannello buff permanenti AI che si accumulano per livello
 
 ---
+
+## BILANCIAMENTO EARLY GAME
+
+### Buff danno iniziale
+- Al turno 1 di ogni battaglia il giocatore ha +50% danno su tutti gli attacchi
+- Il bonus scala di -1% per ogni turno fino ad arrivare a 0% al turno 50
+- Dal turno 50 in poi nessun bonus
+- Si resetta ad ogni nuova battaglia
+
+### Buff difensivo iniziale
+- Al turno 1 di ogni battaglia il giocatore riceve il 25% di danno in meno
+- Il bonus scala di -0.5% per ogni turno fino ad arrivare a 0% al turno 50
+- Dal turno 50 in poi nessun bonus
+- Si resetta ad ogni nuova battaglia
+
+### Oggetti per ROT
+- Ogni ROT può equipaggiare massimo **2 oggetti** contemporaneamente
 
 ## SCALING LIVELLO ROT
 
