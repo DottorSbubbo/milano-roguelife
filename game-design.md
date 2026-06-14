@@ -206,7 +206,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 ### SCHIZO
 - **2 DIMENSIONI** — Fisico, 2 colpi da 20 danni
 - **4CHAN THEORY** — Speciale, 2 colpi da 20 danni
-- **POTERI FORTI** — Utility: probabilità critico sale al 50% per 3 turni. Non usabile consecutivamente
+- **POTERI FORTI** — Utility: tutta la squadra alleata ottiene probabilità critico al 75% per tutta la battaglia. Non usabile consecutivamente
 
 ### TROLL
 - **TESCHIO** — Fisico, 40 danni
@@ -220,7 +220,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ### BASED
 - **CHA CHA CHAD** — Fisico, 20 danni, colpisce da 1 a 4 volte (probabilità colpi aggiuntivi proporzionale alle stat)
-- **CANNONE SWAG** — Speciale, 20 danni, colpisce da 1 a 4 volte (stessa meccanica)
+- **CANNONE SWAG** — Speciale, 20 danni, colpisce da 1 a 4 volte. Stessa meccanica di CHA CHA CHAD ma usa SP.ATK invece di ATK per calcolare la probabilità
 - **SALSA BASE** — Utility: per 3 turni ogni colpo ha 10% di probabilità di stunnare il bersaglio (salta il turno). Non usabile consecutivamente
 
 ---
@@ -391,6 +391,13 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 - **Scudo azzerato** — lo scudo persiste tra i turni della stessa battaglia ma si azzera all'inizio di ogni nuova battaglia
 - Solo stat base permanenti, oggetti e drugs rimangono
 
+### Sistema buff/debuff visivo
+- Quando un ROT è affetto da un buff o debuff di stadio, appare una piccola freccia sopra la barra HP/scudo
+- Freccia verso l'alto = buff (stadio aumentato), freccia verso il basso = debuff (stadio diminuito)
+- Colori per stat: ATK rosso, SP.ATK viola, DEF blu, SP.DEF verde, SPD ciano
+- Buff speciali come POTERI FORTI: freccia verso l'alto giallo/arancione
+- Hover sulla freccia apre finestra info a sinistra con descrizione del buff/debuff
+
 ### Sistema scudo
 - Lo scudo è una barra blu sopra la barra HP verde, stesse dimensioni
 - Il danno rimuove prima lo scudo prima di intaccare gli HP
@@ -473,6 +480,7 @@ Si apre dopo ogni vittoria. 4 sezioni indipendenti con tasto reroll indipendente
 2. **Fase esecuzione:** tutti gli attacchi partono in ordine di Speed
 3. Parità di Speed → attacca prima il giocatore
 4. Se un Rot va KO prima di usare la sua mossa pianificata → mossa annullata
+5. **Reindirizzamento automatico:** se il bersaglio di un attacco offensivo viene eliminato prima che il ROT attaccante agisca, l'attacco viene reindirizzato al prossimo ROT nemico vivo (priorità a destra del bersaglio originale). Il log mostra 'Bersaglio eliminato — attacco reindirizzato a [nome ROT]'
 
 ### Selezione mosse (UI)
 - Freccia sopra il Rot alleato selezionato (frecce o mouse)
