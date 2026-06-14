@@ -6539,7 +6539,7 @@ function buildStarterScreen() {
         <div class="rot-name-flames">
           <span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span>
         </div>
-        <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${def.name}</div>
+        <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name, 1.5)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${def.name}</div>
       </div>
     `;
     if (def.sprite) {
