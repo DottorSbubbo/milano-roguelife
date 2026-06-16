@@ -268,6 +268,12 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 ### RARE (15%)
 | Mossa | Effetto |
 |---|---|
+| **SBERLATE** | Fisico, 50 danni a tutti i ROT nemici contemporaneamente |
+| **BORDELLO** | Speciale, 50 danni a tutti i ROT nemici contemporaneamente |
+
+### RARE (15%)
+| Mossa | Effetto |
+|---|---|
 | ABBRACCIO | Scudo 15% HP massimi a tutto il team |
 | TOH | Trasferisce tutti i malus di un Rot alleato a un Rot nemico |
 | CHINOTTO | Un Rot alleato selezionato recupera 50% HP |
@@ -381,6 +387,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ### Permadeath
 - Rot morto in battaglia = **perso per sempre** con tutti i suoi upgrade
+- Quando un ROT alleato muore gli oggetti equipaggiati vanno automaticamente nel primo slot libero del marsupio — se il marsupio è pieno gli oggetti vengono persi
 - Game over se tutti e 3 i Rot muoiono
 
 ### Reset ad ogni battaglia

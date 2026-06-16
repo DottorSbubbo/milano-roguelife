@@ -5,7 +5,7 @@
 <title>Milano Roguelife — Battle</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=Monoton&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -20,6 +20,41 @@ body {
   user-select: none;
 }
 
+/* ── Pulsante impostazioni: fisso in alto a destra, sempre visibile su qualsiasi schermata ── */
+#settings-btn {
+  position: fixed; top: 10px; right: 10px; z-index: 20000;
+  width: 46px; height: 46px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; line-height: 0; cursor: pointer;
+  background: linear-gradient(180deg, #3a3a4a 0%, #1c1c28 100%);
+  border: 1px solid #4a4a5e;
+  box-shadow: 0 2px 0 #0c0c14, 0 4px 8px rgba(0,0,0,0.5);
+  transition: transform 0.08s, box-shadow 0.08s;
+}
+#settings-btn:hover { background: linear-gradient(180deg, #4a4a5e 0%, #28283a 100%); }
+#settings-btn:active { transform: translateY(2px); box-shadow: 0 0 0 #0c0c14, 0 2px 4px rgba(0,0,0,0.5); }
+
+#settings-panel {
+  position: fixed; top: 58px; right: 12px; z-index: 20000;
+  display: none; flex-direction: column; gap: 16px;
+  width: 240px; padding: 18px 20px;
+  background: rgba(10,10,18,0.97); border: 1px solid #3a3a4e;
+  border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  font-family: 'Silkscreen', 'Courier New', monospace;
+}
+#settings-panel.on { display: flex; }
+#settings-panel .settings-title {
+  font-size: 11px; letter-spacing: 3px; color: #888; text-transform: uppercase;
+  border-bottom: 1px solid #2a2a3a; padding-bottom: 8px;
+}
+.settings-row { display: flex; flex-direction: column; gap: 6px; }
+.settings-row label {
+  font-size: 10px; letter-spacing: 2px; color: #c0c0d0; text-transform: uppercase;
+}
+.settings-row input[type="range"] {
+  width: 100%; cursor: pointer; accent-color: #ffb300;
+}
+
 /* ── HEADER ── */
 #header {
   background: rgba(5,5,10,0.95);
@@ -29,20 +64,39 @@ body {
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
+  position: relative;
 }
-#header h1 {
-  font-size: 24px; letter-spacing: 8px; color: #ff3333; text-transform: uppercase;
-  font-weight: 900; text-shadow: 0 0 12px rgba(255,51,51,0.45);
+/* ── logo animato: si adatta all'altezza della barra; scale() ingrandisce visivamente senza spostare elementi ── */
+#header-logo {
+  height: 56px; width: auto; flex-shrink: 0;
+  transform: scale(1.9); transform-origin: left center;
 }
-#turn-info  { font-size: 10px; color: #333; letter-spacing: 3px; }
-#hud-stats { display: flex; gap: 12px; align-items: center; }
+/* ── TURNO corrente: piccolo, azzurro, poco a sinistra del pulsante impostazioni in alto a destra ── */
+#turn-info {
+  position: fixed; top: 24px; right: 68px; z-index: 15000;
+  font-family: 'Silkscreen', 'Courier New', monospace;
+  font-size: 13px; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;
+  color: #7dd3fc;
+  text-shadow: 0 0 6px rgba(125,211,252,0.5);
+}
+/* ── GOLD accanto a LIVELLO, entrambi centrati in alto ── */
+#hud-stats {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: nowrap;
+}
 #hud-level {
-  font-size: 15px; letter-spacing: 2px; font-weight: bold; text-transform: uppercase;
-  padding: 8px 16px; border-radius: 3px; white-space: nowrap;
-  color: #60d4ff; background: rgba(10,45,60,0.55); border: 1px solid rgba(40,140,180,0.3);
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-size: 18px; letter-spacing: 2px; font-weight: normal; text-transform: uppercase;
+  padding: 0; border-radius: 0; white-space: nowrap;
+  color: #c084fc; background: transparent; border: none;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6), 0 -1px 3px rgba(168,85,247,0.85), 0 0 8px rgba(192,132,252,0.6);
+  text-align: center;
 }
 #hud-gold {
-  position: relative;
+  position: absolute; left: 100%; top: 50%; transform: translateY(-50%);
+  margin-left: 24px;
+  font-family: 'Silkscreen', 'Courier New', monospace;
   font-size: 11px; letter-spacing: 1px; font-weight: bold; text-transform: uppercase;
   padding: 6px 12px; border-radius: 3px; white-space: nowrap;
   color: #fde68a; background: rgba(80,55,15,0.4); border: 1px solid rgba(180,140,40,0.3);
@@ -79,22 +133,87 @@ body {
   flex-shrink: 0; min-height: 30px;
 }
 #speed-bar-label {
-  font-size: 11px; letter-spacing: 3px; text-transform: uppercase; font-weight: bold;
-  color: #d4a830; background: rgba(55,40,8,0.75);
-  padding: 7px 14px; border-radius: 3px;
-  border: 1px solid rgba(140,100,20,0.35); white-space: nowrap; flex-shrink: 0;
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-size: 11px; font-weight: normal; letter-spacing: 2px; text-transform: uppercase;
+  color: #fde68a;
+  padding: 6px 18px; border-radius: 999px;
+  border: 1.5px solid rgba(212,168,48,0.65);
+  white-space: nowrap; flex-shrink: 0;
+  position: relative; overflow: hidden; cursor: default;
+  background: radial-gradient(ellipse at 50% 18%, rgba(255,220,80,0.42) 0%, rgba(100,65,5,0.92) 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255,240,150,0.55),
+    inset 0 -3px 6px rgba(0,0,0,0.45),
+    0 2px 8px rgba(180,130,0,0.5);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25), 0 0 8px rgba(253,230,138,0.6);
+}
+/* gloss highlight identico ai token velocità ROT */
+#speed-bar-label::before {
+  content: ''; position: absolute;
+  top: 0; left: 10%; width: 80%; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 999px 999px 0 0;
+  pointer-events: none;
+}
+/* shimmer sweep */
+#speed-bar-label::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 25%, rgba(255,255,255,0.32) 50%, transparent 75%);
+  background-size: 250% 100%;
+  animation: velocita-shimmer 2.4s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes velocita-shimmer {
+  0%   { background-position: 250% center; }
+  100% { background-position: -50% center; }
 }
 #speed-tokens { display: flex; gap: 6px; flex-wrap: wrap; }
 .spd-token {
   display: flex; align-items: center; justify-content: center; gap: 4px;
-  padding: 3px 8px; border: 1px solid #1a1a28; border-radius: 2px;
-  font-size: 9px; letter-spacing: 1px; transition: opacity 0.4s; white-space: nowrap;
-  flex-shrink: 0;
+  padding: 4px 10px; border-radius: 999px; border: 1.5px solid;
+  font-size: 9px; letter-spacing: 1px; white-space: nowrap; flex-shrink: 0;
+  cursor: pointer; position: relative; overflow: hidden;
+  transition: opacity 0.4s, transform 0.1s;
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.45),
+    inset 0 -3px 5px rgba(0,0,0,0.35),
+    0 2px 6px rgba(0,0,0,0.4);
+}
+.spd-token::before {
+  content: ''; position: absolute;
+  top: 0; left: 10%; width: 80%; height: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 100%);
+  border-radius: 999px 999px 0 0;
+  pointer-events: none;
 }
 .spd-token.acted { opacity: 0.15; }
-.spd-token.player-spd { background: rgba(22,163,74,0.10); border-color: #1a5c32; color: #4aaa70; }
-.spd-token.enemy-spd  { background: rgba(220,38,38,0.10);  border-color: #5c1a1a; color: #bb4444; }
-.spd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.spd-token.player-spd {
+  background: radial-gradient(ellipse at 50% 20%, rgba(74,220,130,0.35) 0%, rgba(22,90,50,0.85) 100%);
+  border-color: #2ecc71; color: #a8ffc4;
+  box-shadow:
+    inset 0 2px 4px rgba(180,255,200,0.5),
+    inset 0 -3px 5px rgba(0,40,15,0.5),
+    0 2px 8px rgba(46,204,113,0.4);
+}
+.spd-token.enemy-spd {
+  background: radial-gradient(ellipse at 50% 20%, rgba(255,80,80,0.35) 0%, rgba(100,20,20,0.85) 100%);
+  border-color: #e74c3c; color: #ffb3b3;
+  box-shadow:
+    inset 0 2px 4px rgba(255,200,200,0.5),
+    inset 0 -3px 5px rgba(60,0,0,0.5),
+    0 2px 8px rgba(231,76,60,0.4);
+}
+@keyframes spd-token-blink {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.35; transform: scale(0.93); }
+}
+@keyframes rot-card-spd-blink {
+  0%, 100% { filter: brightness(1); }
+  50%       { filter: brightness(1.65) saturate(1.4); }
+}
+.spd-hover-blink { animation: spd-token-blink 0.5s ease-in-out infinite; }
+.rot-card.spd-hover-highlight { animation: rot-card-spd-blink 0.5s ease-in-out infinite; }
+.spd-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 
 /* ══ STAGE ══ */
 #stage {
@@ -668,21 +787,23 @@ body {
 /* HP / shield bars */
 /* ── Cornice metallica unica per le barre scudo + HP, con texture, riflessi e bulloni ── */
 .bars-frame {
-  width: 140px; box-sizing: border-box; padding: 2px 3px;
+  width: 140px; box-sizing: border-box; padding: 2px 3px 1px;
   border-radius: 4px; position: relative;
+  margin-bottom: -3px;
   background:
     repeating-linear-gradient(135deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 5px),
     linear-gradient(135deg, #c2cadc 0%, #9aa3b8 20%, #6b7488 48%, #3a4150 76%, #1c1f28 100%);
   border: 1px solid #05060a;
+  border-bottom-width: 0.5px;
   box-shadow:
     inset 0 1px 0 rgba(255,255,255,0.7),
     inset -1px 0 0 rgba(255,255,255,0.22),
     inset 1px 0 0 rgba(0,0,0,0.5),
-    inset 0 -1px 0 rgba(0,0,0,0.8),
+    inset 0 -0.5px 0 rgba(0,0,0,0.8),
     0 2px 2px rgba(0,0,0,0.5);
   display: flex; flex-direction: column;
 }
-.bars-row { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 1px; }
+.bars-row { display: flex; flex-direction: column; align-items: center; gap: 0; padding: 1px; }
 .bars-divider {
   height: 1px; margin: 1px 4px;
   background: linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(255,255,255,0.3) 100%);
@@ -710,21 +831,32 @@ body {
   position: relative; height: 100%; border-radius: 1px;
   transition: width 0.55s ease, background-color 0.55s;
 }
-/* riflesso lucido sopra il riempimento */
+/* riflesso metallico/cromato sopra il riempimento */
 .hp-fill::after, .shield-fill::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(255,255,255,0.15) 35%, rgba(0,0,0,0.05) 55%, rgba(0,0,0,0.35) 100%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.35) 28%, rgba(255,255,255,0.08) 45%, rgba(0,0,0,0.12) 55%, rgba(0,0,0,0.45) 100%);
+}
+/* riflesso di luce che scorre sopra la barra, effetto cromato animato */
+.hp-fill::before, .shield-fill::before {
+  content: ''; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(110deg, transparent 25%, rgba(255,255,255,0.65) 47%, rgba(255,255,255,0.95) 50%, rgba(255,255,255,0.65) 53%, transparent 75%);
+  background-size: 250% 100%;
+  mix-blend-mode: screen;
+  animation: hp-bar-shine 16s linear infinite;
+}
+@keyframes hp-bar-shine {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 .hp-fill.high { background-color: #16a34a; box-shadow: 0 0 6px rgba(22,163,74,0.4); }
 .hp-fill.mid  { background-color: #d97706; box-shadow: 0 0 6px rgba(217,119,6,0.4); }
 .hp-fill.low  { background-color: #dc2626; box-shadow: 0 0 6px rgba(220,38,38,0.5); }
-.hp-nums { font-size: 10px; color: #252535; white-space: nowrap; }
 .shield-fill { background-color: #3b82f6; box-shadow: 0 0 6px rgba(59,130,246,0.5); }
 
 /* ── Icone freccia: buff/debuff attivi, sopra il nome del ROT ── */
-.stage-row { width: 140px; display: flex; gap: 5px; min-height: 16px; align-items: center; justify-content: center; flex-wrap: wrap; }
+.stage-row { width: 140px; display: flex; gap: 6px; min-height: 24px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .stage-icon {
-  font-size: 13px; font-weight: bold; line-height: 1; cursor: help;
+  font-size: 20px; font-weight: bold; line-height: 1; cursor: help;
   letter-spacing: 0; user-select: none;
 }
 
@@ -907,10 +1039,10 @@ body {
 .loadout-token-drug {
   border: 1px solid rgba(255,255,255,0.12);
   background: rgba(255,255,255,0.04);
-  padding: 3px 7px; opacity: 0.85; font-weight: normal;
+  padding: 3px 4px; opacity: 0.85; font-weight: normal;
 }
 .drug-icon {
-  display: inline-block; width: 10px; height: 10px; border-radius: 50%;
+  display: inline-block; width: 8px; height: 8px; border-radius: 50%;
   flex-shrink: 0;
 }
 .loadout-token-mult { opacity: 0.7; }
@@ -962,7 +1094,7 @@ body {
   border-right: 1px solid #1a1a2e;
   padding: 36px 16px 16px;
   flex-direction: column; gap: 10px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 #info-panel.open { display: flex; }
 
@@ -1013,10 +1145,6 @@ body {
   font-size: 18px; font-weight: bold; letter-spacing: 1px;
   text-transform: uppercase; color: #ffffff; line-height: 1.4;
 }
-.info-title.info-title-move {
-  font-family: 'Silkscreen', 'Courier New', monospace;
-  font-size: 20px; letter-spacing: 2px;
-}
 .info-badge {
   display: inline-block; font-size: 10px; padding: 3px 9px;
   border-radius: 2px; letter-spacing: 1px; text-transform: uppercase; font-weight: bold;
@@ -1040,11 +1168,18 @@ body {
 .info-badge-clickable:hover { filter: brightness(1.3); }
 
 .info-level {
-  font-size: 16px; font-weight: 800; color: #ffb627;
-  letter-spacing: 2px; line-height: 1.1;
-  border-top: 1px solid #222230; margin-top: 4px; padding-top: 10px;
+  display: inline-block;
+  font-size: 12px; font-weight: 800; color: #fff;
+  letter-spacing: 1px; line-height: 1.1;
+  margin-top: 8px; padding: 3px 12px;
+  border-radius: 999px; border: none;
+  background: linear-gradient(180deg, #93e5ff 0%, #3b82f6 55%, #1d4ed8 100%);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.85),
+    inset 0 -4px 6px rgba(0,0,0,0.25),
+    0 2px 6px rgba(0,0,0,0.35);
 }
-.info-level .info-level-num { color: #ffd700; }
+.info-level .info-level-num { color: #fff; }
 
 .type-table {
   display: grid; grid-template-columns: 52px 1fr 1fr 1fr; gap: 0;
@@ -1087,8 +1222,8 @@ body {
   display: flex; flex-direction: column; gap: 5px;
 }
 .info-move-name {
-  font-family: 'Silkscreen', 'Courier New', monospace;
-  font-size: 13px; font-weight: bold; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 11px; font-weight: bold; color: #ffffff; letter-spacing: 1px; text-transform: uppercase;
 }
 .info-move-meta { font-size: 10px; color: #aaaacc; letter-spacing: 1px; }
 
@@ -1106,9 +1241,9 @@ body {
   background-size: 200% 200%;
   border: none;
   color: #fff;
-  font-family: 'Courier New', monospace;
-  font-size: 13px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; border-radius: 5px;
+  font-family: 'Fredoka', 'Nunito', sans-serif;
+  font-size: 16px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  cursor: pointer; border-radius: 8px;
   transition: all 0.12s;
   box-shadow: 0 2px 10px rgba(244,63,94,0.35);
   flex-shrink: 0;
@@ -1169,7 +1304,7 @@ body {
 #battle-log {
   flex: 1; overflow-y: auto;
   font-family: 'VT323', 'Courier New', monospace;
-  font-size: 16px; line-height: 1.5;
+  font-size: 18px; line-height: 1.45;
   scrollbar-width: thin; scrollbar-color: #333 transparent;
 }
 /* ── pannello secondario a sinistra del log (hover su status/tipo), speculare a #info-panel-secondary ── */
@@ -1195,8 +1330,8 @@ body {
 .lg.crit    { color: #fbbf24; font-weight: bold; }
 .log-link   { cursor: pointer; border-bottom: 1px dotted currentColor; opacity: 0.8; transition: opacity 0.1s; }
 .log-link:hover { opacity: 1; }
-.log-link-rot  { font-family: 'Press Start 2P', 'Courier New', monospace; font-size: 0.85em; }
-.log-link-move { font-family: 'Silkscreen', 'Courier New', monospace; font-size: 1.05em; }
+.log-link-rot  { font-family: 'VT323', 'Courier New', monospace; }
+.log-link-move { font-family: 'VT323', 'Courier New', monospace; }
 
 /* ══════════════════════════════════════
    ACTION PANEL — new 3-zone horizontal layout
@@ -1208,7 +1343,7 @@ body {
   border-top: 2px solid #3a2a4a;
   padding: 0;
   flex-shrink: 0;
-  min-height: 164px;
+  min-height: 172px;
   display: flex;
   align-items: stretch;
   position: relative;
@@ -1227,9 +1362,9 @@ body {
 #action-panel > #panel-right {
   position: relative; z-index: 1;
 }
-/* sfondo opaco dietro alla scritta di fase: lo sparkle non la attraversa mai */
+/* nessun sfondo — le scritte di fase sono direttamente sulla barra con le particelle dietro */
 #panel-left-phase {
-  background: #160b22;
+  background: transparent;
 }
 .sparkle-particle {
   position: absolute; top: 0; height: 3px; border-radius: 3px;
@@ -1252,7 +1387,7 @@ body {
 
 /* LEFT — pulsante log + testo di fase */
 #panel-left {
-  flex: 0 0 320px;
+  flex: 0 0 340px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1264,27 +1399,37 @@ body {
 }
 /* larghezza fissa: contiene la scritta più lunga (es. "SCEGLI BERSAGLIO") senza mai ridimensionarsi */
 #panel-left-phase {
-  flex: 0 0 230px;
+  flex: 0 0 250px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px;
+  padding: 8px 12px;
   box-sizing: border-box;
   border-radius: 4px;
 }
 #phase-lbl {
-  font-size: 17px;
-  letter-spacing: 3px;
-  color: #f3eaff;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 14px;
+  letter-spacing: 1px;
+  color: #f0d4ff;
   text-transform: uppercase;
   font-weight: bold;
-  line-height: 1.2;
+  line-height: 1.3;
+  text-shadow:
+    1px 1px 0 #000, -1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000,
+    0 0 12px rgba(220,160,255,0.7);
 }
 #phase-sub {
-  font-size: 11px;
-  color: #b8aed4;
-  letter-spacing: 1px;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 9px;
+  font-weight: bold;
+  color: #c4a8e8;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
+  line-height: 1.4;
+  text-shadow:
+    1px 1px 0 rgba(0,0,0,0.8), -1px 1px 0 rgba(0,0,0,0.8),
+    1px -1px 0 rgba(0,0,0,0.8), -1px -1px 0 rgba(0,0,0,0.8);
 }
 
 /* CENTER — move buttons */
@@ -1312,24 +1457,64 @@ body {
   border-left: 1px solid rgba(255,255,255,0.08);
 }
 
-/* Move buttons */
+/* Move buttons — parallelepipedi 3D con texture metallica, sprofondano a fondo alla pressione */
 .move-btn {
   padding: 16px 26px;
-  border: 1.5px solid #d1d5db;
-  background: #ffffff;
+  border: none;
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.14) 0px, rgba(255,255,255,0.14) 2px, transparent 2px, transparent 6px),
+    linear-gradient(180deg, #fdfdfe 0%, #e9ebef 35%, #ced2d9 65%, #aeb3bc 100%);
   color: #111827;
   font-family: 'Courier New', monospace;
   font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
-  cursor: pointer; border-radius: 4px;
+  cursor: pointer; border-radius: 6px;
   display: flex; flex-direction: column; align-items: center; gap: 6px;
   min-width: 160px;
-  transition: all 0.12s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  position: relative;
+  transform: translateY(0);
+  transition: transform 0.05s, box-shadow 0.05s, background 0.12s;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 3px rgba(0,0,0,0.12),
+    0 1px 0 #c2c6cd,
+    0 2px 0 #b6bac2,
+    0 3px 0 #a7abb4,
+    0 4px 0 #989ca6,
+    0 5px 0 #898d98,
+    0 6px 0 #7b7f8a,
+    0 8px 14px rgba(0,0,0,0.40);
 }
-.move-btn:hover:not(:disabled) { background: #f3f4f6; border-color: #6b7280; box-shadow: 0 2px 6px rgba(0,0,0,0.12); }
+.move-btn:hover:not(:disabled) {
+  background:
+    repeating-linear-gradient(115deg, rgba(255,255,255,0.22) 0px, rgba(255,255,255,0.22) 2px, transparent 2px, transparent 6px),
+    linear-gradient(180deg, #ffffff 0%, #eef0f4 35%, #d4d8de 65%, #b4b9c2 100%);
+}
+.move-btn:active:not(:disabled) {
+  transform: translateY(8px);
+  background:
+    repeating-linear-gradient(115deg, rgba(0,0,0,0.07) 0px, rgba(0,0,0,0.07) 2px, transparent 2px, transparent 6px),
+    linear-gradient(180deg, #c6cad1 0%, #b6bac2 40%, #a7abb4 70%, #989ca6 100%);
+  box-shadow:
+    inset 0 3px 6px rgba(0,0,0,0.40),
+    inset 0 -1px 0 rgba(255,255,255,0.10);
+}
 .move-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-.move-btn-name { color: #111827; font-size: 15px; font-weight: bold; letter-spacing: 1px; }
-.move-btn-sub  { font-size: 11px; color: #6b7280; }
+/* ── drag & drop: il box sollevato e quello target lampeggiano ── */
+@keyframes move-btn-blink {
+  0%, 100% { outline-color: transparent; }
+  50% { outline-color: #fde68a; }
+}
+.move-btn-dragging, .move-btn-dragover {
+  outline: 3px solid transparent; outline-offset: 2px;
+  animation: move-btn-blink 0.5s ease-in-out infinite;
+}
+.move-btn-dragging { opacity: 0.55; }
+.move-btn-name {
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-size: 19px; font-weight: normal; letter-spacing: 2px;
+  color: var(--move-color, #111827);
+  text-shadow: var(--move-glow, none);
+}
 
 /* Back button */
 #back-btn {
@@ -1337,26 +1522,44 @@ body {
   background: #f9fafb;
   border: 1.5px solid #d1d5db;
   color: #6b7280;
-  font-family: 'Courier New', monospace;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
   font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
   cursor: pointer; border-radius: 3px;
   transition: all 0.12s;
 }
 #back-btn:hover { background: #f3f4f6; border-color: #9ca3af; color: #374151; }
 
-/* Execute button */
+/* Execute button: grosso, lucido, effetto 3D glossy */
 #execute-btn {
-  padding: 16px 0;
-  background: #dc2626;
-  border: 1.5px solid #b91c1c;
+  padding: 22px 0;
+  background: linear-gradient(180deg, #f87171 0%, #dc2626 45%, #b91c1c 100%);
+  border: 2px solid #7f1d1d;
   color: #fff;
-  font-family: 'Courier New', monospace;
-  font-size: 13px; letter-spacing: 3px; text-transform: uppercase;
-  cursor: pointer; border-radius: 3px;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 16px; letter-spacing: 4px; text-transform: uppercase;
+  cursor: pointer; border-radius: 14px;
   transition: all 0.12s;
-  box-shadow: 0 2px 8px rgba(220,38,38,0.3);
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,0.65),
+    inset 0 -6px 8px rgba(0,0,0,0.35),
+    0 6px 0 #7f1d1d;
 }
-#execute-btn:hover { background: #b91c1c; box-shadow: 0 3px 12px rgba(220,38,38,0.4); }
+#execute-btn:hover {
+  background: linear-gradient(180deg, #fca5a5 0%, #ef4444 45%, #b91c1c 100%);
+  box-shadow:
+    inset 0 2px 5px rgba(255,255,255,0.75),
+    inset 0 -6px 8px rgba(0,0,0,0.35),
+    0 6px 0 #7f1d1d;
+}
+#execute-btn:active {
+  transform: translateY(4px);
+  box-shadow:
+    inset 0 2px 4px rgba(255,255,255,0.5),
+    inset 0 -3px 5px rgba(0,0,0,0.3),
+    0 1px 4px rgba(220,38,38,0.5),
+    0 2px 0 #7f1d1d;
+}
 
 /* ── evidenziazione opzione selezionata via tastiera ── */
 @keyframes kb-focus-blink {
@@ -1494,12 +1697,6 @@ body {
   position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0;
 }
 .starter-sprite-canvas.mirrored { transform: scaleX(-1); }
-.starter-type-chip {
-  position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%);
-  font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-size: 14px; padding: 7px 22px; border-radius: 4px;
-  letter-spacing: 3px; font-weight: bold; opacity: 0.95;
-}
 
 #screen-starter { overflow-y: auto; padding: 22px 20px; }
 #starter-info-panel {
@@ -1539,10 +1736,12 @@ body {
 .sip-move-box {
   background: rgba(255,255,255,0.025); border: 1px solid #1e1e38; border-radius: 4px;
   padding: 13px 16px; display: flex; flex-direction: column; gap: 10px;
-  font-family: 'Silkscreen', 'Courier New', monospace;
 }
 .sip-move-top { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.sip-move-name { font-size: 21px; font-weight: bold; letter-spacing: 1.5px; text-transform: uppercase; color: #fff; }
+.sip-move-name {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 15px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; color: #fff;
+}
 .sip-chips { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
 .sip-chip {
   font-size: 9px; padding: 3px 9px; border-radius: 2px;
@@ -1645,87 +1844,197 @@ body {
 #progress-overlay {
   display: none; position: fixed; inset: 0;
   background: rgba(2,2,5,0.94);
-  align-items: center; justify-content: center; z-index: 110;
-  font-family: 'Courier New', monospace;
+  z-index: 110;
+  font-family: 'VT323', 'Courier New', monospace;
+  padding: 0 0 8px 0; overflow-y: auto; box-sizing: border-box;
 }
-#progress-overlay.on { display: flex; }
-#progress-box {
-  display: flex; gap: 30px; align-items: flex-start; justify-content: center;
-  max-width: 920px; width: 100%; padding: 0 24px; max-height: 90vh;
+/* 3 colonne: [levelup fissa 280px] [contenuto centrato 1fr] [specchio 280px]
+   La colonna centrale è sempre centrata sullo schermo, indipendentemente da LEVEL UP */
+#progress-overlay.on {
+  display: grid;
+  grid-template-columns: 280px 1fr 280px;
+  grid-template-rows: auto auto;
+  grid-template-areas:
+    "lup title ."
+    "lup main  .";
+  gap: 12px 0;
+  align-content: center;
 }
+/* ── VITTORIA/GAME OVER: parte del blocco centrato verticalmente, non più ancorata in alto ── */
+#progress-title {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 52px; letter-spacing: 14px; font-weight: bold; text-transform: uppercase;
+  text-align: center;
+  grid-area: title; align-self: end;
+}
+#progress-title.win  { color: #166534; text-shadow: 0 0 50px rgba(22,163,74,0.5); }
+#progress-title.lose { color: #7f1d1d; text-shadow: 0 0 50px rgba(220,38,38,0.35); }
+/* ── colonna centrale: ROT cards + gold + buttons, sempre centrata sullo schermo ── */
 #progress-main {
-  display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center;
-  flex: 1; min-width: 300px; max-width: 380px;
+  grid-area: main; align-self: start;
+  display: flex; flex-direction: column; gap: 12px; align-items: center; text-align: center;
 }
-#progress-title { font-size: 38px; letter-spacing: 9px; font-weight: bold; text-transform: uppercase; }
-#progress-title.win  { color: #166534; text-shadow: 0 0 40px rgba(22,163,74,0.4); }
-#progress-title.lose { color: #7f1d1d; text-shadow: 0 0 40px rgba(220,38,38,0.3); }
-#progress-sub { font-size: 12px; color: #6a6a9a; letter-spacing: 1.5px; line-height: 1.8; }
-#progress-sub strong { color: #d4a830; font-size: 15px; }
+#progress-sub { font-size: 24px; color: #6a6a9a; letter-spacing: 1.5px; line-height: 1.8; flex-shrink: 0; }
+#progress-sub strong { color: #d4a830; font-size: 28px; }
 .progress-section-lbl {
-  font-size: 10px; letter-spacing: 3px; color: #555580; text-transform: uppercase; margin-top: 4px;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 11px; letter-spacing: 3px; color: #555580; text-transform: uppercase; margin-top: 4px;
 }
 .progress-section-lbl.dead-lbl { color: #7a3a3a; }
-.surv-list { display: flex; flex-direction: column; gap: 6px; width: 100%; }
-.surv-card, .dead-card {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 7px 14px; border-radius: 3px; font-size: 11px; letter-spacing: 1px;
+/* ── etichetta ROT SOPRAVVISSUTI: grande e di colore vivace ── */
+.progress-section-lbl.surv-lbl {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 26px; letter-spacing: 8px; color: #4ade80; font-weight: bold;
+  text-shadow: 0 0 22px rgba(74,222,128,0.6); margin-top: 6px;
+  margin-bottom: 24px;
+}
+/* ── griglia a 3 slot fissi (token grandi): dimensione fissa calcolata per 3 token, invariabile ── */
+.surv-grid { display: grid; grid-template-columns: repeat(3, 220px); gap: 16px; width: auto; }
+.surv-card, .dead-card, .surv-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: 26px 14px; min-height: 120px; border-radius: 6px; letter-spacing: 1px;
 }
 .surv-card {
-  background: rgba(22,101,52,0.16); border: 1px solid rgba(22,163,74,0.28); color: #9adbb0;
+  background: rgba(22,101,52,0.18); border: 2px solid rgba(22,163,74,0.35); color: #9adbb0;
 }
-.surv-name, .dead-name {
+/* ── token nome ROT sopravvissuto: stesso stile/font/colore/effetto glossy della battaglia, in grande ── */
+.surv-card .rot-name-token {
+  width: 100%; height: 64px; border-radius: 10px; padding: 4px 14px;
+  white-space: nowrap; word-break: normal; hyphens: none;
+}
+/* ── i token nome nella schermata di vittoria non reagiscono al passaggio del mouse ── */
+.surv-card .rot-name-token:hover {
+  animation: none;
+}
+.dead-name {
   font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-weight: bold; min-width: 0; overflow: hidden; text-overflow: ellipsis;
-  white-space: nowrap; margin-right: 10px; font-size: 11px;
+  font-weight: bold; max-width: 100%; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; font-size: 18px;
 }
-.surv-level { color: #d4a830; font-size: 10px; letter-spacing: 2px; flex-shrink: 0; }
+/* ── token livello: stesso bubble glossy blu usato in battaglia, ridimensionato per non spostare il layout ── */
+.surv-card .info-level { margin-top: 0; font-size: 13px; padding: 3px 14px; }
 .dead-card {
-  background: rgba(80,20,20,0.16); border: 1px solid rgba(140,40,40,0.28);
+  background: rgba(80,20,20,0.16); border: 2px solid rgba(140,40,40,0.28);
   color: #9a6a6a; opacity: 0.75; text-decoration: line-through;
 }
-.dead-tag { font-size: 9px; letter-spacing: 2px; color: #7a3a3a; text-decoration: none; }
-#progress-gold {
-  font-size: 13px; letter-spacing: 2px; color: #fde68a;
+.dead-tag { font-size: 12px; letter-spacing: 2px; color: #7a3a3a; text-decoration: none; }
+.surv-empty { border: 2px dashed rgba(255,255,255,0.06); }
+/* ── box gold singolo, compatto e centrato orizzontalmente ── */
+.gold-boxes { display: flex; justify-content: center; width: 100%; }
+.gold-box {
+  width: 380px; max-width: 100%;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 14px; letter-spacing: 2px; color: #fde68a;
   background: rgba(80,55,15,0.4); border: 1px solid rgba(180,140,40,0.35);
-  padding: 9px 20px; border-radius: 3px;
-  display: flex; flex-direction: column; gap: 4px; align-items: center;
+  padding: 14px 22px; border-radius: 4px;
+  display: flex; flex-direction: column; gap: 8px; align-items: stretch;
 }
+/* ── titolo GOLD BATTAGLIA: grande e animato con brillio continuo ── */
+.gold-box-title {
+  font-size: 16px; letter-spacing: 4px; color: #fde68a; text-transform: uppercase;
+  text-align: center; padding-bottom: 8px; margin-bottom: 2px;
+  background: linear-gradient(90deg, #b89a4a 0%, #fde68a 30%, #fff8c0 50%, #fde68a 70%, #b89a4a 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  animation: gold-shimmer 2.4s linear infinite;
+}
+@keyframes gold-shimmer {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
+.progress-gold-line { display: flex; align-items: center; justify-content: space-between; gap: 14px; white-space: nowrap; }
+.progress-gold-line.divider { border-bottom: 1px solid rgba(180,140,40,0.3); padding-bottom: 8px; }
+.progress-gold-line.source { color: #b0b0d0; font-size: 12px; font-weight: normal; letter-spacing: 1px; }
 .progress-gold-line.interest { color: #86efac; }
-.progress-gold-line.total { color: #fff; font-size: 14px; margin-top: 2px; }
-#progress-continue-btn, #progress-restart-btn {
+.progress-gold-line.total { color: #fff; font-size: 17px; padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.12); }
+/* ── righe interattive: INTERESSI e ALTRO pulsano e aprono finestra info ── */
+.progress-gold-line.altro-row,
+.progress-gold-line.interest-row {
+  cursor: pointer;
+  animation: altro-pulse 1.8s ease-in-out infinite;
+}
+@keyframes altro-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+.progress-gold-line.altro-row:hover,
+.progress-gold-line.interest-row:hover {
+  animation: none; opacity: 1;
+}
+#progress-restart-btn {
   padding: 10px 34px; background: #0a0a18; border: 1px solid #1e1e30;
   color: #3a3a5a; font-family: 'Courier New', monospace;
   font-size: 11px; letter-spacing: 3px; cursor: pointer; border-radius: 2px;
   margin-top: 4px; transition: all 0.12s;
 }
-#progress-continue-btn:hover, #progress-restart-btn:hover { background: #111120; border-color: #2a2a44; color: #6a6a9a; }
+#progress-restart-btn:hover { background: #111120; border-color: #2a2a44; color: #6a6a9a; }
 
+/* ── pulsante CONTINUA "slot machine": grande, colorato, 3D esagerato, sprofonda alla pressione ── */
+.btn-3d-continue {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 18px; letter-spacing: 6px; font-weight: bold;
+  color: #4a1d00; text-transform: uppercase;
+  padding: 20px 58px; margin-top: 10px;
+  border: none; border-radius: 14px; cursor: pointer;
+  position: relative; transform: translateY(0);
+  background:
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,0.65) 0%, transparent 48%),
+    linear-gradient(180deg, #fff3a0 0%, #ffd54a 30%, #ffb300 65%, #ff7a00 100%);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55), 0 -1px 1px rgba(0,0,0,0.25);
+  transition: transform 0.05s, box-shadow 0.05s, filter 0.12s;
+  box-shadow:
+    inset 0 3px 0 rgba(255,255,255,0.65),
+    inset 0 -6px 10px rgba(0,0,0,0.28),
+    0 3px 0 #d97f00,
+    0 6px 0 #c76e00,
+    0 9px 0 #b65e00,
+    0 12px 0 #a44e00,
+    0 16px 26px rgba(0,0,0,0.55);
+}
+.btn-3d-continue:hover { filter: brightness(1.1); }
+.btn-3d-continue:active {
+  transform: translateY(14px);
+  filter: brightness(0.96);
+  box-shadow:
+    inset 0 4px 12px rgba(0,0,0,0.5),
+    inset 0 -1px 0 rgba(255,255,255,0.15);
+}
+
+/* ── colonna sinistra fissa: LEVEL UP, ancorato al bordo sinistro ── */
 #levelup-panel {
-  display: none; flex-direction: column; gap: 12px;
-  background: rgba(10,10,20,0.6); border: 1px solid rgba(212,168,48,0.25);
-  border-radius: 4px; padding: 18px; min-width: 250px; max-width: 290px;
-  max-height: 80vh; overflow-y: auto;
+  grid-area: lup; align-self: center;
+  position: static; transform: none;
+  display: none; flex-direction: column; gap: 16px;
+  width: 200px; max-height: 80vh;
+  margin-left: 60px; padding-left: 0; box-sizing: border-box;
 }
 #levelup-panel.visible { display: flex; }
+/* ── LEVEL UP!: molto più grande e visibile ── */
 .levelup-title {
-  font-size: 13px; letter-spacing: 4px; color: #d4a830; text-align: center;
-  font-weight: bold; padding-bottom: 6px; border-bottom: 1px solid rgba(212,168,48,0.18);
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 30px; letter-spacing: 3px; color: #fde68a; text-align: center;
+  font-weight: bold; padding-bottom: 12px; border-bottom: 2px solid rgba(212,168,48,0.3);
+  text-shadow: 0 0 22px rgba(253,230,138,0.8), 0 0 8px rgba(253,230,138,0.6);
+  flex-shrink: 0;
 }
-.levelup-card { padding-top: 4px; }
-.levelup-card + .levelup-card { border-top: 1px solid rgba(255,255,255,0.06); padding-top: 12px; }
+.levelup-slots { display: grid; grid-template-rows: repeat(3, 1fr); gap: 14px; flex: 1; min-height: 0; }
+.levelup-card, .levelup-empty {
+  background: rgba(10,10,20,0.6); border: 1px solid rgba(212,168,48,0.25);
+  border-radius: 4px; padding: 16px; overflow-y: auto;
+}
+.levelup-empty { border-style: dashed; border-color: rgba(255,255,255,0.06); }
 .levelup-name {
   font-family: 'Press Start 2P', 'Courier New', monospace;
-  font-size: 11px; letter-spacing: 1px; color: #cfcfe8; margin-bottom: 7px;
+  font-size: 14px; letter-spacing: 1px; color: #cfcfe8; margin-bottom: 10px;
 }
-.levelup-lvl  { color: #d4a830; font-size: 10px; letter-spacing: 2px; }
-.levelup-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px 14px; }
+.levelup-lvl  { color: #d4a830; font-size: 13px; letter-spacing: 2px; }
+.levelup-stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 7px 14px; }
 .levelup-stat {
   display: flex; justify-content: space-between; align-items: center;
-  font-size: 10px; color: #6a6a90; letter-spacing: 1px;
+  font-size: 15px; color: #6a6a90; letter-spacing: 1px;
 }
 .levelup-stat.increased { color: #4ade80; font-weight: bold; }
-.lu-plus { color: #4ade80; font-size: 9px; margin-left: 3px; }
+.lu-plus { color: #4ade80; font-size: 13px; margin-left: 3px; }
 
 /* ── NEGOZIO ── */
 #shop-overlay {
@@ -1781,7 +2090,7 @@ body {
 .shop-section {
   display: flex; flex-direction: column; gap: 8px;
   background: rgba(10,10,20,0.6); border: 1px solid rgba(255,255,255,0.06);
-  border-radius: 6px; padding: 12px;
+  border-radius: 6px; padding: 12px 12px 16px;
   min-height: 0; overflow: hidden;
 }
 /* ── colori distintivi per box sezione ── */
@@ -1791,18 +2100,45 @@ body {
 #shop-section-rot { background-color: #1a1a2e !important; opacity: 1 !important; border-color: rgba(120,120,180,0.14); }
 #shop-section-rot .shop-rot-card { background-color: #24243c !important; opacity: 1 !important; }
 .shop-section-title {
+  font-family: 'Silkscreen', 'Courier New', monospace;
   font-size: 13px; letter-spacing: 5px; color: #8888b0; text-transform: uppercase;
   display: flex; align-items: center; justify-content: space-between;
   font-weight: bold; flex-shrink: 0;
 }
 .shop-reroll-btn {
-  font-size: 11px; letter-spacing: 2px; padding: 6px 14px;
-  background: #0a0a18; border: 1px solid #1e1e30; color: #8a8ab0;
-  border-radius: 3px; cursor: pointer; transition: all 0.12s;
-  font-family: 'Courier New', monospace; text-transform: uppercase;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 11px; letter-spacing: 1px; padding: 6px 14px;
+  color: #8a8ab0; text-transform: uppercase;
+  background: #0c0c1e; border: 1px solid #1a1a30;
+  border-radius: 3px; cursor: pointer;
+  position: relative; transform: translateY(0);
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(150,150,200,0.15);
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.05),
+    0 3px 0 rgba(10,10,35,0.9),
+    0 4px 8px rgba(0,0,0,0.45);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, color 0.12s;
 }
-.shop-reroll-btn:hover:not(:disabled) { background: #111120; border-color: #2a2a44; color: #d4a830; }
-.shop-reroll-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.shop-reroll-btn:hover:not(:disabled) {
+  color: #d4a830;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(212,168,48,0.25), 0 0 6px rgba(212,168,48,0.3);
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 3px 0 rgba(60,40,0,0.7),
+    0 4px 10px rgba(212,168,48,0.2);
+}
+.shop-reroll-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 4px 10px rgba(0,0,0,0.7),
+    inset 0 2px 0 rgba(0,0,0,0.5),
+    0 1px 0 rgba(10,10,35,0.5);
+}
+.shop-reroll-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 .shop-card {
   display: flex; flex-direction: column; gap: 6px;
   background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
@@ -1815,6 +2151,7 @@ body {
   font-size: 14px; letter-spacing: 1px; font-weight: bold;
 }
 .shop-rarity-badge {
+  font-family: 'Silkscreen', 'Courier New', monospace;
   font-size: 10px; letter-spacing: 3px; padding: 3px 10px; border-radius: 3px;
   text-transform: uppercase; font-weight: bold; background: rgba(255,255,255,0.07);
 }
@@ -1844,14 +2181,16 @@ body {
 
 /* ── card mossa/oggetto/drug: testo più grande, sfrutta lo spazio del box ── */
 .shop-item-card .shop-card-name,
-.shop-drug-card .shop-card-name { font-size: 17px; }
-.shop-move-card .shop-card-name {
-  font-family: 'Silkscreen', 'Courier New', monospace;
-  font-size: 20px;
+.shop-drug-card .shop-card-name,
+.shop-move-card .shop-card-name { font-size: 17px; }
+.shop-move-power { font-size: 13px; opacity: 0.65; letter-spacing: 0; }
+.shop-move-name-clickable { cursor: pointer; }
+.shop-move-name-clickable:hover {
+  animation: loadout-token-blink 0.6s ease-in-out infinite;
 }
-.shop-move-card .shop-card-desc,
 .shop-item-card .shop-card-desc,
-.shop-drug-card .shop-card-desc { font-size: 19px; line-height: 1.4; }
+.shop-drug-card .shop-card-desc,
+.shop-move-card .shop-card-desc { font-size: 17px; line-height: 1.3; overflow: hidden; }
 
 /* ── token tipo mossa: spazio fisso, sempre nella stessa posizione ── */
 .shop-move-type-row { display: flex; flex-shrink: 0; }
@@ -1871,14 +2210,44 @@ body {
 .shop-card-bottom { display: flex; align-items: center; justify-content: flex-end; gap: 10px; flex-shrink: 0; }
 .shop-price { font-size: 12px; color: #fde68a; letter-spacing: 3px; }
 .shop-buy-btn {
-  font-size: 12px; letter-spacing: 3px; padding: 7px 20px;
-  background: #0a0a18; border: 1px solid #1e1e30; color: #9adbb0;
-  border-radius: 3px; cursor: pointer; transition: all 0.12s;
-  font-family: 'Courier New', monospace; text-transform: uppercase;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 11px; letter-spacing: 1px; padding: 6px 11px;
+  color: #9adbb0; text-transform: uppercase;
+  background: #0c0c1e; border: 1px solid #1a1a30;
+  border-radius: 3px; cursor: pointer;
+  position: relative; transform: translateY(0);
+  /* bassorilievo: inciso nel materiale */
+  text-shadow:
+    0 -1px 0 rgba(0,0,0,0.7),
+    0  1px 0 rgba(120,255,180,0.18);
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.05),
+    0 3px 0 rgba(0,60,25,0.7),
+    0 4px 8px rgba(0,0,0,0.45);
+  transition: transform 0.06s ease, box-shadow 0.06s ease, color 0.12s;
 }
-.shop-buy-btn:hover:not(:disabled) { background: #111120; border-color: rgba(22,163,74,0.4); color: #4ade80; }
-.shop-buy-btn:disabled { opacity: 0.35; cursor: not-allowed; color: #555580; }
-.shop-buy-btn.bought { opacity: 0.35; cursor: not-allowed; color: #555580; border-color: #1e1e30; }
+.shop-buy-btn:hover:not(:disabled) {
+  color: #4ade80;
+  text-shadow: 0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(74,222,128,0.25), 0 0 6px rgba(74,222,128,0.3);
+  box-shadow:
+    inset 0 2px 5px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(0,0,0,0.4),
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 3px 0 rgba(0,100,40,0.7),
+    0 4px 10px rgba(74,222,128,0.2);
+}
+/* sprofonda come tasto fisico premuto (uguale a CONTINUA) */
+.shop-buy-btn:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow:
+    inset 0 4px 10px rgba(0,0,0,0.7),
+    inset 0 2px 0 rgba(0,0,0,0.5),
+    0 1px 0 rgba(0,60,25,0.4);
+}
+.shop-buy-btn:disabled { opacity: 0.3; cursor: not-allowed; color: #444460; }
+.shop-buy-btn.bought   { opacity: 0.3; cursor: not-allowed; color: #444460; border-color: #151525; }
 .shop-empty { font-size: 12px; color: #555580; letter-spacing: 1px; padding: 6px 0; }
 
 /* sezioni con più card affiancate (OGGETTI / MOSSE) */
@@ -1891,6 +2260,96 @@ body {
 
 /* ── box ROT, tendenzialmente quadrato ── */
 .shop-rot-card { gap: 10px; }
+.shop-rot-card-clickable { cursor: pointer; }
+.shop-rot-card-clickable:hover {
+  animation: shop-rot-card-blink 0.6s ease-in-out infinite;
+}
+@keyframes shop-rot-card-blink {
+  0%, 100% { border-color: rgba(255,255,255,0.06); }
+  50% { border-color: #fde68a; }
+}
+.shop-rot-name-wrap, .shop-rot-name-wrap .rot-name-token {
+  width: 100%; height: 30px;
+}
+.shop-rot-name-wrap .rot-name-token { border-radius: 6px; }
+.shop-rot-name-wrap .rot-name-token:hover { animation: none; }
+/* token nome ROT nella gestione ROT: nessun hover */
+.rmcard-name-wrap .rot-name-token:hover { animation: none; cursor: default; }
+.shop-rot-sprite {
+  width: 100%; flex: 1; min-height: 0;
+  position: relative; overflow: hidden; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 55%);
+}
+.shop-rot-sprite.sprite-mode { background: none; background-image: none; }
+/* ── sprite a piena dimensione mantenendo le proporzioni originali (280x310) ──
+   occupa tutto lo spazio disponibile del box, il resto della riga inferiore
+   (token tipo + gold/ACQUISTA) resta fisso in .shop-card-bottom */
+.shop-rot-sprite-canvas { max-width: 100%; max-height: 100%; width: auto; height: auto; }
+.shop-rot-sprite-canvas.mirrored { transform: scaleX(-1); }
+/* ── riga inferiore fissa: token tipo a sx, gold + ACQUISTA a dx, come le altre sezioni ── */
+.shop-rot-card .shop-card-bottom { justify-content: space-between; }
+.shop-rot-card .shop-card-bottom .type-chip { position: static; margin-right: auto; opacity: 1; }
+
+/* ── finestra info centrata ROT del negozio ── */
+.shop-rot-info-header { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.shop-rot-info-name-wrap, .shop-rot-info-name-wrap .rot-name-token {
+  width: 220px; height: 44px;
+}
+.shop-rot-info-name-wrap .rot-name-token { border-radius: 8px; }
+/* ── nome ROT nella finestra acquisto: nessun lampeggio al passaggio del mouse ── */
+.shop-rot-info-name-wrap .rot-name-token:hover { animation: none; }
+.shop-rot-info-sprite {
+  width: 300px; height: 300px;
+  position: relative; overflow: hidden; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 55%);
+}
+.shop-rot-info-sprite.sprite-mode { background: none; background-image: none; }
+.shop-rot-info-sprite-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.shop-rot-info-sprite-canvas.mirrored { transform: scaleX(-1); }
+.shop-rot-info-badges { display: flex; align-items: center; gap: 8px; }
+/* ── token livello: ovale, dimensioni simili al token tipo, nessun margine superiore ── */
+#shop-move-info-box .shop-rot-info-badges .info-level {
+  margin-top: 0; font-size: 14px; padding: 5px 14px; border-radius: 999px;
+}
+/* ── riga badge tipo+livello affiancati orizzontalmente nel pannello info battaglia ── */
+.rot-info-badges { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rot-info-badges .info-level { margin-top: 0; font-size: 11px; padding: 3px 11px; border-radius: 999px; }
+/* ── mosse in griglia 2×2 compatta, solo nome visibile (come nella gestione ROT) ── */
+.shop-rot-info-moves {
+  display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr);
+  gap: 6px; height: 84px;
+}
+/* ── pulsante chiudi nella finestra dettaglio mossa secondaria ── */
+.shop-move-secondary-close {
+  position: absolute; top: 10px; right: 10px;
+  font-size: 15px; padding: 4px 10px; background: #0a0a18; border: 1px solid #1e1e30;
+  color: #c08080; border-radius: 4px; cursor: pointer; font-family: 'Courier New', monospace;
+}
+.shop-move-secondary-close:hover { background: #240f0f; border-color: #4a2020; color: #f87171; }
+/* ── spazio extra tra l'ultima mossa e il pulsante ACQUISTA ── */
+/* ── riga sprite con pulsante STATS ai lati ── */
+.shop-rot-info-sprite-row {
+  display: flex; align-items: center; width: 100%;
+}
+.shop-rot-stats-side {
+  flex: 1; display: flex; justify-content: center; align-items: center;
+}
+.shop-rot-stats-btn {
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-size: 9px; letter-spacing: 1.5px; text-transform: uppercase;
+  padding: 8px 12px; border-radius: 6px; cursor: pointer;
+  color: #a5f3fc; background: rgba(6,182,212,0.12);
+  border: 1.5px solid rgba(6,182,212,0.45);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.15), 0 1px 4px rgba(0,0,0,0.4);
+  transition: background 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.shop-rot-stats-btn:hover {
+  background: rgba(6,182,212,0.25); border-color: rgba(6,182,212,0.8); color: #e0f9ff;
+}
+.shop-rot-info-footer { display: flex; justify-content: flex-end; margin-top: 18px; }
 .shop-rot-name {
   font-family: 'Press Start 2P', 'Courier New', monospace;
   font-size: 16px; letter-spacing: 1px;
@@ -1914,8 +2373,8 @@ body {
   animation: shop-cat-icon-blink 0.6s ease-in-out infinite;
 }
 .shop-rot-move-name {
-  font-family: 'Silkscreen', 'Courier New', monospace;
-  font-weight: bold; font-size: 15px; letter-spacing: 1px;
+  font-family: 'Press Start 2P', 'Courier New', monospace;
+  font-weight: bold; font-size: 12px; letter-spacing: 1px;
 }
 .shop-rot-move-power {
   font-size: 11px; letter-spacing: 2px; color: #fde68a;
@@ -1934,13 +2393,7 @@ body {
 .shop-picker-btn:hover:not(:disabled) { background: #111120; border-color: rgba(212,168,48,0.4); color: #d4a830; }
 .shop-picker-btn:disabled { opacity: 0.35; cursor: not-allowed; }
 .shop-picker-cancel { color: #7a3a3a; }
-#shop-continue-btn {
-  align-self: center; padding: 14px 48px; background: #0a0a18; border: 1px solid #1e1e30;
-  color: #6a6a9a; font-family: 'Courier New', monospace;
-  font-size: 15px; letter-spacing: 5px; cursor: pointer; border-radius: 3px;
-  margin-top: 4px; transition: all 0.12s;
-}
-#shop-continue-btn:hover { background: #111120; border-color: #2a2a44; color: #d4a830; }
+#shop-continue-btn { align-self: center; font-size: 15px; letter-spacing: 5px; padding: 16px 48px; }
 
 /* ── GESTIONE ROT (modale: squadra + marsupio) ── */
 #rot-manager-overlay {
@@ -2016,6 +2469,71 @@ body {
   cursor: grab; flex: 0 0 calc((100% - 2 * 8px) / 3); min-height: 0; overflow: hidden;
 }
 .rot-manager-card.dragging { opacity: 0.35; }
+.rot-manager-card-empty {
+  border-style: dashed; border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.015); cursor: default;
+}
+#rot-manager-box.mode-items-default .rot-manager-card-empty {
+  flex: 0 0 calc((100% - 2 * 14px) / 3);
+}
+
+/* ── finestra GESTIONE ROT default ("negozio 1"): card grandi affiancate, sprite + nome + mosse verticali + loadout ── */
+#rot-manager-box.mode-items-default #rot-manager-roster {
+  flex-direction: row; gap: 14px;
+}
+/* dimensione fissa calcolata sul numero massimo di ROT (3): non cambia mai, anche con meno ROT in squadra */
+#rot-manager-box.mode-items-default .rot-manager-card.rmcard-v2 {
+  flex: 0 0 calc((100% - 2 * 14px) / 3); min-width: 0; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  padding: 16px;
+}
+.rmcard-sprite {
+  width: 100%; flex: 1; min-height: 0;
+  position: relative; overflow: hidden; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 55%);
+}
+.rmcard-sprite.sprite-mode { background: none; background-image: none; }
+.rmcard-sprite-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rmcard-sprite-canvas.mirrored { transform: scaleX(-1); }
+/* pulsante STATS sovrapposto allo sprite, angolo in alto a sinistra */
+.rmcard-stats-btn {
+  position: absolute; top: 6px; left: 6px; z-index: 10;
+  font-family: 'Silkscreen', 'Courier New', monospace; font-weight: bold;
+  font-size: 9px; letter-spacing: 1px; padding: 4px 8px;
+  color: #a5f3fc; text-transform: uppercase;
+  background: rgba(5,5,16,0.82); border: 1px solid rgba(125,211,252,0.35);
+  border-radius: 3px; cursor: pointer;
+  text-shadow: 0 0 6px rgba(125,211,252,0.5);
+  transition: background 0.1s, border-color 0.1s;
+}
+.rmcard-stats-btn:hover {
+  background: rgba(10,30,50,0.92); border-color: rgba(125,211,252,0.7);
+  color: #e0f9ff;
+}
+.rmcard-name-wrap { width: 100%; height: 44px; flex-shrink: 0; }
+.rmcard-name-token { width: 100%; height: 44px; border-radius: 10px; }
+/* griglia mosse 2x2 a posizione fissa: due mosse a sinistra, due a destra,
+   non si ridimensiona in base al numero di mosse del ROT */
+.rmcard-moves {
+  display: grid; grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(2, 1fr);
+  grid-auto-flow: column;
+  gap: 6px; width: 100%; height: 84px; flex-shrink: 0;
+}
+.rmcard-move-row {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: bold; color: #fde68a; letter-spacing: 0.5px;
+  background: rgba(0,0,0,0.25); border-radius: 3px; padding: 8px 12px;
+  border: 2px solid transparent; cursor: pointer; transition: border-color 0.12s;
+  overflow: hidden;
+}
+.rmcard-move-row:hover { animation: rm-move-blink 0.6s ease-in-out infinite; }
+.rmcard-move-name {
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-weight: normal; font-size: 11px; letter-spacing: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+#rot-manager-box.mode-items-default .rm-loadout { width: 100%; margin-top: 0; flex-shrink: 0; }
 .rm-row1 {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   flex-wrap: nowrap; flex-shrink: 0;
@@ -2060,22 +2578,20 @@ body {
   50%      { border-color: #fde68a; }
 }
 .rm-move-name {
-  font-weight: bold; color: #fde68a;
+  font-family: 'Monoton', 'Courier New', monospace;
+  font-weight: normal; color: #fde68a; font-size: 13px; letter-spacing: 1.5px;
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .rm-move-desc { display: none; }
-/* finestra assegnazione mossa: box più grandi, testo completo sempre visibile */
-#rot-manager-box.mode-moves .rm-moves { height: 150px; gap: 8px; }
-#rot-manager-box.mode-moves .rm-move-row { font-size: 16px; padding: 12px 16px; gap: 6px; }
-#rot-manager-box.mode-moves .rm-move-desc {
-  font-family: 'VT323', 'Courier New', monospace;
-  display: block; font-size: 16px; font-weight: normal; color: #b0b0d0;
-  letter-spacing: 0.5px; line-height: 1.3; white-space: normal; overflow: visible;
-}
 /* OGGETTI/DRUGS: ancorati in fondo al box, affiancati sulla stessa riga */
 .rm-loadout { margin-top: auto; display: flex; flex-direction: row; gap: 18px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
 .rm-loadout-row { display: flex; align-items: center; gap: 8px; font-size: 12px; }
 .rm-loadout-label { letter-spacing: 2px; color: #8888b0; flex-shrink: 0; }
+/* slot oggetto: lampeggia quando un oggetto trascinato vi passa sopra */
+.loadout-token-item.dragover {
+  animation: loadout-token-blink 0.4s ease-in-out infinite;
+  border-color: #fde68a;
+}
 /* 2 slot oggetti a posizione fissa */
 .loadout-token-empty {
   border-style: dashed; opacity: 0.4; min-width: 64px; justify-content: center;
@@ -2252,6 +2768,22 @@ body {
 #shop-move-info-secondary .type-table-title { font-size: 28px; }
 #shop-move-info-secondary .type-table-name,
 #shop-move-info-secondary .type-table-cell { font-size: 15px; min-height: 38px; }
+/* ── modalità grande: identica alla finestra info primaria (usata per dettaglio mossa da acquista ROT) ── */
+#shop-move-info-secondary.shop-move-secondary-large {
+  transform: translate(-50%, -50%);
+  width: 92vw; max-width: 720px; max-height: 86vh;
+  padding: 44px 48px; border-radius: 10px;
+  border-color: rgba(212,168,48,0.35);
+  background: rgba(10,10,18,0.98);
+  gap: 18px;
+}
+#shop-move-info-secondary.shop-move-secondary-large .info-title { font-size: 34px; letter-spacing: 3px; }
+#shop-move-info-secondary.shop-move-secondary-large .info-text { font-size: 24px; line-height: 1.6; }
+#shop-move-info-secondary.shop-move-secondary-large .info-section { font-size: 15px; letter-spacing: 4px; padding-top: 14px; }
+#shop-move-info-secondary.shop-move-secondary-large .info-badge { font-size: 16px; padding: 6px 16px; border-radius: 4px; }
+#shop-move-info-secondary.shop-move-secondary-large .info-stat-lbl { font-size: 17px; }
+#shop-move-info-secondary.shop-move-secondary-large .info-stat-val { font-size: 24px; }
+#shop-move-info-secondary.shop-move-secondary-large .info-stat-grid { gap: 12px 18px; }
 
 /* ── finestra secondaria sovraimpressa a sinistra (status/tipo hover dalla finestra info oggetto/drug) ── */
 #shop-move-info-secondary-left {
@@ -2277,8 +2809,22 @@ body {
 </head>
 <body ondblclick="onStageBackgroundClick(event)">
 
+<!-- ── Pulsante impostazioni audio, fisso su ogni schermata ── -->
+<div id="settings-btn" onclick="event.stopPropagation(); toggleSettingsPanel()" title="Impostazioni audio">⚙️</div>
+<div id="settings-panel" onclick="event.stopPropagation()">
+  <div class="settings-title">AUDIO</div>
+  <div class="settings-row">
+    <label for="music-volume-slider">Musica</label>
+    <input type="range" id="music-volume-slider" min="0" max="100" value="50" oninput="setMusicVolume(this.value/100)">
+  </div>
+  <div class="settings-row">
+    <label for="sfx-volume-slider">Effetti sonori</label>
+    <input type="range" id="sfx-volume-slider" min="0" max="100" value="50" oninput="setSfxVolume(this.value/100)">
+  </div>
+</div>
+
 <div id="header">
-  <h1>Milano Roguelife</h1>
+  <canvas id="header-logo" width="793" height="189"></canvas>
   <div id="hud-stats">
     <span id="hud-level">LIVELLO 1</span>
     <span id="hud-gold"><span id="hud-gold-text">$ GOLD 0</span></span>
@@ -2373,16 +2919,19 @@ body {
 </div>
 
 <div id="progress-overlay">
-  <div id="progress-box">
-    <div id="progress-main">
-      <div id="progress-title"></div>
-      <div id="progress-sub"></div>
-      <div id="progress-survivors"></div>
-      <div id="progress-gold"></div>
-      <button id="progress-continue-btn" onclick="continueRun()">CONTINUA</button>
-      <button id="progress-restart-btn" onclick="restartGame()">NUOVA RUN</button>
+  <div id="progress-title"></div>
+  <div id="progress-main">
+    <div id="progress-sub"></div>
+    <div id="progress-survivors"></div>
+    <div class="gold-boxes" id="progress-gold-boxes">
+      <div class="gold-box" id="progress-gold-battle"></div>
     </div>
-    <div id="levelup-panel"></div>
+    <button id="progress-continue-btn" class="btn-3d-continue" onclick="continueRun()">CONTINUA</button>
+    <button id="progress-restart-btn" onclick="restartGame()">NUOVA RUN</button>
+  </div>
+  <div id="levelup-panel">
+    <div class="levelup-title">LEVEL UP!</div>
+    <div class="levelup-slots" id="levelup-slots"></div>
   </div>
 </div>
 
@@ -2403,7 +2952,7 @@ body {
       <div class="shop-section" id="shop-section-drugs"></div>
       <div class="shop-section" id="shop-section-moves"></div>
     </div>
-    <button id="shop-continue-btn" onclick="shopContinue()">CONTINUA</button>
+    <button id="shop-continue-btn" class="btn-3d-continue" onclick="shopContinue()">CONTINUA</button>
   </div>
 </div>
 
@@ -2504,6 +3053,29 @@ const TYPE_COLORS = {
   VAPE:   { bg:'#164e63', text:'#a5f3fc' },
   BASED:  { bg:'#7c2d12', text:'#fed7aa' },
 };
+
+// ── Effetti delle mosse senza tipo che curano (testo verde) vs altre utility/buff/scudo (testo blu) ──
+const HEAL_MOVE_EFFECTS = ['heal', 'heal_single', 'team_regen'];
+
+// ── Bordo/outline scuro e spesso intorno al testo, per leggibilità massima su qualsiasi sfondo ──
+const MOVE_TEXT_OUTLINE = `
+  -1.5px -1.5px 0 #000, 0 -1.5px 0 #000, 1.5px -1.5px 0 #000,
+  -1.5px 0 0 #000, 1.5px 0 0 #000,
+  -1.5px 1.5px 0 #000, 0 1.5px 0 #000, 1.5px 1.5px 0 #000
+`.replace(/\s+/g, ' ').trim();
+
+// ── Stile del testo del nome mossa nei bottoni di battaglia ──
+function moveTextStyle(move) {
+  const isBaseAttack = move.name === BASE_ATCK.name && !move.type && move.cat === 'PHYSICAL';
+  if (isBaseAttack) return `--move-color:#111827; --move-glow:${MOVE_TEXT_OUTLINE};`;
+  let color;
+  if (move.type) {
+    color = (TYPE_COLORS[move.type] || {}).text || '#111827';
+  } else {
+    color = HEAL_MOVE_EFFECTS.includes(move.effect) ? '#4ade80' : '#60a5fa';
+  }
+  return `--move-color:${color}; --move-glow: ${MOVE_TEXT_OUTLINE}, 0 0 5px ${color}, 0 0 2px ${color};`;
+}
 
 // ── Colore di sfondo del token nome ROT, in base al tipo ──
 const NAME_TOKEN_COLORS = {
@@ -2611,9 +3183,9 @@ const ROT_DEFS = {
     uniqueMove:{ name:'CRIMSON MENTONE', type:'MOG', cat:'UTILITY', power:0, pp:10,
       effect:'stage', stages:[
         { stat:'def', delta:-1, team:'ALLY' }, { stat:'spDef', delta:-1, team:'ALLY' },
-        { stat:'atk', delta:2,  team:'ALLY' }, { stat:'spAtk', delta:2,  team:'ALLY' }
+        { stat:'atk', delta:3,  team:'ALLY' }, { stat:'spAtk', delta:3,  team:'ALLY' }
       ], target:'SELF',
-      desc:'Abassa di 1 stadio DEF e SP.DEF di tutta la squadra alleata e aumenta di 2 stadi ATK e SP.ATK di tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
+      desc:'Abassa di 1 stadio DEF e SP.DEF di tutta la squadra alleata e aumenta di 3 stadi ATK e SP.ATK di tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
     sprite: { src:'spritesheet/rot/idle/mob.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   LOGAN_FRAUD: {
@@ -2718,7 +3290,8 @@ const ITEM_DEFS = {
   },
   SCARPE_DA_GINNASTICA: {
     name: 'SCARPE DA GINNASTICA', short: 'SCARPE', rarity: 'comune',
-    desc: 'Il ROT attacca sempre per primo, una volta per battaglia.', color: RARITY_COLOR.comune,
+    desc: 'Il ROT attacca sempre per primo in assoluto, indipendentemente dalla velocità. Nella barra velocità appare sempre in prima posizione.',
+    color: RARITY_COLOR.comune,
   },
   CEROTTO: {
     name: 'CEROTTO', short: 'CEROTTO', rarity: 'comune',
@@ -2946,18 +3519,24 @@ const GENERIC_MOVE_DEFS = {
     effect:'stage', stages:[ { stat:'spAtk', delta:2, team:'SELF' } ], desc:'+2 stadi Attacco Speciale personale.' },
   MAKE_UP:           { name:'MAKE UP',           type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'comune', effect:'shield', shieldPct:0.25, desc:'Scudo pari al 25% degli HP massimi personali.' },
   URCA:              { name:'URCA',              type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'comune', effect:'guard_next', reduction:0.5, desc:'-50% danno dal prossimo attacco ricevuto.' },
-  SCHEDINA:          { name:'SCHEDINA',          type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'comune', desc:'Guadagni il 10% del gold posseduto.' },
-  LAMPIONE:          { name:'LAMPIONE',          type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune', desc:'Per 3 turni il team è immune a stun e ad abbassamenti delle statistiche.' },
-  TERME:             { name:'TERME',             type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY',     rarity:'comune', desc:'Elimina ogni malus da un ROT alleato selezionato.' },
+  SCHEDINA:          { name:'SCHEDINA',          type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'comune',
+    effect:'gold_pct', pct:0.10, desc:'Guadagni il 10% del gold posseduto.' },
+  LAMPIONE:          { name:'LAMPIONE',          type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune',
+    effect:'team_immunity', turns:3, desc:'Per 3 turni il team è immune a stun e ad abbassamenti delle statistiche.' },
+  TERME:             { name:'TERME',             type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY',     rarity:'comune',
+    effect:'cleanse_single', desc:'Elimina ogni malus da un ROT alleato selezionato.' },
   OFFRO_IO:          { name:'OFFRO IO',          type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune', effect:'heal', healPct:0.15 },
   APRI_LE_FINESTRE:  { name:'APRI LE FINESTRE',  type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune',
     effect:'reset_stages', desc:'Rimuove tutti gli status negativi (AVVELENATO, BRUCIATO, STRAFATTO, TASCHE BUCATE, BURNOUT, COLLASSO, FERITE) e i debuff di stadio da tutta la squadra alleata. Non rimuove i buff positivi.' },
 
   // ── RARE ──
+  SBERLATE:         { name:'SBERLATE',         type:null, cat:'PHYSICAL', power:50, pp:10, target:'ENEMY_ALL', rarity:'rara', desc:'Uno schiaffo distribuito simultaneamente a tutti i ROT nemici.' },
+  BORDELLO:         { name:'BORDELLO',         type:null, cat:'SPECIAL',  power:50, pp:10, target:'ENEMY_ALL', rarity:'rara', desc:'Un caos speciale totale che travolge tutti i ROT nemici contemporaneamente.' },
   ABBRACCIO:        { name:'ABBRACCIO',       type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'rara', effect:'shield', shieldPct:0.15, desc:'Scudo pari al 15% degli HP massimi a tutto il team.' },
   TOH:              { name:'TOH',             type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY',     rarity:'rara',
     effect:'copy_malus', desc:'Tutti i malus (status negativi e debuff di stadio) del ROT alleato selezionato vengono copiati su tutti i ROT nemici contemporaneamente.' },
-  CHINOTTO:         { name:'CHINOTTO',        type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY',     rarity:'rara', desc:'Un ROT alleato selezionato recupera il 50% degli HP massimi.' },
+  CHINOTTO:         { name:'CHINOTTO',        type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY',     rarity:'rara',
+    effect:'heal_single', healPct:0.50, desc:'Un ROT alleato selezionato recupera il 50% degli HP massimi.' },
   PROVACI:          { name:'PROVACI',         type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'rara',
     effect:'counter', vulnPct:0.15, returnPct:2.0,
     desc:'+15% danno subito dal prossimo attacco. Restituisce il 200% del danno subito all\'attaccante.' },
@@ -2966,14 +3545,16 @@ const GENERIC_MOVE_DEFS = {
   SHOTTINI:         { name:'SHOTTINI',        type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
     effect:'stage', stages:[ { stat:'atk', delta:1, team:'ALLY' }, { stat:'spAtk', delta:1, team:'ALLY' } ] },
   REDBULL:          { name:'REDBULL',         type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
-    effect:'stage', stages:[ { stat:'spd', delta:1, team:'ALLY' } ] },
+    effect:'stage', stages:[ { stat:'spd', delta:1, team:'ALLY' } ], desc:'+1 stadio Velocità a tutto il team.' },
 
   // ── ATOMICHE ──
   BESTEMMIA:        { name:'BESTEMMIA',       type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'atomica', effect:'immunity', nonConsecutive:true, desc:'Protezione completa da qualsiasi attacco per 1 turno. Non usabile consecutivamente.' },
   LANDLORDARE:      { name:'LANDLORDARE',     type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'atomica',
     effect:'team_regen', turns:5, healPct:0.10, desc:'Per 5 turni il team recupera il 10% degli HP massimi a fine turno.' },
-  CENTRO_SOCIALE:   { name:'CENTRO SOCIALE',  type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'atomica', desc:'Per 3 turni, ogni buff ricevuto viene copiato su un alleato casuale.' },
-  CORONAVIRUS:      { name:'CORONAVIRUS',     type:null, cat:'UTILITY', power:0, pp:10, target:'ENEMY_ALL',rarity:'atomica', desc:'Per 3 turni, ogni status negativo applicato a un nemico viene copiato su un altro nemico casuale.' },
+  CENTRO_SOCIALE:   { name:'CENTRO SOCIALE',  type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'atomica',
+    effect:'copy_buff', turns:3, desc:'Per 3 turni, ogni buff ricevuto viene copiato su un alleato casuale.' },
+  CORONAVIRUS:      { name:'CORONAVIRUS',     type:null, cat:'UTILITY', power:0, pp:10, target:'ENEMY_ALL',rarity:'atomica',
+    effect:'copy_status', turns:3, desc:'Per 3 turni, ogni status negativo applicato a un nemico viene copiato su un altro nemico casuale.' },
 };
 
 // Mosse di tipo (sbloccate ai livelli 10/50/100, acquistabili anche al negozio — 10%)
@@ -3001,7 +3582,8 @@ const TYPE_MOVE_DEFS = {
 
   // ── VAPE ──
   TOSSE_CRONICA:      { name:'TOSSE CRONICA',      type:'VAPE',   cat:'PHYSICAL', power:40, pp:10, target:'ENEMY' },
-  SVAPATA:            { name:'SVAPATA',            type:'VAPE',   cat:'SPECIAL',  power:40, pp:10, target:'ENEMY' },
+  SVAPATA:            { name:'SVAPATA',            type:'VAPE',   cat:'SPECIAL',  power:40, pp:10, target:'ENEMY',
+    desc:'Una boccata densa e aromatizzata sferrata dritta in faccia al bersaglio, infliggendo un colpo speciale di tipo VAPE.' },
   MISCELATORE:        { name:'MISCELATORE',        type:'VAPE',   cat:'UTILITY',  power:0,  pp:10, target:'SELF',
     effect:'guard_turn', reduction:0.5, counterStatus:'STRAFATTO', nonConsecutive:true,
     desc:'Nel turno di utilizzo il danno ricevuto è ridotto del 50% e applica STRAFATTO a chi attacca. Non usabile consecutivamente.' },
@@ -3024,8 +3606,10 @@ const TYPE_MOVE_DEFS = {
 
   // ── PSYCHO ──
   CORPORATE:          { name:'CORPORATE',          type:'PSYCHO', cat:'PHYSICAL', power:30, pp:10, target:'ENEMY',
+    rampDamage:10,
     desc:'30 danni, +10 per ogni uso consecutivo. Si resetta cambiando mossa.' },
   HR:                 { name:'HR',                 type:'PSYCHO', cat:'SPECIAL',  power:30, pp:10, target:'ENEMY',
+    rampDamage:10,
     desc:'30 danni, +10 per ogni uso consecutivo. Si resetta cambiando mossa.' },
   DOGE:               { name:'DOGE',               type:'PSYCHO', cat:'UTILITY',  power:0,  pp:10, target:'SELF',
     effect:'guard_turn', reduction:0.5, counterStatus:'BRUCIATO', nonConsecutive:true,
@@ -3039,6 +3623,7 @@ const TYPE_MOVE_DEFS = {
     multiHit:{ maxHits:4, statKey:'spAtk' },
     desc:'Colpisce da 1 a 4 volte (probabilità dei colpi aggiuntivi proporzionale allo SP.ATK).' },
   SALSA_BASE:         { name:'SALSA BASE',         type:'BASED',  cat:'UTILITY',  power:0,  pp:10, target:'SELF',
+    effect:'salsa_base', turns:3, chance:0.10, nonConsecutive:true,
     desc:'Per 3 turni ogni colpo ha il 10% di probabilità di stunnare il bersaglio. Non usabile consecutivamente.' },
 };
 
@@ -3073,6 +3658,11 @@ function mkRot(def, level, isPlayer) {
     counterNext: null,
     critChanceOverride: null,
     landlordareTurns: 0,
+    lampioneTurns: 0,
+    centroSocialeTurns: 0,
+    coronavirusTurns: 0,
+    salsaBaseTurns: 0,
+    comboCount: 0,
     drugs: [],
     items: [null, null],
     moves: [
@@ -3099,8 +3689,10 @@ function effStat(rot, s) {
   return Math.max(1, Math.floor(rot.stats[s] * STAGE_MULT[stage]));
 }
 
+// SCARPE DA GINNASTICA: il ROT va sempre per primo (velocità effettiva = +∞ per il sort)
 // ZOCCOLI DI LEGNO: il ROT va sempre per ultimo (velocità effettiva = -∞ per il sort)
 function spdForSort(rot) {
+  if (rot.items.includes('SCARPE_DA_GINNASTICA')) return Infinity;
   if (rot.items.includes('ZOCCOLI_DI_LEGNO')) return -Infinity;
   return effStat(rot, 'spd');
 }
@@ -3151,8 +3743,28 @@ function takeDmg(rot, amount) {
     amount -= rot.shield;
     rot.shield = 0;
   }
+  if (amount > 0) playSfx('damage');
   rot.curHp = Math.max(0, rot.curHp - amount);
-  if (rot.curHp === 0) rot.isAlive = false;
+  if (rot.curHp === 0 && rot.isAlive) {
+    // ── FENICE: resurrezione una tantum al 50% HP, consuma l'oggetto ──
+    const feniceIdx = rot.isPlayer ? rot.items.indexOf('FENICE') : -1;
+    if (feniceIdx !== -1) {
+      rot.items[feniceIdx] = null;
+      rot.curHp = Math.ceil(rot.maxHp * 0.5);
+    } else {
+      rot.isAlive = false;
+      // ── morte definitiva: gli oggetti dell'alleato passano nel primo slot libero del marsupio ──
+      if (rot.isPlayer) {
+        for (let i = 0; i < rot.items.length; i++) {
+          const key = rot.items[i];
+          if (!key) continue;
+          const emptySlot = runState.marsupio.findIndex(s => s === null);
+          if (emptySlot !== -1) runState.marsupio[emptySlot] = key;
+          rot.items[i] = null;
+        }
+      }
+    }
+  }
 }
 
 // ── WELFARE GRATUITO: +50% efficacia di cure/scudi applicati dal o al possessore ──
@@ -3170,6 +3782,7 @@ function applyHealAmount(rot, amount, source, skipReplicate) {
   const before = rot.curHp;
   rot.curHp = Math.min(rot.maxHp, rot.curHp + finalAmt);
   const healed = rot.curHp - before;
+  if (healed > 0) playSfx('heal');
   if (!skipReplicate && finalAmt > 0 && rot.items.includes('COLBACCO')) {
     const team = rot.isPlayer ? B.player : B.enemy;
     for (const ally of team.filter(r => r.isAlive && r !== rot)) {
@@ -3187,6 +3800,7 @@ function applyShieldAmount(rot, amount, source, skipReplicate) {
   if (!rot.isAlive) return 0;
   const finalAmt = Math.floor(amount * welfareMult(rot, source));
   rot.shield += finalAmt;
+  if (finalAmt > 0) playSfx('buff');
   if (!skipReplicate && finalAmt > 0 && rot.items.includes('COLBACCO')) {
     const team = rot.isPlayer ? B.player : B.enemy;
     for (const ally of team.filter(r => r.isAlive && r !== rot)) {
@@ -3223,6 +3837,7 @@ function addStatus(rot, type) {
   }
   if (type === 'COLLASSO') {
     if (ex) return false;
+    if (rot.lampioneTurns > 0) return false;
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'TASCHE BUCATE') {
@@ -3296,6 +3911,7 @@ function endTurnStatuses(rot) {
         }
       } else {
         runState.gold += 5;
+        recordGoldGain('TASCHE BUCATE (nemico)', 5);
         updateHud();
         showGoldFloat(5);
         logs.push({ parts:[
@@ -3321,6 +3937,11 @@ function endTurnStatuses(rot) {
     }
     rot.landlordareTurns--;
   }
+  // ── LAMPIONE / CENTRO SOCIALE / CORONAVIRUS / SALSA BASE: decremento contatori a turni ──
+  if (rot.lampioneTurns > 0) rot.lampioneTurns--;
+  if (rot.centroSocialeTurns > 0) rot.centroSocialeTurns--;
+  if (rot.coronavirusTurns > 0) rot.coronavirusTurns--;
+  if (rot.salsaBaseTurns > 0) rot.salsaBaseTurns--;
   // ── AVANZI: il ROT recupera il 10% degli HP massimi a fine turno ──
   if (rot.items.includes('AVANZI')) {
     const heal = applyHealPct(rot, 0.10, rot);
@@ -3338,6 +3959,7 @@ function endTurnStatuses(rot) {
   // ── PIGGYBANK: a fine turno il giocatore guadagna 5 gold ──
   if (rot.items.includes('PIGGYBANK') && runState) {
     runState.gold += 5;
+    recordGoldGain('PIGGYBANK', 5);
     updateHud();
     showGoldFloat(5);
     logs.push({ parts:[
@@ -3424,6 +4046,10 @@ document.addEventListener('click', e => {
     console.log('[doc click] click fuori dal pannello informativo -> chiudo', e.target);
     closeInfo();
   }
+  const logOverlay = document.getElementById('battle-log-overlay');
+  if (logOverlay && logOverlay.classList.contains('open') && !logOverlay.contains(e.target)) {
+    closeBattleLogOverlay();
+  }
   closeSecondaryInfoBattle();
   closeSecondaryInfoStarter();
 });
@@ -3443,9 +4069,8 @@ function closeSecondaryInfoBattle() {
 }
 
 // ── SISTEMA 1: pannello laterale secondario della schermata starter ──
-// Centrato verticalmente, posizionato a sinistra di #starter-info-panel.
+// Posizionato a sinistra di #starter-info-panel e ancorato nella metà bassa dello schermo.
 function openSecondaryInfoStarter(html) {
-  console.log('[openSecondaryInfoStarter] apertura pannello secondario starter');
   const panel = document.getElementById('info-panel-secondary-starter');
   document.getElementById('info-content-secondary-starter').innerHTML = html;
   const sip = document.getElementById('starter-info-panel');
@@ -3453,6 +4078,12 @@ function openSecondaryInfoStarter(html) {
   const gap = 10;
   const panelWidth = 260;
   panel.style.left = `${Math.max(gap, rect.left - gap - panelWidth)}px`;
+  // ancora il bordo inferiore al bordo inferiore della finestra info starter (bottom-aligned)
+  const maxH = Math.min(panel.offsetHeight || 380, window.innerHeight * 0.55);
+  const idealBottom = Math.min(window.innerHeight - gap, rect.bottom + gap);
+  const idealTop = Math.max(gap, idealBottom - maxH);
+  panel.style.top = `${idealTop}px`;
+  panel.style.transform = 'none';
   panel.classList.add('open');
 }
 function closeSecondaryInfoStarter() {
@@ -3495,7 +4126,7 @@ function showRotInfo(rotDef) {
   const um   = rotDef.uniqueMove;
   const umTc = TYPE_COLORS[um.type] || { bg:'#333', text:'#aaa' };
   openInfo(`
-    <div class="info-title" style="color:${tc.text}">${rotDef.name}</div>
+    <div class="info-title" style="color:${tc.text}">${infoTitleHtml(rotDef.name)}</div>
     <span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="showTypeInfo('${rotDef.type}')" onmouseleave="closeSecondaryInfo()">${rotDef.type}</span>
     <div class="info-section">STAT BASE</div>
     <div class="info-stat-grid">
@@ -3530,9 +4161,11 @@ function showRotBattleInfo(rot) {
     : '<span class="loadout-token loadout-token-drug loadout-token-empty"><span class="drug-icon-empty"></span></span>';
 
   openInfo(`
-    <div class="info-title" style="color:${tc.text}">${rot.def.name}</div>
-    <span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="showTypeInfo('${rot.def.type}')" onmouseleave="closeSecondaryInfo()">${rot.def.type}</span>
-    <div class="info-level">LIV <span class="info-level-num">${rot.level}</span></div>
+    <div class="info-title" style="color:${tc.text}">${infoTitleHtml(rot.def.name)}</div>
+    <div class="rot-info-badges">
+      <span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="showTypeInfo('${rot.def.type}')" onmouseleave="closeSecondaryInfo()">${rot.def.type}</span>
+      <div class="info-level">LIV <span class="info-level-num">${rot.level}</span></div>
+    </div>
     <div class="info-stat-grid">
       <div class="info-stat"><span class="info-stat-lbl">HP</span><span class="info-stat-val">${rot.curHp}/${rot.maxHp}</span></div>
       <div class="info-stat"><span class="info-stat-lbl">ATK</span><span class="info-stat-val">${effStat(rot,'atk')}</span></div>
@@ -3557,7 +4190,7 @@ function moveEffectDesc(move, statusLinkFn) {
     : move.effect === 'stage'   ? 'Modifica le stat della squadra.'
     : move.status               ? `${move.status.chance * 100}% di probabilità di infliggere ${move.status.type === 'RANDOM' ? 'uno status casuale' : statusLinkFn(move.status.type)} al bersaglio.${move.recoil ? ` Il lanciatore subisce un recoil pari al ${move.recoil}% del danno inflitto.` : ''}`
     : move.recoil               ? `Attacco potente. Il lanciatore subisce un recoil pari al ${move.recoil}% del danno inflitto.`
-    : 'Nessun effetto secondario.';
+    : '';
 }
 
 function showMoveInfo(move) {
@@ -3568,7 +4201,7 @@ function showMoveInfo(move) {
     ? `<span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="showTypeInfo('${move.type}')" onmouseleave="closeSecondaryInfo()">${move.type}</span>`
     : `<span class="info-badge" style="background:${tc.bg};color:${tc.text}">NEUTRO</span>`;
   const catBadge = catInfo
-    ? `<span class="info-badge info-badge-clickable" style="background:rgba(255,255,255,0.07);color:#ccc" title="${catInfo.label}" onmouseenter="showCategoryInfo('${move.cat}')" onmouseleave="closeSecondaryInfo()">${catInfo.icon} ${catInfo.label}</span>`
+    ? `<span class="info-badge info-badge-clickable" style="background:rgba(255,255,255,0.07);color:#ccc" title="${catInfo.label}" onmouseenter="showCategoryInfo('${move.cat}')" onmouseleave="closeSecondaryInfo()">${catInfo.label}</span>`
     : `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${move.cat}</span>`;
   openInfo(`
     <div class="info-title info-title-move" style="color:${tc.text}">${move.name}</div>
@@ -3599,7 +4232,13 @@ function openShopMoveInfoSecondary(html) {
   document.getElementById('shop-move-info-secondary').classList.add('open');
 }
 function closeShopMoveInfoSecondary() {
-  document.getElementById('shop-move-info-secondary').classList.remove('open');
+  const el = document.getElementById('shop-move-info-secondary');
+  el.classList.remove('open');
+  el.classList.remove('shop-move-secondary-large');
+  el.style.pointerEvents = '';
+  el.style.top = '';
+  el.style.left = '';
+  el.style.transform = '';
 }
 function openShopMoveInfoSecondaryLeft(html) {
   if (!html) return;
@@ -3637,6 +4276,11 @@ function statusLinkShopMoveInfo(statusType) {
   const color = STATUS_COLORS[statusType] || '#fff';
   return `<span class="status-link" style="color:${color}" onmouseenter="openShopMoveInfoSecondary(statusInfoHtml('${statusType}'))" onmouseleave="closeShopMoveInfoSecondary()">${statusType}</span>`;
 }
+// Versione che apre nel pannello SINISTRO — usata quando il pannello destro è già occupato dalla finestra info mossa grande
+function statusLinkShopMoveInfoLeft(statusType) {
+  const color = STATUS_COLORS[statusType] || '#fff';
+  return `<span class="status-link" style="color:${color}" onmouseenter="openShopMoveInfoSecondaryLeft(statusInfoHtml('${statusType}'))" onmouseleave="closeShopMoveInfoSecondaryLeft()">${statusType}</span>`;
+}
 // Click su un box mossa nelle finestre del negozio: apre la finestra info centrata
 function showMoveInfoShop(event, uid, idx) {
   if (event) event.stopPropagation();
@@ -3648,10 +4292,10 @@ function showMoveInfoShop(event, uid, idx) {
   const ppTxt = move.curPp === Infinity ? '∞' : `${move.curPp}/${move.pp}`;
   const catInfo = CATEGORY_INFO[move.cat];
   const typeBadge = move.type
-    ? `<span class="info-badge" style="background:${tc.bg};color:${tc.text}">${move.type}</span>`
+    ? `<span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="openShopMoveInfoSecondary(typeTableHtml('${move.type}'))" onmouseleave="closeShopMoveInfoSecondary()">${move.type}</span>`
     : `<span class="info-badge" style="background:${tc.bg};color:${tc.text}">NEUTRO</span>`;
   const catBadge = catInfo
-    ? `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${catInfo.icon} ${catInfo.label}</span>`
+    ? `<span class="info-badge info-badge-clickable" style="background:rgba(255,255,255,0.07);color:#ccc" onmouseenter="openShopMoveInfoSecondary(categoryInfoHtml('${move.cat}'))" onmouseleave="closeShopMoveInfoSecondary()">${catInfo.label}</span>`
     : `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${move.cat}</span>`;
   openShopMoveInfo(`
     <div class="info-title info-title-move" style="color:${tc.text}">${move.name}</div>
@@ -3664,6 +4308,162 @@ function showMoveInfoShop(event, uid, idx) {
     <div class="info-section">EFFETTO</div>
     <div class="info-text">${moveEffectDesc(move, statusLinkShopMoveInfo)}</div>
   `);
+}
+
+// Click sul nome di una mossa in vendita nel negozio (non ancora posseduta): apre la finestra info centrata
+function showShopMoveOfferInfo(event, idx) {
+  if (event) event.stopPropagation();
+  const offer = shopState.moves[idx];
+  if (!offer) return;
+  const def = shopMoveDef(offer);
+  const tc = def.type ? (TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const catInfo = CATEGORY_INFO[def.cat];
+  const typeBadge = def.type
+    ? `<span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="openShopMoveInfoSecondary(typeTableHtml('${def.type}'))" onmouseleave="closeShopMoveInfoSecondary()">${def.type}</span>`
+    : `<span class="info-badge" style="background:${tc.bg};color:${tc.text}">NEUTRO</span>`;
+  const catBadge = catInfo
+    ? `<span class="info-badge info-badge-clickable" style="background:rgba(255,255,255,0.07);color:#ccc" onmouseenter="openShopMoveInfoSecondary(categoryInfoHtml('${def.cat}'))" onmouseleave="closeShopMoveInfoSecondary()">${catInfo.label}</span>`
+    : `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${def.cat}</span>`;
+  openShopMoveInfo(`
+    <div class="info-title info-title-move" style="color:${tc.text}">${def.name}</div>
+    ${typeBadge}
+    ${catBadge}
+    <div class="info-stat-grid info-stat-grid-move">
+      <div class="info-stat"><span class="info-stat-lbl">POT</span><span class="info-stat-val">${def.power}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">PP</span><span class="info-stat-val">${def.pp}</span></div>
+    </div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${moveEffectDesc(def, statusLinkShopMoveInfo)}</div>
+  `);
+}
+
+// Mosse del ROT in vendita: memorizzate per l'accesso dal click sulla griglia compatta
+let SHOP_ROT_INFO_MOVES = [];
+
+// Dettaglio mossa dal pannello acquisto ROT: apre finestra secondaria cliccabile con descrizione completa
+function showRmRotStats(event, uid) {
+  if (event) event.stopPropagation();
+  const r = runState.roster.find(rot => rot.uid === uid);
+  if (!r) return;
+  const s = {
+    HP:      r.maxHp,
+    ATK:     r.stats.atk,
+    'SP.ATK':r.stats.spAtk,
+    DEF:     r.stats.def,
+    'SP.DEF':r.stats.spDef,
+    SPD:     r.stats.spd,
+  };
+  const rows = Object.entries(s).map(([lbl, val]) =>
+    `<div class="info-stat"><span class="info-stat-lbl">${lbl}</span><span class="info-stat-val">${val}</span></div>`
+  ).join('');
+  const panel = document.getElementById('shop-move-info-secondary');
+  panel.classList.add('shop-move-secondary-large');
+  openShopMoveInfoSecondary(`
+    <button class="shop-move-secondary-close" onclick="closeShopMoveInfoSecondary()">×</button>
+    <div class="info-title" style="letter-spacing:2px;color:#a5f3fc">STATISTICHE</div>
+    <div class="info-stat-grid">${rows}</div>
+  `);
+  panel.style.pointerEvents = 'auto';
+}
+
+function showShopRotStats(event) {
+  if (event) event.stopPropagation();
+  const def = ROT_DEFS[shopState.rot.key];
+  const lv  = runState.level;
+  const s = {
+    HP:      def.base.hp    + lv,
+    ATK:     def.base.atk   + lv,
+    'SP.ATK':def.base.spAtk + lv,
+    DEF:     def.base.def   + lv,
+    'SP.DEF':def.base.spDef + lv,
+    SPD:     def.base.spd   + lv,
+  };
+  const rows = Object.entries(s).map(([lbl, val]) =>
+    `<div class="info-stat"><span class="info-stat-lbl">${lbl}</span><span class="info-stat-val">${val}</span></div>`
+  ).join('');
+  const panel = document.getElementById('shop-move-info-secondary');
+  panel.classList.add('shop-move-secondary-large');
+  openShopMoveInfoSecondary(`
+    <button class="shop-move-secondary-close" onclick="closeShopMoveInfoSecondary()">×</button>
+    <div class="info-title" style="letter-spacing:2px;color:#a5f3fc">STATISTICHE</div>
+    <div class="info-stat-grid">${rows}</div>
+  `);
+  panel.style.pointerEvents = 'auto';
+}
+
+function showShopRotMoveDetail(event, idx) {
+  if (event) event.stopPropagation();
+  const m = SHOP_ROT_INFO_MOVES[idx];
+  if (!m) return;
+  const tc = m.type ? (TYPE_COLORS[m.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const ppTxt = m.pp === Infinity ? '∞' : `${m.pp}`;
+  const catInfo = CATEGORY_INFO[m.cat];
+  // In questa finestra il pannello secondario È la finestra stessa (large), quindi type/status usano il pannello sinistro
+  const typeBadge = m.type
+    ? `<span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onmouseenter="openShopMoveInfoSecondaryLeft(typeTableHtml('${m.type}'))" onmouseleave="closeShopMoveInfoSecondaryLeft()">${m.type}</span>`
+    : `<span class="info-badge" style="background:${tc.bg};color:${tc.text}">NEUTRO</span>`;
+  const catBadge = catInfo
+    ? `<span class="info-badge info-badge-clickable" style="background:rgba(255,255,255,0.07);color:#ccc" onmouseenter="openShopMoveInfoSecondaryLeft(categoryInfoHtml('${m.cat}'))" onmouseleave="closeShopMoveInfoSecondaryLeft()">${catInfo.label}</span>`
+    : `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${m.cat}</span>`;
+  const panel = document.getElementById('shop-move-info-secondary');
+  panel.classList.add('shop-move-secondary-large');
+  openShopMoveInfoSecondary(`
+    <button class="shop-move-secondary-close" onclick="closeShopMoveInfoSecondary()">×</button>
+    <div class="info-title info-title-move" style="color:${tc.text}">${m.name}</div>
+    ${typeBadge}
+    ${catBadge}
+    <div class="info-stat-grid info-stat-grid-move">
+      <div class="info-stat"><span class="info-stat-lbl">POT</span><span class="info-stat-val">${m.power}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">PP</span><span class="info-stat-val">${ppTxt}</span></div>
+    </div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${moveEffectDesc(m, statusLinkShopMoveInfoLeft)}</div>
+  `);
+  panel.style.pointerEvents = 'auto';
+}
+
+// Click sul box ROT in vendita nel negozio: apre la finestra info centrata con sprite, tipo, livello e mosse
+function showShopRotInfo() {
+  const def = ROT_DEFS[shopState.rot.key];
+  const um = def.uniqueMove;
+  const tc = TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' };
+  const bought = shopState.bought.rot;
+  const buyLabel = bought ? 'ACQUISTATO' : `ACQUISTA — ${shopState.rot.price} GOLD`;
+  const buyDisabled = bought || runState.gold < shopState.rot.price;
+  SHOP_ROT_INFO_MOVES = [BASE_ATCK, um];
+  const movesHtml = SHOP_ROT_INFO_MOVES.map((m, i) => {
+    const mtc = m.type ? (TYPE_COLORS[m.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+    return `<div class="rm-move-row" onclick="showShopRotMoveDetail(event,${i})"><span class="rm-move-name" style="color:${mtc.text}">${m.name}</span></div>`;
+  }).join('');
+  openShopMoveInfo(`
+    <div class="shop-rot-info-header">
+      <div class="rot-name-wrap shop-rot-info-name-wrap">
+        <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name, 1.6)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${tokenDisplayHtml(def.name)}</div>
+      </div>
+      <div class="shop-rot-info-sprite-row">
+        <div class="shop-rot-stats-side"></div>
+        <div class="shop-rot-info-sprite ${def.sprite ? 'sprite-mode' : ''}" style="${def.sprite ? '' : `background:${tc.bg}`}">
+          ${def.sprite ? `<canvas class="shop-rot-info-sprite-canvas${def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
+        </div>
+        <div class="shop-rot-stats-side">
+          <button class="shop-rot-stats-btn" onclick="showShopRotStats(event)">STATS</button>
+        </div>
+      </div>
+      <div class="shop-rot-info-badges">
+        <span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text}" onclick="showTypeInfoCentered(event,'${def.type}')">${def.type}</span>
+        <div class="info-level">LIV <span class="info-level-num">${runState.level}</span></div>
+      </div>
+    </div>
+    <div class="info-section">MOSSE</div>
+    <div class="shop-rot-info-moves">${movesHtml}</div>
+    <div class="shop-rot-info-footer">
+      <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="buyRot(); closeShopMoveInfo();" ${buyDisabled ? 'disabled' : ''} title="Aggiungi questo ROT alla tua squadra.">${buyLabel}</button>
+    </div>
+  `);
+  if (def.sprite) {
+    const canvas = document.getElementById('shop-move-info-content').querySelector('.shop-rot-info-sprite-canvas');
+    initRotSpriteCanvas(canvas, def.sprite);
+  }
 }
 
 // ── Pannello secondario del negozio: layer indipendente, z-index altissimo ──
@@ -3927,6 +4727,7 @@ function showDrugInfo(drugKey) {
 function initBattle() {
   applyBattleBackground();
   turnNum = 1;
+  document.getElementById('turn-info').textContent = `TURNO ${turnNum}`;
   const lvl = 5;
   B = {
     player: [ mkRot(ROT_DEFS.MIKEY, lvl, true), mkRot(ROT_DEFS.BRASATO, lvl, true), mkRot(ROT_DEFS.POKE_MON, lvl, true) ],
@@ -3936,6 +4737,7 @@ function initBattle() {
     selMove: null,         // mossa selezionata
     assigned: {},          // uid → { move, targets }
     actedUids: new Set(),  // ROT che hanno già agito questo turno
+    goldLog: [],           // gold guadagnato durante la battaglia, per fonte
   };
   // Demo items/drugs
   B.player.find(r => r.def === ROT_DEFS.BRASATO).items[0] = 'ZOCCOLI_DI_LEGNO';
@@ -3967,15 +4769,48 @@ function calibrateTokenWidth() {
 // PLANNING PHASE — nuovo flusso manuale
 // ═══════════════════════════════════════════════════
 
+// Stack di cronologia per INDIETRO: ogni elemento è uno snapshot dello stato di planning
+// Prima di ogni azione in avanti si fa push; goBack() fa pop e ripristina.
+let B_HISTORY = [];
+
+function snapPlanningState() {
+  return {
+    phase:      B.phase,
+    currentUid: B.current?.uid ?? null,
+    selMove:    B.selMove,
+    // copia profonda di assigned (move è un riferimento immutabile, targets è un array)
+    assigned: Object.fromEntries(
+      Object.entries(B.assigned).map(([uid, v]) => [uid, { move: v.move, targets: [...v.targets] }])
+    ),
+    // azioni dei ROT giocatore (per ripristinare .action su ogni rot)
+    playerActions: B.player.map(r => ({ uid: r.uid, action: r.action ? { move: r.action.move, targets: [...r.action.targets] } : null })),
+  };
+}
+
+function pushPlanningHistory() {
+  B_HISTORY.push(snapPlanningState());
+}
+
+function restorePlanningState(snap) {
+  B.phase    = snap.phase;
+  B.current  = snap.currentUid ? B.player.find(r => r.uid === snap.currentUid) ?? null : null;
+  B.selMove  = snap.selMove;
+  B.assigned = snap.assigned;
+  snap.playerActions.forEach(({ uid, action }) => {
+    const r = B.player.find(r => r.uid === uid);
+    if (r) r.action = action;
+  });
+}
+
 function startPlanningPhase() {
-  // Reset assegnazioni per il nuovo turno
   B.player.forEach(r => r.action = null);
   B.enemy.forEach(r => r.action = null);
   B.assigned = {};
-  B.current = null;
-  B.selMove = null;
+  B.current  = null;
+  B.selMove  = null;
   B.actedUids = new Set();
-  B.phase = 'ROT_SELECT';
+  B.phase    = 'ROT_SELECT';
+  B_HISTORY  = [];
   render();
 }
 
@@ -3983,15 +4818,17 @@ function startPlanningPhase() {
 function onPlayerRotClick(rot) {
   if (B.phase !== 'ROT_SELECT') return;
   if (!rot.isAlive) return;
+  pushPlanningHistory();
   B.current = rot;
   B.selMove = null;
-  B.phase = 'MOVE_SELECT';
+  B.phase   = 'MOVE_SELECT';
   render();
 }
 
 // Step 2 → 3: giocatore clicca una mossa
 function onMoveClick(move) {
   if (B.phase !== 'MOVE_SELECT' || !B.current) return;
+  pushPlanningHistory();          // snapshot PRIMA di cambiare stato
   B.selMove = move;
   if (move.target === 'ALLY_ALL') {
     autoAssignTarget(B.player.filter(r => r.isAlive));
@@ -4006,6 +4843,7 @@ function onMoveClick(move) {
 }
 
 function autoAssignTarget(targets) {
+  // NON fa push: onMoveClick ha già fatto lo snapshot
   closeInfo();
   B.assigned[B.current.uid] = { move: B.selMove, targets };
   B.current.action = { move: B.selMove, targets };
@@ -4019,52 +4857,29 @@ function autoAssignTarget(targets) {
 // Step 3 → avanti: giocatore clicca il bersaglio
 function onTargetClick(targetRot) {
   if (B.phase !== 'TARGET_SELECT') return;
+  pushPlanningHistory();          // snapshot PRIMA di assegnare il bersaglio
   closeInfo();
-  // Assegna azione al ROT corrente
   B.assigned[B.current.uid] = { move: B.selMove, targets: [targetRot] };
   B.current.action = { move: B.selMove, targets: [targetRot] };
   B.current = null;
   B.selMove = null;
-  // Tutti i ROT vivi assegnati?
   const unassigned = B.player.filter(r => r.isAlive && !B.assigned[r.uid]);
   B.phase = unassigned.length === 0 ? 'READY' : 'ROT_SELECT';
   render();
 }
 
-// Pulsante INDIETRO
+// INDIETRO — ripristina esattamente lo step precedente nella sequenza
 function canGoBack() {
-  if (B.phase === 'MOVE_SELECT' || B.phase === 'TARGET_SELECT' || B.phase === 'READY') return true;
-  if (B.phase === 'ROT_SELECT') return B.player.some(r => r.isAlive && B.assigned[r.uid]);
-  return false;
+  return B_HISTORY.length > 0;
 }
 
 function goBack() {
-  if (B.phase === 'TARGET_SELECT') {
-    // Torna a selezione mossa per il ROT corrente
-    B.selMove = null;
-    B.phase = 'MOVE_SELECT';
-  } else if (B.phase === 'MOVE_SELECT') {
-    // Deseleziona ROT, torna a SCEGLI ROT
-    B.current = null;
-    B.phase = 'ROT_SELECT';
-  } else if (B.phase === 'READY' || B.phase === 'ROT_SELECT') {
-    // Annulla l'ultima assegnazione, torna a selezione mossa per quell'ROT
-    const assignedRots = B.player.filter(r => r.isAlive && B.assigned[r.uid]);
-    if (assignedRots.length > 0) {
-      const last = assignedRots[assignedRots.length - 1];
-      delete B.assigned[last.uid];
-      last.action = null;
-      B.current = last;
-      B.selMove = null;
-      B.phase = 'MOVE_SELECT';
-    } else {
-      B.phase = 'ROT_SELECT';
-    }
-  }
+  if (B_HISTORY.length === 0) return;
+  restorePlanningState(B_HISTORY.pop());
   render();
 }
 
-// Click su area non interattiva dello schermo: annulla l'azione corrente / torna a cascata allo step precedente
+// Doppio click su area non interattiva dello schermo → un solo step indietro
 function onStageBackgroundClick(event) {
   if (!B || B.phase === 'EXEC' || B.phase === 'END') return;
   const interactive = '.rot-card, button, .sbadge, #info-panel, #info-panel-secondary, ' +
@@ -4081,7 +4896,13 @@ function planAI() {
   const players  = B.player.filter(r => r.isAlive);
   const enemies  = B.enemy.filter(r => r.isAlive);
   for (const e of enemies) {
-    const avail = e.moves.filter(m => m.curPp === Infinity || m.curPp > 0);
+    const burnout = e.statuses.find(s => s.type === 'BURNOUT');
+    let avail = e.moves.filter(m => m.curPp === Infinity || m.curPp > 0);
+    // ── BURNOUT: l'IA non può ripetere la mossa usata al turno precedente ──
+    if (burnout && avail.length > 1) {
+      const unlocked = avail.filter(m => m.name !== e.lastMove?.name);
+      if (unlocked.length > 0) avail = unlocked;
+    }
     const move  = avail[Math.floor(Math.random() * avail.length)];
     let targets;
     if (move.target === 'ALLY_ALL')  targets = enemies.slice();
@@ -4106,7 +4927,7 @@ async function executePhase() {
     ...B.player.filter(r => r.isAlive && r.action),
     ...B.enemy.filter(r => r.isAlive && r.action),
   ].sort((a,b) => {
-    const sa = effStat(a,'spd'), sb = effStat(b,'spd');
+    const sa = spdForSort(a), sb = spdForSort(b);
     if (sa !== sb) return sb - sa;
     return a.isPlayer ? -1 : 1;
   });
@@ -4227,6 +5048,7 @@ async function executePhase() {
       await wait(250);
       continue;
     }
+    rot.comboCount = (rot.lastMove?.name === move.name) ? (rot.comboCount || 0) + 1 : 0;
     rot.lastMove = move;
 
     if (move.curPp !== Infinity) move.curPp--;
@@ -4359,22 +5181,38 @@ async function executePhase() {
         { text: '!' }
       ], 'info');
       const buffedRots = new Set();
+      const applyStage = (r, stat, delta) => {
+        const old = r.stages[stat] || 0;
+        const next = Math.max(-8, Math.min(8, old + delta));
+        if (next === old) return false;
+        r.stages[stat] = next;
+        const arrow = delta > 0 ? '▲' : '▼';
+        if (delta > 0) buffedRots.add(r);
+        logRich([
+          { text: r.def.name, onclick: () => showRotInfo(r.def) },
+          { text: `: ${STAGE_STAT_LABELS[stat]} ${arrow} (stadio ${next >= 0 ? '+' : ''}${next})` }
+        ], 'status');
+        return true;
+      };
       for (const stg of move.stages) {
         const team = stg.team === 'SELF' ? [rot] : stg.team === 'ALLY' ? allyTeam : enemyTeam;
         for (const r of team.filter(r => r.isAlive)) {
-          const old = r.stages[stg.stat] || 0;
-          const next = Math.max(-8, Math.min(8, old + stg.delta));
-          if (next === old) continue;
-          r.stages[stg.stat] = next;
-          const arrow = stg.delta > 0 ? '▲' : '▼';
-          if (stg.delta > 0) buffedRots.add(r);
-          logRich([
-            { text: r.def.name, onclick: () => showRotInfo(r.def) },
-            { text: `: ${STAGE_STAT_LABELS[stg.stat]} ${arrow} (stadio ${next >= 0 ? '+' : ''}${next})` }
-          ], 'status');
+          // ── LAMPIONE: il team è immune agli abbassamenti di statistiche provenienti dai nemici ──
+          if (stg.delta < 0 && stg.team === 'ENEMY' && r.lampioneTurns > 0) continue;
+          const applied = applyStage(r, stg.stat, stg.delta);
+          // ── CENTRO SOCIALE: ogni buff ricevuto viene copiato su un alleato casuale ──
+          if (applied && stg.delta > 0 && r.centroSocialeTurns > 0) {
+            const rTeam = r.isPlayer ? B.player : B.enemy;
+            const others = rTeam.filter(o => o.isAlive && o !== r);
+            if (others.length) {
+              const other = others[Math.floor(Math.random() * others.length)];
+              applyStage(other, stg.stat, stg.delta);
+            }
+          }
         }
       }
       if (buffedRots.size) {
+        playSfx('buff');
         buffHopAnim([...buffedRots]);
         await wait(250);
         render(); await wait(350);
@@ -4498,12 +5336,144 @@ async function executePhase() {
       }
       render(); await wait(600);
 
+    // ── HEAL SINGLE (CHINOTTO) ──
+    } else if (move.effect === 'heal_single') {
+      const tgt = targets[0];
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      const healAmt = applyHealPct(tgt, move.healPct, rot);
+      logRich([
+        { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+        { text: ` recupera ${healAmt} HP!` }
+      ], 'info');
+      buffHopAnim([tgt]);
+      await wait(250);
+      render(); await wait(350);
+
+    // ── CLEANSE SINGLE (TERME) ──
+    } else if (move.effect === 'cleanse_single') {
+      const tgt = targets[0];
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      tgt.statuses = [];
+      for (const stat of Object.keys(tgt.stages)) {
+        if (tgt.stages[stat] < 0) tgt.stages[stat] = 0;
+      }
+      logRich([
+        { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+        { text: ' viene purificato!' }
+      ], 'info');
+      render(); await wait(600);
+
+    // ── GOLD PCT (SCHEDINA) ──
+    } else if (move.effect === 'gold_pct') {
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      if (rot.isPlayer && runState) {
+        const gain = Math.floor(runState.gold * move.pct);
+        if (gain > 0) {
+          runState.gold += gain;
+          recordGoldGain(move.name, gain);
+          updateHud();
+          showGoldFloat(gain);
+        }
+        logRich([
+          { text: 'Il giocatore guadagna ' },
+          { text: `${gain} gold` },
+          { text: ' grazie a ' },
+          { text: move.name, onclick: () => showMoveInfo(move) },
+          { text: '!' }
+        ], 'status');
+      }
+      render(); await wait(600);
+
+    // ── TEAM IMMUNITY (LAMPIONE) ──
+    } else if (move.effect === 'team_immunity') {
+      const allyTeam = rot.isPlayer ? B.player : B.enemy;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const r of allyTeam.filter(r => r.isAlive)) {
+        r.lampioneTurns = move.turns;
+      }
+      logRich([
+        { text: `La squadra è immune a stun e abbassamenti delle statistiche per ${move.turns} turni!` }
+      ], 'status');
+      render(); await wait(600);
+
+    // ── COPY BUFF (CENTRO SOCIALE) ──
+    } else if (move.effect === 'copy_buff') {
+      const allyTeam = rot.isPlayer ? B.player : B.enemy;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const r of allyTeam.filter(r => r.isAlive)) {
+        r.centroSocialeTurns = move.turns;
+      }
+      logRich([
+        { text: `Per ${move.turns} turni, ogni buff ricevuto dalla squadra viene copiato su un alleato casuale!` }
+      ], 'status');
+      render(); await wait(600);
+
+    // ── COPY STATUS (CORONAVIRUS) ──
+    } else if (move.effect === 'copy_status') {
+      const enemyTeam = rot.isPlayer ? B.enemy : B.player;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const tgt of enemyTeam.filter(r => r.isAlive)) {
+        tgt.coronavirusTurns = move.turns;
+      }
+      logRich([
+        { text: `Per ${move.turns} turni, ogni status negativo applicato a un nemico viene copiato su un altro nemico casuale!` }
+      ], 'status');
+      render(); await wait(600);
+
+    // ── SALSA BASE ──
+    } else if (move.effect === 'salsa_base') {
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      rot.salsaBaseTurns = move.turns;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: `: per ${move.turns} turni ogni colpo ha il ${Math.round(move.chance * 100)}% di probabilità di stunnare il bersaglio!` }
+      ], 'status');
+      render(); await wait(600);
+
     // ── DANNO ──
     } else if (move.power > 0) {
       let totalDmgDealt = 0;
       // RUGPULL: danno base + 1 per ogni gold in banca del giocatore
+      // CORPORATE/HR: +X danni per ogni uso consecutivo della stessa mossa
       const dmgMove = move.goldScalePower
         ? { ...move, power: move.goldScalePower.base + move.goldScalePower.perGold * (runState ? runState.gold : 0) }
+        : move.rampDamage
+        ? { ...move, power: move.power + move.rampDamage * rot.comboCount }
         : move;
       // ── SBUBBO: il ROT attacca due volte consecutivamente con la stessa mossa ──
       const sbubboHits = rot.items.includes('SBUBBO') ? 2 : 1;
@@ -4682,6 +5652,45 @@ async function executePhase() {
             ], 'status');
             render();
             await wait(350);
+            // ── CORONAVIRUS: lo status negativo viene copiato su un altro nemico casuale ──
+            if (tgt.coronavirusTurns > 0) {
+              const tgtTeam = tgt.isPlayer ? B.player : B.enemy;
+              const others = tgtTeam.filter(o => o.isAlive && o !== tgt);
+              if (others.length) {
+                const other = others[Math.floor(Math.random() * others.length)];
+                const ok2 = addStatus(other, stType);
+                if (ok2) {
+                  const st2 = other.statuses.find(s => s.type === stType);
+                  logRich([
+                    { text: other.def.name, onclick: () => showRotInfo(other.def) },
+                    { text: stType === 'FERITE' ? ' ha ' : ' è ' },
+                    { text: stType, onclick: () => showStatusInfo(stType) },
+                    { text: `${st2&&st2.stacks>1?' (x'+st2.stacks+')':''} per ` },
+                    { text: 'CORONAVIRUS', onclick: () => showMoveInfo(GENERIC_MOVE_DEFS.CORONAVIRUS) },
+                    { text: '!' }
+                  ], 'status');
+                  render();
+                  await wait(350);
+                }
+              }
+            }
+          }
+        }
+
+        // ── SALSA BASE: probabilità di stunnare il bersaglio a ogni colpo ──
+        if (rot.salsaBaseTurns > 0 && tgt.isAlive && Math.random() < 0.10) {
+          const ok = addStatus(tgt, 'COLLASSO');
+          if (ok) {
+            logRich([
+              { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+              { text: ' è in ' },
+              { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+              { text: ' per ' },
+              { text: 'SALSA BASE', onclick: () => showMoveInfo(TYPE_MOVE_DEFS.SALSA_BASE) },
+              { text: '!' }
+            ], 'status');
+            render();
+            await wait(350);
           }
         }
 
@@ -4700,6 +5709,7 @@ async function executePhase() {
         if (move.goldPerHit && runState) {
           if (rot.isPlayer) {
             runState.gold += move.goldPerHit;
+            recordGoldGain(move.name, move.goldPerHit);
             updateHud();
             showGoldFloat(move.goldPerHit);
             logRich([
@@ -4725,9 +5735,12 @@ async function executePhase() {
         }
       }
 
-      // Recoil: percentuale del danno totale inflitto al bersaglio
+      // Recoil: percentuale del danno totale inflitto al bersaglio, max 20% HP del lanciatore
       if (move.recoil && rot.isAlive) {
-        const recoilDmg = Math.max(1, Math.round(totalDmgDealt * move.recoil / 100));
+        const recoilDmg = Math.min(
+          Math.max(1, Math.round(totalDmgDealt * move.recoil / 100)),
+          Math.floor(rot.maxHp * 0.20)
+        );
         takeDmg(rot, recoilDmg);
         logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -4821,6 +5834,12 @@ function updateHud() {
   goldEl.textContent = `$ GOLD ${runState.gold}`;
 }
 
+// ── registra una fonte di gold guadagnato durante la battaglia (per il riepilogo vittoria) ──
+function recordGoldGain(label, amount) {
+  if (!B || !B.goldLog || amount <= 0) return;
+  B.goldLog.push({ label, amount });
+}
+
 // Animazione "+Xg"/"-Xg" che scorre via dal contatore gold, in tempo reale
 function showGoldFloat(amount) {
   const host = document.getElementById('hud-gold');
@@ -4890,13 +5909,14 @@ function applyVictoryProgression() {
 
 function renderLevelUpPanel(levelUps) {
   const panel = document.getElementById('levelup-panel');
+  const slots = document.getElementById('levelup-slots');
   if (!levelUps.length) {
     panel.classList.remove('visible');
-    panel.innerHTML = '';
+    slots.innerHTML = '';
     return;
   }
   panel.classList.add('visible');
-  panel.innerHTML = `<div class="levelup-title">LEVEL UP!</div>` + levelUps.map(({ rot, oldStats, newStats }) => `
+  const cards = levelUps.map(({ rot, oldStats, newStats }) => `
     <div class="levelup-card">
       <div class="levelup-name">${rot.def.name} <span class="levelup-lvl">→ LIV ${rot.level}</span></div>
       <div class="levelup-stats">
@@ -4909,10 +5929,81 @@ function renderLevelUpPanel(levelUps) {
         }).join('')}
       </div>
     </div>
-  `).join('');
+  `);
+  // ── 3 slot a posizione bloccata: gli slot vuoti restano riservati ──
+  const emptySlots = Math.max(0, 3 - cards.length);
+  slots.innerHTML = cards.join('') + Array(emptySlots).fill('<div class="levelup-empty"></div>').join('');
+}
+
+// ── dettaglio fonti gold "ALTRO" dell'ultima battaglia, mostrato nella finestra info centrata ──
+let VICTORY_GOLD_ALTRO = [];
+function showVictoryGoldAltroInfo() {
+  const total = VICTORY_GOLD_ALTRO.reduce((sum, [, amount]) => sum + amount, 0);
+  const rows = VICTORY_GOLD_ALTRO.length
+    ? VICTORY_GOLD_ALTRO.map(([label, amount]) =>
+        `<div class="progress-gold-line source" style="white-space:nowrap"><span>${label}</span><span style="margin-left:24px">+${amount}g</span></div>`
+      ).join('')
+    : `<div class="progress-gold-line source"><span>Nessuna fonte aggiuntiva</span></div>`;
+  const goldBox = document.getElementById('progress-gold-battle');
+  const panel   = document.getElementById('shop-move-info-secondary');
+  if (panel && goldBox) {
+    const rect = goldBox.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const pw = 340, gap = 16;
+    let leftPx;
+    if (rect.right + gap + pw <= vw)        leftPx = rect.right + gap;
+    else if (rect.left - gap - pw >= 0)     leftPx = rect.left - gap - pw;
+    else                                    leftPx = Math.max(8, vw - pw - 8);
+    panel.style.top       = rect.top + 'px';
+    panel.style.left      = leftPx + 'px';
+    panel.style.transform = 'none';
+  }
+  openShopMoveInfoSecondary(`
+    <div class="gold-box" style="width:280px;max-height:none;border:none;background:none;padding:0;">
+      <div class="gold-box-title" style="font-size:12px;letter-spacing:3px;">ALTRO — DETTAGLIO</div>
+      ${rows}
+      <div class="progress-gold-line total">TOTALE<span>+${total}g</span></div>
+    </div>
+  `);
+}
+
+function showVictoryGoldInterestInfo() {
+  const goldBox = document.getElementById('progress-gold-battle');
+  const panel   = document.getElementById('shop-move-info-secondary');
+  if (panel && goldBox) {
+    const rect = goldBox.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const pw = 340, gap = 16;
+    let leftPx;
+    if (rect.right + gap + pw <= vw)    leftPx = rect.right + gap;
+    else if (rect.left - gap - pw >= 0) leftPx = rect.left - gap - pw;
+    else                                leftPx = Math.max(8, vw - pw - 8);
+    panel.style.top       = rect.top + 'px';
+    panel.style.left      = leftPx + 'px';
+    panel.style.transform = 'none';
+  }
+  openShopMoveInfoSecondary(`
+    <div class="gold-box" style="width:280px;max-height:none;border:none;background:none;padding:0;gap:12px;">
+      <div class="gold-box-title" style="font-size:12px;letter-spacing:3px;">INTERESSI</div>
+      <div class="info-text" style="font-size:18px;line-height:1.6;color:#86efac">
+        Ogni <strong style="color:#fde68a">10g</strong> in banca generano
+        <strong style="color:#fde68a">+1g</strong> di interesse per vittoria.<br><br>
+        Massimo <strong style="color:#fde68a">+5g</strong> con
+        <strong style="color:#fde68a">50g</strong> in banca.
+      </div>
+    </div>
+  `);
 }
 
 function showVictoryScreen() {
+  // chiudi tutte le finestre di battaglia aperte
+  closeInfo();
+  document.getElementById('info-panel')?.classList.remove('open');
+  document.getElementById('info-panel-secondary')?.classList.remove('open');
+  document.getElementById('battle-log-overlay')?.classList.remove('open');
+  document.getElementById('battle-log-secondary')?.classList.remove('open');
+  closeShopMoveInfoSecondary?.();
+
   const { goldEarned, interestEarned, survivors, dead, levelUps } = applyVictoryProgression();
   updateHud();
 
@@ -4924,23 +6015,39 @@ function showVictoryScreen() {
     `Turni impiegati: ${turnNum} — Livello raggiunto: <strong>${runState.level}</strong>`;
 
   const survHtml = survivors.map(r =>
-    `<div class="surv-card"><span class="surv-name">${r.def.name}</span><span class="surv-level">LIV ${r.level}</span></div>`
+    `<div class="surv-card">
+      <div class="rot-name-token" style="font-size:${nameTokenFontSize(r.def.name, 1.9)}px; --token-bg:${NAME_TOKEN_COLORS[r.def.type] || '#2a2a40'}">${tokenDisplayHtml(r.def.name)}</div>
+      <div class="info-level">LIV <span class="info-level-num">${r.level}</span></div>
+    </div>`
   ).join('');
+  // ── griglia a 3 slot fissi: gli slot non occupati da sopravvissuti restano vuoti ma riservati ──
+  const emptySurvSlots = Math.max(0, 3 - survivors.length);
+  const emptySurvHtml = Array(emptySurvSlots).fill('<div class="surv-empty"></div>').join('');
   const deadHtml = dead.map(r =>
     `<div class="dead-card"><span class="dead-name">${r.def.name}</span><span class="dead-tag">PERSO PER SEMPRE</span></div>`
   ).join('');
   document.getElementById('progress-survivors').innerHTML = `
-    <div class="progress-section-lbl">ROT SOPRAVVISSUTI</div>
-    <div class="surv-list">${survHtml || '<div class="surv-card">Nessuno...</div>'}</div>
-    ${dead.length ? `<div class="progress-section-lbl dead-lbl">ROT PERSI</div><div class="surv-list">${deadHtml}</div>` : ''}
+    <div class="progress-section-lbl surv-lbl">ROT SOPRAVVISSUTI</div>
+    <div class="surv-grid">${survHtml}${emptySurvHtml}</div>
   `;
 
-  const goldEl = document.getElementById('progress-gold');
-  goldEl.style.display = '';
-  goldEl.innerHTML = `
-    <div class="progress-gold-line">GOLD GUADAGNATO: +${goldEarned}g</div>
-    ${interestEarned > 0 ? `<div class="progress-gold-line interest">INTERESSI: +${interestEarned}g</div>` : ''}
-    <div class="progress-gold-line total">TOTALE: ${runState.gold}g</div>
+  // ── riepilogo dettagliato del gold guadagnato in battaglia, per fonte (mosse/effetti/oggetti) ──
+  const goldSources = {};
+  for (const { label, amount } of B.goldLog || []) {
+    goldSources[label] = (goldSources[label] || 0) + amount;
+  }
+  const altroEntries = Object.entries(goldSources);
+  const altroTotal = altroEntries.reduce((sum, [, amount]) => sum + amount, 0);
+  const battleTotal = goldEarned + interestEarned + altroTotal;
+  VICTORY_GOLD_ALTRO = altroEntries;
+
+  document.getElementById('progress-gold-boxes').style.display = '';
+  document.getElementById('progress-gold-battle').innerHTML = `
+    <div class="gold-box-title">GOLD BATTAGLIA</div>
+    <div class="progress-gold-line divider">RICOMPENSA VITTORIA<span>+${goldEarned}g</span></div>
+    <div class="progress-gold-line interest interest-row" onclick="showVictoryGoldInterestInfo()" onmouseenter="showVictoryGoldInterestInfo()" onmouseleave="closeShopMoveInfoSecondary()">INTERESSI<span>+${interestEarned}g</span></div>
+    <div class="progress-gold-line altro-row divider" onmouseenter="showVictoryGoldAltroInfo()" onmouseleave="closeShopMoveInfoSecondary()">ALTRO<span>+${altroTotal}g</span></div>
+    <div class="progress-gold-line total">TOTALE BATTAGLIA<span>+${battleTotal}g</span></div>
   `;
 
   document.getElementById('progress-continue-btn').style.display = '';
@@ -4948,9 +6055,35 @@ function showVictoryScreen() {
 
   renderLevelUpPanel(levelUps);
   document.getElementById('progress-overlay').classList.add('on');
+  // posiziona il pannello LEVEL UP e adatta i font dei token nome
+  requestAnimationFrame(() => {
+    const lup = document.getElementById('levelup-panel');
+    const firstCard = document.querySelector('.surv-card');
+    if (lup && lup.classList.contains('visible')) {
+      lup.style.marginLeft = Math.round(window.innerWidth * 0.15) + 'px';
+    }
+    // secondo rAF: layout stabile, adatta font-size dei token nome uno alla volta
+    requestAnimationFrame(() => {
+      document.querySelectorAll('.surv-card .rot-name-token').forEach(el => {
+        let fs = parseFloat(getComputedStyle(el).fontSize);
+        while (el.scrollWidth > el.clientWidth && fs > 6) {
+          fs -= 0.5;
+          el.style.fontSize = fs + 'px';
+          void el.offsetWidth; // forza reflow immediato
+        }
+      });
+    });
+  });
 }
 
 function showGameOverScreen() {
+  closeInfo();
+  document.getElementById('info-panel')?.classList.remove('open');
+  document.getElementById('info-panel-secondary')?.classList.remove('open');
+  document.getElementById('battle-log-overlay')?.classList.remove('open');
+  document.getElementById('battle-log-secondary')?.classList.remove('open');
+  closeShopMoveInfoSecondary?.();
+
   playLostMusic();
   const title = document.getElementById('progress-title');
   title.textContent = 'GAME OVER';
@@ -4959,8 +6092,8 @@ function showGameOverScreen() {
   document.getElementById('progress-sub').innerHTML =
     `Tutti i tuoi ROT sono caduti.<br>Record: <strong>${runState.battlesWon}</strong> battaglie sopravvissute`;
   document.getElementById('progress-survivors').innerHTML = '';
-  document.getElementById('progress-gold').textContent = '';
-  document.getElementById('progress-gold').style.display = 'none';
+  document.getElementById('progress-gold-boxes').style.display = 'none';
+  document.getElementById('progress-gold-battle').innerHTML = '';
 
   document.getElementById('progress-continue-btn').style.display = 'none';
   document.getElementById('progress-restart-btn').style.display = '';
@@ -5156,6 +6289,13 @@ function completeRotReplace() {
 function sellRot(uid) {
   const idx = runState.roster.findIndex(r => r.uid === uid);
   if (idx === -1) return;
+  const rot = runState.roster[idx];
+  // ── gli oggetti del ROT venduto tornano nel marsupio, se pieno vengono persi ──
+  for (const key of rot.items) {
+    if (!key) continue;
+    const emptySlot = runState.marsupio.findIndex(s => s === null);
+    if (emptySlot !== -1) runState.marsupio[emptySlot] = key;
+  }
   runState.roster.splice(idx, 1);
   runState.gold += ROT_PRICE;
   updateHud();
@@ -5192,6 +6332,9 @@ function cancelPurchase() {
   closeRotManager();
   renderShop();
 }
+
+// ── drag & drop dei box mossa in battaglia: indice della mossa sollevata ──
+let moveDragSrcIndex = null;
 
 // ═══════════════════════════════════════════════════
 // GESTIONE ROT (modale: squadra + marsupio, drag & drop)
@@ -5276,10 +6419,11 @@ function rotCardLoadoutHtml(r, draggable) {
   // ── OGGETTI: 2 slot a posizione fissa, vuoti o pieni ──
   const itemSlots = [0, 1].map(i => {
     const key = r.items[i];
+    const slotEvents = `ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${r.uid}',${i})"`;
     if (key && ITEM_DEFS[key]) {
-      return `<span class="loadout-token loadout-token-item" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} style="color:${ITEM_DEFS[key].color}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`;
+      return `<span class="loadout-token loadout-token-item" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} ${slotEvents} style="color:${ITEM_DEFS[key].color}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`;
     }
-    return '<span class="loadout-token loadout-token-item loadout-token-empty">—</span>';
+    return `<span class="loadout-token loadout-token-item loadout-token-empty" ${slotEvents}>—</span>`;
   }).join('');
   // ── DRUGS: iconcina colorata + moltiplicatore ──
   const drugCounts = {};
@@ -5321,11 +6465,38 @@ function rotCardItemSlotsHtml(r) {
   return `<div class="rm-item-slots">${slots}</div>`;
 }
 
+// ── finestra GESTIONE ROT (default, "negozio 1"): card grande con sprite, nome, mosse in verticale, oggetti/drugs ──
+function rotCardDefaultHtml(r) {
+  const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
+  const spriteHtml = r.def.sprite
+    ? `<canvas class="rmcard-sprite-canvas${r.def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310" data-uid="${r.uid}"></canvas>`
+    : '';
+  const movesHtml = r.moves.map((m, i) => {
+    const mtc = m.type ? (TYPE_COLORS[m.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+    return `<div class="rmcard-move-row" onclick="showMoveInfoShop(event,'${r.uid}',${i})"><span class="rmcard-move-name" style="color:${mtc.text}">${m.name}</span></div>`;
+  }).join('');
+  return `
+    <div class="rot-manager-card rmcard-v2" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}" draggable="true"
+         ondragstart="onRotDragStart(event,'${r.uid}')" ondragend="onDragEnd(event)"
+         ondragover="onRotCardDragOver(event)" ondragleave="onRotCardDragLeave(event)" ondrop="onRotDrop(event,'${r.uid}')">
+      <div class="rmcard-sprite ${r.def.sprite ? 'sprite-mode' : ''}" style="${r.def.sprite ? '' : `background:${tc.bg}`}">
+        ${spriteHtml}
+        <button class="rmcard-stats-btn" onclick="showRmRotStats(event,'${r.uid}')">STATS</button>
+      </div>
+      <div class="rot-name-wrap rmcard-name-wrap">
+        <div class="rot-name-token rmcard-name-token" style="font-size:${nameTokenFontSize(r.def.name, 1.3)}px; --token-bg:${NAME_TOKEN_COLORS[r.def.type] || '#2a2a40'}">${tokenDisplayHtml(r.def.name)}</div>
+      </div>
+      <div class="rmcard-moves">${movesHtml}</div>
+      ${rotCardLoadoutHtml(r, true)}
+    </div>
+  `;
+}
+
 // ── dispatcher: sceglie la modalità (oggetti / drugs / mosse) in base all'acquisto in attesa ──
 function renderRotManager() {
   const box = document.getElementById('rot-manager-box');
   const p = shopState.pendingPurchase;
-  box.classList.remove('mode-items', 'mode-drugs', 'mode-moves', 'mode-replace');
+  box.classList.remove('mode-items', 'mode-items-default', 'mode-drugs', 'mode-moves', 'mode-replace');
   if (pendingRotReplace) {
     box.classList.add('mode-replace');
     renderRotManagerReplace();
@@ -5341,23 +6512,44 @@ function renderRotManager() {
   }
 }
 
+// Riempe sempre 3 slot — quelli vuoti appaiono come placeholder tratteggiati
+function padRotSlots(html, count, extraClass = '') {
+  const empty = Array(Math.max(0, 3 - count))
+    .fill(`<div class="rot-manager-card rot-manager-card-empty${extraClass ? ' ' + extraClass : ''}"></div>`)
+    .join('');
+  return html + empty;
+}
+
 // ── Finestra 1: acquisto oggetti — box completi, marsupio, drag & drop, vendita ──
 function renderRotManagerItems(p) {
   const assignMode = !!(p && p.type === 'item');
   renderAssignBanner(p, assignMode, 'item');
+  const box = document.getElementById('rot-manager-box');
+  box.classList.toggle('mode-items-default', !assignMode);
   const rosterEl = document.getElementById('rot-manager-roster');
-  rosterEl.innerHTML = runState.roster.map(r => {
-    const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
-    return `
-      <div class="rot-manager-card ${assignMode ? 'rot-assignable' : ''}" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}" draggable="true"
-           ondragstart="onRotDragStart(event,'${r.uid}')" ondragend="onDragEnd(event)"
-           ondragover="onRotCardDragOver(event)" ondragleave="onRotCardDragLeave(event)" ondrop="onRotDrop(event,'${r.uid}')"
-           ${assignMode ? `onclick="assignPurchaseToRot('${r.uid}')"` : ''}>
-        ${rotCardHeaderHtml(r, tc)}
-        ${assignMode ? rotCardItemSlotsHtml(r) : (rotCardMovesHtml(r, false) + rotCardLoadoutHtml(r, true))}
-      </div>
-    `;
-  }).join('');
+  if (assignMode) {
+    const cards = runState.roster.map(r => {
+      const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
+      return `
+        <div class="rot-manager-card rot-assignable" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}" draggable="true"
+             ondragstart="onRotDragStart(event,'${r.uid}')" ondragend="onDragEnd(event)"
+             ondragover="onRotCardDragOver(event)" ondragleave="onRotCardDragLeave(event)" ondrop="onRotDrop(event,'${r.uid}')"
+             onclick="assignPurchaseToRot('${r.uid}')">
+          ${rotCardHeaderHtml(r, tc)}
+          ${rotCardItemSlotsHtml(r)}
+        </div>
+      `;
+    }).join('');
+    rosterEl.innerHTML = padRotSlots(cards, runState.roster.length);
+  } else {
+    const cards = runState.roster.map(r => rotCardDefaultHtml(r)).join('');
+    rosterEl.innerHTML = padRotSlots(cards, runState.roster.length, 'rmcard-v2');
+    runState.roster.forEach(r => {
+      if (r.def.sprite) {
+        initRotSpriteCanvas(rosterEl.querySelector(`.rmcard-sprite-canvas[data-uid="${r.uid}"]`), r.def.sprite);
+      }
+    });
+  }
 
   const grid = document.getElementById('marsupio-grid');
   grid.innerHTML = runState.marsupio.map((key, i) => {
@@ -5373,7 +6565,7 @@ function renderRotManagerDrugs(p) {
   const assignMode = !!(p && p.type === 'drug');
   renderAssignBanner(p, assignMode, 'drug');
   const rosterEl = document.getElementById('rot-manager-roster');
-  rosterEl.innerHTML = runState.roster.map(r => {
+  const cards = runState.roster.map(r => {
     const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
     return `
       <div class="rot-manager-card ${assignMode ? 'rot-assignable' : ''}" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}"
@@ -5383,13 +6575,14 @@ function renderRotManagerDrugs(p) {
       </div>
     `;
   }).join('');
+  rosterEl.innerHTML = padRotSlots(cards, runState.roster.length);
 }
 
 // ── Finestra sostituzione ROT: squadra piena — solo stats/tipo/oggetti/drugs, click per sostituire ──
 function renderRotManagerReplace() {
   renderAssignBanner(null, false, null);
   const rosterEl = document.getElementById('rot-manager-roster');
-  rosterEl.innerHTML = runState.roster.map(r => {
+  const cards = runState.roster.map(r => {
     const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
     return `
       <div class="rot-manager-card rot-assignable" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}"
@@ -5399,6 +6592,7 @@ function renderRotManagerReplace() {
       </div>
     `;
   }).join('');
+  rosterEl.innerHTML = padRotSlots(cards, runState.roster.length);
 }
 
 // ── Finestra 3: acquisto mosse — mosse in evidenza, click per assegnare/sostituire ──
@@ -5406,7 +6600,7 @@ function renderRotManagerMoves(p) {
   const assignMode = !!(p && p.type === 'move') && !moveAssignState;
   renderAssignBanner(p, !!(p && p.type === 'move'), 'move');
   const rosterEl = document.getElementById('rot-manager-roster');
-  rosterEl.innerHTML = runState.roster.map(r => {
+  const cards = runState.roster.map(r => {
     const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
     const selectable = !!(moveAssignState && moveAssignState.stage === 'select-slot' && moveAssignState.uid === r.uid);
     return `
@@ -5417,6 +6611,7 @@ function renderRotManagerMoves(p) {
       </div>
     `;
   }).join('');
+  rosterEl.innerHTML = padRotSlots(cards, runState.roster.length);
 }
 
 // ── assegna l'oggetto in attesa al ROT cliccato (Finestra 1) ──
@@ -5618,7 +6813,15 @@ document.addEventListener('mousedown', e => {
   if (e.button !== 0) return; // solo click sinistro
   const moveInfo = document.getElementById('shop-move-info-overlay');
   if (moveInfo.classList.contains('on')) {
-    if (!document.getElementById('shop-move-info-box').contains(e.target)) closeShopMoveInfo();
+    const secondary = document.getElementById('shop-move-info-secondary');
+    const primaryBox = document.getElementById('shop-move-info-box');
+    // se la finestra secondaria (stats / descrizione mossa) è aperta:
+    // click fuori da essa → chiude solo la secondaria, lasciando aperta la finestra info principale
+    if (secondary.classList.contains('open')) {
+      if (!secondary.contains(e.target)) closeShopMoveInfoSecondary();
+      return;
+    }
+    if (!primaryBox.contains(e.target)) closeShopMoveInfo();
     return;
   }
   const confirm = document.getElementById('rot-confirm-overlay');
@@ -5628,6 +6831,11 @@ document.addEventListener('mousedown', e => {
   }
   const rm = document.getElementById('rot-manager-overlay');
   if (rm.classList.contains('on')) {
+    const secondary = document.getElementById('shop-move-info-secondary');
+    if (secondary.classList.contains('open')) {
+      if (!secondary.contains(e.target)) closeShopMoveInfoSecondary();
+      return;
+    }
     if (!document.getElementById('rot-manager-box').contains(e.target)) cancelPurchase();
     return;
   }
@@ -5702,6 +6910,34 @@ function placeItemAtSource(d, key) {
   }
 }
 
+// ── drag su un singolo slot oggetto: lo slot lampeggia, drop scambia con quello slot esatto ──
+function onItemSlotDragOver(event) {
+  if (!rotManagerDrag || rotManagerDrag.kind !== 'item') return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.add('dragover');
+}
+function onItemSlotDragLeave(event) {
+  event.stopPropagation();
+  event.currentTarget.classList.remove('dragover');
+}
+function onItemSlotDrop(event, uid, slotIdx) {
+  if (!rotManagerDrag || rotManagerDrag.kind !== 'item') return;
+  event.preventDefault();
+  event.stopPropagation();
+  event.currentTarget.classList.remove('dragover');
+  const rot = runState.roster.find(r => r.uid === uid);
+  if (!rot) { rotManagerDrag = null; return; }
+  if (rotManagerDrag.source === 'rot' && rotManagerDrag.uid === uid && rotManagerDrag.slotIdx === slotIdx) { rotManagerDrag = null; return; }
+  const oldItem = rot.items[slotIdx];
+  const key = rotManagerDrag.key;
+  removeItemFromSource(rotManagerDrag);
+  rot.items[slotIdx] = key;
+  if (oldItem) placeItemAtSource(rotManagerDrag, oldItem);
+  rotManagerDrag = null;
+  renderRotManager();
+}
+
 // ── drop su un box ROT: riequipaggia l'oggetto trascinato (scambio con quello attuale) ──
 function onRotCardDragOver(event) {
   if (!rotManagerDrag || rotManagerDrag.kind !== 'item') return;
@@ -5767,13 +7003,10 @@ function renderShop() {
   {
     const rerollCost = shopState.rerollCounts.rot + 1;
     const def = ROT_DEFS[shopState.rot.key];
-    const um = def.uniqueMove;
     const tc = TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' };
-    const catInfo = CATEGORY_INFO[um.cat];
     const bought = shopState.bought.rot;
     let buyLabel = bought ? 'ACQUISTATO' : 'ACQUISTA';
     let buyDisabled = bought || runState.gold < shopState.rot.price;
-    const umTc = TYPE_COLORS[um.type] || { bg:'#333', text:'#aaa' };
     const rotSection = document.getElementById('shop-section-rot');
     rotSection.style.background = `${tc.bg}33`;
     rotSection.style.borderColor = `${tc.bg}55`;
@@ -5782,27 +7015,23 @@ function renderShop() {
         <span>ROT</span>
         <button class="shop-reroll-btn" onclick="rerollSection('rot')" ${runState.gold < rerollCost ? 'disabled' : ''} title="Sostituisci il ROT proposto con un altro. Il costo aumenta a ogni reroll.">REROLL — ${rerollCost}g</button>
       </div>
-      <div class="shop-card shop-rot-card">
-        <div class="shop-card-top">
-          <span class="shop-card-name shop-rot-name" style="color:${tc.text}">${def.name}</span>
-          <span class="shop-rarity-badge shop-rarity-badge-clickable" style="background:${tc.bg};color:${tc.text}" onclick="showTypeInfoCentered(event,'${def.type}')">${def.type}</span>
+      <div class="shop-card shop-rot-card shop-rot-card-clickable" onclick="showShopRotInfo()">
+        <div class="rot-name-wrap shop-rot-name-wrap">
+          <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name, 1.1)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${tokenDisplayHtml(def.name)}</div>
         </div>
-        <div class="shop-card-desc">LIVELLO ${runState.level}</div>
-        <div class="shop-rot-move-box">
-          <div class="shop-rot-move-name-row">
-            <span class="shop-rot-move-cat" onclick="showCategoryInfoCentered(event,'${um.cat}')">${catInfo ? catInfo.icon : ''}</span>
-            <span class="shop-rot-move-name" style="color:${umTc.text}">${um.name}</span>
-            <span class="shop-rarity-badge shop-rarity-badge-clickable" style="background:${umTc.bg};color:${umTc.text}" onclick="showTypeInfoCentered(event,'${um.type}')">${um.type}</span>
-            <span class="shop-rot-move-power">POT ${um.power}</span>
-          </div>
-          <div class="shop-rot-move-desc">${moveEffectDesc(um, statusLinkCentered)}</div>
+        <div class="shop-rot-sprite ${def.sprite ? 'sprite-mode' : ''}" style="${def.sprite ? '' : `background:${tc.bg}`}">
+          ${def.sprite ? `<canvas class="shop-rot-sprite-canvas${def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
         </div>
         <div class="shop-card-bottom">
+          <span class="type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${def.type}</span>
           <span class="shop-price">${shopState.rot.price} GOLD</span>
-          <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="buyRot()" ${buyDisabled ? 'disabled' : ''} title="Aggiungi questo ROT alla tua squadra.">${buyLabel}</button>
+          <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="event.stopPropagation(); buyRot()" ${buyDisabled ? 'disabled' : ''} title="Aggiungi questo ROT alla tua squadra.">${buyLabel}</button>
         </div>
       </div>
     `;
+    if (def.sprite) {
+      initRotSpriteCanvas(rotSection.querySelector('.shop-rot-sprite-canvas'), def.sprite);
+    }
   }
 
   // ── OGGETTI ──
@@ -5871,12 +7100,10 @@ function renderShop() {
       const bought = shopState.bought.moves[idx];
       const disabled = bought || runState.gold < offer.price;
       const catInfo = CATEGORY_INFO[def.cat];
-      const powerTxt = def.power > 0 ? `Potenza ${def.power}${def.hits ? ` x${def.hits}` : ''}` : '';
-      const descTxt = [powerTxt, def.desc].filter(Boolean).join(' — ');
       return `
         <div class="shop-card shop-move-card" style="${rarityCardStyle(rarity)}">
           <div class="shop-card-top">
-            <span class="shop-card-name" style="color:${tc.text}">${def.name}</span>
+            <span class="shop-card-name shop-move-name-clickable" style="color:${tc.text}" onclick="showShopMoveOfferInfo(event, ${idx})">${def.name}${def.power ? `<span class="shop-move-power"> · POT ${def.power}</span>` : ''}</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <span class="shop-cat-icon" title="${catInfo ? catInfo.label : def.cat}" onclick="showCategoryInfoCentered(event,'${def.cat}')">${catInfo ? catInfo.icon : ''}</span>
               ${rarityBadge(rarity)}
@@ -5887,7 +7114,7 @@ function renderShop() {
               ? `<span class="shop-move-type-token" style="background:${tc.bg};color:${tc.text}" onclick="showTypeInfoCentered(event,'${def.type}')">${def.type}</span>`
               : `<span class="shop-move-type-token shop-move-type-none">NESSUNO</span>`}
           </div>
-          <div class="shop-card-desc">${descTxt}</div>
+          <div class="shop-card-desc">${moveEffectDesc(def, statusLinkCentered)}</div>
           <div class="shop-card-bottom">
             <span class="shop-price">${offer.price} GOLD</span>
             <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="buyMove(${idx})" ${disabled ? 'disabled' : ''} title="Insegna questa mossa a un ROT della tua squadra.">${bought ? 'ACQUISTATO' : 'ACQUISTA'}</button>
@@ -5902,28 +7129,15 @@ function renderShop() {
       </div>
       <div class="shop-card-row">${cards}</div>
     `;
-    fitShopMoveDescriptions();
   }
 
-}
-
-// ── riduce automaticamente il font-size della descrizione delle mosse nel negozio
-//    in modo che il testo non spinga mai in basso prezzo/tasto ACQUISTA ──
-function fitShopMoveDescriptions() {
-  document.querySelectorAll('#shop-section-moves .shop-move-card .shop-card-desc').forEach(el => {
-    let fontSize = 15;
-    el.style.fontSize = fontSize + 'px';
-    while (el.scrollHeight > el.clientHeight + 1 && fontSize > 9) {
-      fontSize -= 0.5;
-      el.style.fontSize = fontSize + 'px';
-    }
-  });
 }
 
 function startNextBattle() {
   playBattleMusic();
   applyBattleBackground();
   turnNum = 1;
+  document.getElementById('turn-info').textContent = `TURNO ${turnNum}`;
   const lvl = runState.level;
   runState.roster.forEach(r => {
     r.action = null;
@@ -5947,6 +7161,7 @@ function startNextBattle() {
     enemy:  enemyDefs.map(def => mkRot(def, lvl, false)),
     phase: 'ROT_SELECT', current: null, selMove: null,
     assigned: {}, actedUids: new Set(),
+    goldLog: [],           // gold guadagnato durante la battaglia, per fonte
   };
   B.tokenWidth = calibrateTokenWidth();
   document.getElementById('overlay').classList.remove('on');
@@ -6077,6 +7292,14 @@ function initRotSpriteCanvas(canvas, spriteCfg) {
 
 // Calcola la dimensione del font del token nome in base alla lunghezza del nome,
 // così il testo riempie sempre lo spazio fisso del token senza uscirne.
+// Sostituzioni display per token nome: nomi senza spazio che vanno su due righe
+const TOKEN_DISPLAY_BREAKS = { 'CRYPTOBISMOL': 'CRYPTO<br>BISMOL' };
+function tokenDisplayHtml(name) { return TOKEN_DISPLAY_BREAKS[name] || name; }
+
+// <br> sensibili per la info-title del pannello info ROT
+const INFO_TITLE_BREAKS = { 'CRYPTOBISMOL': 'CRYPTO<br>BISMOL', 'CHEESECAKE': 'CHEESE<br>CAKE' };
+function infoTitleHtml(name) { return INFO_TITLE_BREAKS[name] || name; }
+
 function nameTokenFontSize(name, scale = 1) {
   const len = name.length;
   const base = len <= 6  ? 14
@@ -6161,21 +7384,19 @@ function mkCard(rot, isPlayer) {
         <div class="hp-bar-track">
           <div class="shield-fill" style="width:${rot.shield > 0 ? Math.min(100, (rot.shield/rot.maxHp)*100).toFixed(1) : 0}%"></div>
         </div>
-        <div class="hp-nums">${rot.shield > 0 ? rot.shield : ''}</div>
       </div>
       <div class="bars-divider"></div>
       <div class="bars-row">
         <div class="hp-bar-track">
           <div class="hp-fill ${hpCls}" style="width:${Math.max(0, pct*100).toFixed(1)}%"></div>
         </div>
-        <div class="hp-nums">${rot.curHp}</div>
       </div>
     </div>
     <div class="rot-name-wrap">
       <div class="rot-name-flames">
         <span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span>
       </div>
-      <div class="rot-name-token" style="font-size:${nameTokenFontSize(rot.def.name)}px; --token-bg:${NAME_TOKEN_COLORS[rot.def.type] || '#2a2a40'}">${rot.def.name}</div>
+      <div class="rot-name-token" style="font-size:${nameTokenFontSize(rot.def.name)}px; --token-bg:${NAME_TOKEN_COLORS[rot.def.type] || '#2a2a40'}">${tokenDisplayHtml(rot.def.name)}</div>
     </div>
     <div class="rot-sprite ${rot.def.sprite ? 'sprite-mode' : ''}" id="spr-${rot.uid}" style="${rot.def.sprite ? '' : `background:${tc.bg}`}">
       ${rot.def.sprite ? `<canvas class="rot-sprite-canvas${rot.def.sprite.mirrorWhen === (isPlayer ? 'player' : 'enemy') ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
@@ -6249,21 +7470,50 @@ function renderPanel() {
 
   // ── CENTER: bottoni mossa (solo in MOVE_SELECT) ──
   if (B.phase === 'MOVE_SELECT' && B.current) {
-    for (const move of B.current.moves) {
-      const tc       = move.type ? (TYPE_COLORS[move.type] || { bg:'#333' }) : { bg:'#9ca3af' };
-      const ppTxt    = move.curPp === Infinity ? '∞' : `${move.curPp}/${move.pp}`;
+    const burnout = B.current.statuses.find(s => s.type === 'BURNOUT');
+    B.current.moves.forEach((move, idx) => {
       const depleted = move.curPp !== Infinity && move.curPp <= 0;
+      // ── BURNOUT: la mossa usata al turno precedente è grigia e non selezionabile ──
+      const burnoutLocked = !!burnout && B.current.lastMove?.name === move.name;
       const btn = document.createElement('button');
       btn.className = 'move-btn';
-      btn.disabled  = depleted;
+      btn.disabled  = depleted || burnoutLocked;
+      btn.draggable = true;
       btn.innerHTML = `
-        <span class="move-btn-name">${move.name}</span>
-        <span class="move-btn-sub" style="color:${tc.bg}">${move.type || 'NEUTRO'} · ${move.cat} · PP ${ppTxt}</span>
+        <span class="move-btn-name" style="${moveTextStyle(move)}">${move.name}</span>
       `;
       btn.addEventListener('mouseenter', () => showMoveInfo(move));
       btn.addEventListener('click', () => onMoveClick(move));
+      // ── drag & drop: riordina i box mosse, scambiando le posizioni ──
+      btn.addEventListener('dragstart', (e) => {
+        moveDragSrcIndex = idx;
+        btn.classList.add('move-btn-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        e.dataTransfer.setData('text/plain', String(idx));
+      });
+      btn.addEventListener('dragover', (e) => {
+        if (moveDragSrcIndex === null || moveDragSrcIndex === idx) return;
+        e.preventDefault();
+        btn.classList.add('move-btn-dragover');
+      });
+      btn.addEventListener('dragleave', () => {
+        btn.classList.remove('move-btn-dragover');
+      });
+      btn.addEventListener('drop', (e) => {
+        e.preventDefault();
+        btn.classList.remove('move-btn-dragover');
+        if (moveDragSrcIndex === null || moveDragSrcIndex === idx) return;
+        const moves = B.current.moves;
+        [moves[moveDragSrcIndex], moves[idx]] = [moves[idx], moves[moveDragSrcIndex]];
+        moveDragSrcIndex = null;
+        render();
+      });
+      btn.addEventListener('dragend', () => {
+        moveDragSrcIndex = null;
+        center.querySelectorAll('.move-btn-dragging, .move-btn-dragover').forEach(b => b.classList.remove('move-btn-dragging', 'move-btn-dragover'));
+      });
       center.appendChild(btn);
-    }
+    });
   }
 
   // ── RIGHT: INDIETRO + AVVIA TURNO ──
@@ -6300,6 +7550,14 @@ function renderSpeedBar(ordered) {
       <div class="spd-dot" style="background:${tc.bg}"></div>
       <span>${rot.def.name.split(' ')[0]}</span>
     `;
+    tok.addEventListener('mouseenter', () => {
+      tok.classList.add('spd-hover-blink');
+      getCardEl(rot.uid)?.classList.add('spd-hover-highlight');
+    });
+    tok.addEventListener('mouseleave', () => {
+      tok.classList.remove('spd-hover-blink');
+      getCardEl(rot.uid)?.classList.remove('spd-hover-highlight');
+    });
     wrap.appendChild(tok);
   }
   wrap.querySelectorAll('.spd-token').forEach(t => t.style.width = B.tokenWidth + 'px');
@@ -6451,6 +7709,7 @@ function playCardAnim(uid, cls, durationMs) {
 function attackAnim(rot) {
   const el = getCardEl(rot.uid);
   if (!el) return;
+  playSfx('attack');
   el.style.setProperty('--atk-dx', rot.isPlayer ? 1 : -1);
   playCardAnim(rot.uid, 'atk-hop', 420);
 }
@@ -6533,13 +7792,12 @@ function buildStarterScreen() {
     card.innerHTML = `
       <div class="starter-sprite ${def.sprite ? 'sprite-mode' : ''}" style="${def.sprite ? '' : `background:${tc.bg}`}">
         ${def.sprite ? `<canvas class="starter-sprite-canvas${def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
-        <span class="starter-type-chip" style="background:rgba(0,0,0,0.55);color:${tc.text}">${def.type}</span>
       </div>
       <div class="rot-name-wrap">
         <div class="rot-name-flames">
           <span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span><span class="flame-px"></span>
         </div>
-        <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name, 1.5)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${def.name}</div>
+        <div class="rot-name-token" style="font-size:${nameTokenFontSize(def.name, 1.5)}px; --token-bg:${NAME_TOKEN_COLORS[def.type] || '#2a2a40'}">${tokenDisplayHtml(def.name)}</div>
       </div>
     `;
     if (def.sprite) {
@@ -6565,7 +7823,7 @@ function uniqueMoveDescText(um) {
   : um.effect === 'stage'   ? 'Modifica le stat della squadra (ATK, SP.ATK, DEF, SP.DEF).'
   : um.status               ? `${um.status.chance * 100}% di probabilità di infliggere ${um.status.type === 'RANDOM' ? 'uno status casuale' : statusLink(um.status.type)} al bersaglio.${um.recoil ? ` Il lanciatore subisce un recoil pari al ${um.recoil}% del danno inflitto.` : ''}`
   : um.recoil               ? `Attacco potente. Il lanciatore subisce un recoil pari al ${um.recoil}% del danno inflitto.`
-  : 'Nessun effetto secondario.';
+  : '';
 }
 
 function renderStarterInfo(key) {
@@ -6748,8 +8006,76 @@ function applyBattleBackground() {
   }
 }
 
-const MUSIC_VOLUME = 0.5;
+let MUSIC_VOLUME = 0.5;
 const MUSIC_FADE_MS = 1200;
+
+// ── Effetti sonori: AudioContext dedicato, completamente separato dalla musica ──
+// così gli effetti non condividono buffer/elementi <audio> con le tracce musicali
+// e non possono causare interruzioni o sovrapposizioni con il crossfade musicale.
+let SFX_VOLUME = 0.5;
+const SFX_FILES = {
+  click: 'sfx/click.mp3',
+  hover: 'sfx/hover.wav',
+  attack: 'sfx/atk.wav',
+  damage: 'sfx/colpito atk.wav',
+  buff: 'sfx/buff.wav',
+  heal: 'sfx/heal.wav',
+};
+const SFX_CTX = new (window.AudioContext || window.webkitAudioContext)();
+const SFX_GAIN = SFX_CTX.createGain();
+SFX_GAIN.gain.value = SFX_VOLUME;
+SFX_GAIN.connect(SFX_CTX.destination);
+const SFX_BUFFERS = {};
+// ── precarica e decodifica tutti gli effetti in background ──
+Object.entries(SFX_FILES).forEach(([name, src]) => {
+  fetch(encodeURI(src))
+    .then(res => res.arrayBuffer())
+    .then(buf => SFX_CTX.decodeAudioData(buf))
+    .then(decoded => { SFX_BUFFERS[name] = decoded; })
+    .catch(() => {});
+});
+function playSfx(name) {
+  const buffer = SFX_BUFFERS[name];
+  if (!buffer || SFX_VOLUME <= 0) return;
+  if (SFX_CTX.state === 'suspended') SFX_CTX.resume();
+  // ── pianifica la riproduzione sul thread audio dedicato, senza bloccare il main thread ──
+  requestAnimationFrame(() => {
+    const source = SFX_CTX.createBufferSource();
+    source.buffer = buffer;
+    source.connect(SFX_GAIN);
+    source.start(0);
+  });
+}
+
+// ── Pannello impostazioni audio: apertura/chiusura e controllo volumi in tempo reale ──
+function toggleSettingsPanel() {
+  document.getElementById('settings-panel').classList.toggle('on');
+}
+document.addEventListener('click', (e) => {
+  const panel = document.getElementById('settings-panel');
+  const btn = document.getElementById('settings-btn');
+  if (panel.classList.contains('on') && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('on');
+  }
+});
+function setMusicVolume(vol) {
+  MUSIC_VOLUME = vol;
+  activeMusic.volume = MUSIC_VOLUME;
+}
+function setSfxVolume(vol) {
+  SFX_VOLUME = vol;
+  SFX_GAIN.gain.value = vol;
+}
+
+// ── Suoni click/hover su tutti i pulsanti interattivi ──
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('button:not(:disabled)');
+  if (btn) playSfx('click');
+}, true);
+document.addEventListener('mouseover', (e) => {
+  const btn = e.target.closest('button:not(:disabled)');
+  if (btn && !btn.contains(e.relatedTarget)) playSfx('hover');
+}, true);
 
 const BATTLE_TRACKS = Array.from({ length: 21 }, (_, i) => `music/battle${i + 1}.mp3`);
 const LOST_TRACKS = ['music/lost1.mp3', 'music/lost2.mp3'];
@@ -6758,45 +8084,93 @@ let musicMode = null; // 'intro' | 'battle' | 'lost'
 let lastBattleTrack = null;
 let musicUnlocked = false;
 let introStarted = false;
+let musicFadeInterval = null;
 
 // Istanza unica e dedicata per intro.mp3, per evitare avvii multipli sovrapposti
 const introAudio = new Audio('music/intro.mp3');
 introAudio.loop = true;
 introAudio.volume = MUSIC_VOLUME;
+introAudio.preload = 'auto';
 
 const musicB = new Audio();
 musicB.volume = 0;
+musicB.preload = 'auto';
 let activeMusic = introAudio;
 let inactiveMusic = musicB;
+
+// ── precarica in background tutti i brani battle/lost, così il browser li ha già in cache
+//    quando crossfadeTo li assegna a un <audio>, evitando scatti per buffering a metà cambio ──
+const MUSIC_PRELOAD_CACHE = {};
+function preloadMusicTracks(srcs) {
+  srcs.forEach(src => {
+    if (MUSIC_PRELOAD_CACHE[src]) return;
+    const a = new Audio();
+    a.preload = 'auto';
+    a.src = encodeURI(src);
+    MUSIC_PRELOAD_CACHE[src] = a;
+  });
+}
+preloadMusicTracks(BATTLE_TRACKS);
+preloadMusicTracks(LOST_TRACKS);
+
+// ── avvia la riproduzione solo quando l'audio è bufferizzato a sufficienza (canplaythrough),
+//    per evitare scatti se il file non è ancora completamente caricato ──
+function playWhenReady(audio) {
+  if (audio.readyState >= 3) {
+    audio.play().catch(err => console.log('errore audio:', err));
+    return;
+  }
+  audio.addEventListener('canplaythrough', () => {
+    audio.play().catch(err => console.log('errore audio:', err));
+  }, { once: true });
+}
 
 // Dissolvenza incrociata fluida tra il brano attivo e il nuovo brano
 function crossfadeTo(src, { loop = false, onEnded = null } = {}) {
   const incoming = inactiveMusic;
   const outgoing = activeMusic;
 
+  // ── annulla un'eventuale dissolvenza precedente ancora in corso, per evitare
+  //    che due fade interferiscano sovrapponendo volumi/istanze ──
+  if (musicFadeInterval) {
+    clearInterval(musicFadeInterval);
+    musicFadeInterval = null;
+  }
+
   incoming.pause();
-  incoming.src = src;
+  incoming.src = encodeURI(src);
   incoming.loop = loop;
   try { incoming.currentTime = 0; } catch {}
   incoming.volume = 0;
   incoming.onended = onEnded;
-  incoming.play().catch(err => console.log('errore audio:', err));
+  incoming.load();
 
-  const steps = 30;
-  const stepTime = MUSIC_FADE_MS / steps;
-  let i = 0;
-  const startVol = outgoing.volume;
-  const iv = setInterval(() => {
-    i++;
-    const t = i / steps;
-    incoming.volume = Math.min(MUSIC_VOLUME, MUSIC_VOLUME * t);
-    outgoing.volume = Math.max(0, startVol * (1 - t));
-    if (i >= steps) {
-      clearInterval(iv);
-      outgoing.pause();
-      outgoing.onended = null;
-    }
-  }, stepTime);
+  const startFade = () => {
+    incoming.play().catch(err => console.log('errore audio:', err));
+    const steps = 30;
+    const stepTime = MUSIC_FADE_MS / steps;
+    let i = 0;
+    const startVol = outgoing.volume;
+    musicFadeInterval = setInterval(() => {
+      i++;
+      const t = i / steps;
+      incoming.volume = Math.min(MUSIC_VOLUME, MUSIC_VOLUME * t);
+      outgoing.volume = Math.max(0, startVol * (1 - t));
+      if (i >= steps) {
+        clearInterval(musicFadeInterval);
+        musicFadeInterval = null;
+        outgoing.pause();
+        outgoing.onended = null;
+      }
+    }, stepTime);
+  };
+
+  // ── attende che il brano sia pronto prima di avviare play()+dissolvenza ──
+  if (incoming.readyState >= 3) {
+    startFade();
+  } else {
+    incoming.addEventListener('canplaythrough', startFade, { once: true });
+  }
 
   activeMusic = incoming;
   inactiveMusic = outgoing;
@@ -6805,9 +8179,9 @@ function crossfadeTo(src, { loop = false, onEnded = null } = {}) {
 // Avvia (o riavvia) intro.mp3 da zero su un'unica istanza, senza sovrapposizioni
 function startIntroAudio() {
   introAudio.pause();
-  introAudio.currentTime = 0;
+  try { introAudio.currentTime = 0; } catch {}
   introAudio.volume = MUSIC_VOLUME;
-  introAudio.play().catch(err => console.log('errore audio:', err));
+  playWhenReady(introAudio);
 }
 
 function playIntroMusic() {
@@ -7165,6 +8539,13 @@ document.querySelectorAll('.pixel-plane').forEach(el => {
 document.querySelectorAll('.pixel-bird').forEach(el => {
   el.addEventListener('animationiteration', () => maybeDropPoop(el));
 });
+
+// ─── logo animato MILANO ROGUELIFE in alto a sinistra (barra superiore) ───
+const HEADER_LOGO_SPRITE = {
+  src: 'spritesheet/GIOCO_cropped.png', cols: 5, rows: 13, frames: 61,
+  frameW: 793, frameH: 189, fps: 12, chromaKey: true,
+};
+initRotSpriteCanvas(document.getElementById('header-logo'), HEADER_LOGO_SPRITE);
 
 // ─── avvio ───
 showScreen('title');
