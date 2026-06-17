@@ -519,7 +519,19 @@ Si apre dopo ogni vittoria. 4 sezioni indipendenti con tasto reroll indipendente
 - Si resetta ad ogni nuova battaglia
 
 ### Oggetti per ROT
-- Ogni ROT può equipaggiare massimo **2 oggetti** contemporaneamente
+- Ogni ROT può equipaggiare massimo **2 oggetti** fino al livello 49
+- Dal livello 50: +1 slot oggetto ogni 50 livelli
+  - Livello 50: 3 oggetti
+  - Livello 100: 4 oggetti
+  - Livello 150: 5 oggetti
+  - Livello 200: 6 oggetti
+
+### Talenti
+- Si sbloccano al livello 50, aumentano di potenza ogni 50 livelli
+- Ogni ROT ha il proprio talento unico (le passive già definite)
+
+### Fusione oggetti
+- Dal livello 50 in poi si possono fondere oggetti — meccanica da definire
 
 ## SCALING LIVELLO ROT
 
