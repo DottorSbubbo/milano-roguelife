@@ -1028,12 +1028,12 @@ body {
   0%, 100% { outline: 2px solid transparent; }
   50% { outline: 2px solid #fde68a; }
 }
-/* oggetti: aspetto di pulsante cliccabile, bordo netto */
+/* oggetti: icona emoji cliccabile */
 .loadout-token-item {
   border: 2px solid #fde68a;
   background: rgba(80,50,10,0.85); color: #fde68a;
   box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4);
-  min-width: 64px; justify-content: center;
+  min-width: 40px; justify-content: center; font-size: 18px; line-height: 1;
 }
 /* drugs: iconcina colorata + moltiplicatore, niente bordo da pulsante */
 .loadout-token-drug {
@@ -2119,7 +2119,7 @@ body {
   min-height: 0; overflow: visible;
 }
 /* ── colori distintivi per box sezione ── */
-#shop-section-items { background: rgba(18,32,52,0.65); border-color: rgba(90,150,210,0.14); }
+#shop-section-items { background: rgba(18,32,52,0.65); border-color: rgba(90,150,210,0.14); overflow: hidden; }
 #shop-section-drugs { background: rgba(42,20,52,0.65); border-color: rgba(190,90,210,0.14); }
 #shop-section-moves { background: rgba(52,30,14,0.65); border-color: rgba(210,130,60,0.14); }
 #shop-section-rot { background-color: #1a1a2e !important; opacity: 1 !important; border-color: rgba(120,120,180,0.14); }
@@ -2174,6 +2174,7 @@ body {
 .shop-card-name {
   font-family: 'Press Start 2P', 'Courier New', monospace;
   font-size: 14px; letter-spacing: 1px; font-weight: bold;
+  white-space: nowrap; overflow: hidden;
 }
 .shop-rarity-badge {
   font-family: 'Silkscreen', 'Courier New', monospace;
@@ -2204,16 +2205,13 @@ body {
   50% { border-color: #fde68a; }
 }
 
-/* ── card mossa/oggetto/drug: testo più grande, sfrutta lo spazio del box ── */
-.shop-item-card .shop-card-name,
-.shop-drug-card .shop-card-name,
-.shop-move-card .shop-card-name { font-size: 17px; }
-.shop-move-power { font-size: 13px; opacity: 0.65; letter-spacing: 0; }
+/* ── card mossa/oggetto/drug: font-size applicato inline via JS per adattarsi al nome ── */
+.shop-move-power { font-size: 0.8em; opacity: 0.65; letter-spacing: 0; }
 .shop-move-name-clickable { cursor: pointer; }
 .shop-move-name-clickable:hover {
   animation: loadout-token-blink 0.6s ease-in-out infinite;
 }
-.shop-item-card .shop-card-desc,
+.shop-item-card .shop-card-desc { font-size: 15px; line-height: 1.25; overflow: hidden; }
 .shop-drug-card .shop-card-desc,
 .shop-move-card .shop-card-desc { font-size: 17px; line-height: 1.3; overflow: hidden; }
 
@@ -2280,7 +2278,9 @@ body {
 #shop-section-items > .shop-card-row, #shop-section-moves > .shop-card-row {
   display: flex; gap: 10px; flex: 1; min-height: 0;
 }
-#shop-section-items > .shop-card-row > .shop-card,
+#shop-section-items > .shop-card-row > .shop-card {
+  flex: 1; height: 220px; max-height: 220px; min-height: 220px; overflow: hidden;
+}
 #shop-section-moves > .shop-card-row > .shop-card { flex: 1; }
 
 /* ── box ROT, tendenzialmente quadrato ── */
@@ -2617,9 +2617,9 @@ body {
   animation: loadout-token-blink 0.4s ease-in-out infinite;
   border-color: #fde68a;
 }
-/* 2 slot oggetti a posizione fissa */
+/* slot oggetto vuoto */
 .loadout-token-empty {
-  border-style: dashed; opacity: 0.4; min-width: 64px; justify-content: center;
+  border-style: dashed; opacity: 0.4; min-width: 40px; justify-content: center;
 }
 /* drug non equipaggiata: iconcina grigia desaturata con barra trasversale */
 .drug-icon-empty {
@@ -2632,16 +2632,73 @@ body {
 }
 /* finestra acquisto OGGETTI: la sezione OGGETTI/DRUGS resta staccata dal bordo inferiore del box */
 #rot-manager-box.mode-items .rm-loadout { margin-bottom: 8px; }
-/* finestra assegnazione OGGETTO acquistato: solo header + 2 slot oggetti grandi che riempiono il box */
-.rm-item-slots { display: flex; gap: 16px; flex: 1; min-height: 0; margin-top: 10px; }
+/* finestra assegnazione OGGETTO acquistato: solo header + slot oggetti grandi che riempiono il box */
+.rm-item-slots { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; min-height: 0; margin-top: 10px; }
 .rm-item-slots .loadout-token-item {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  font-size: 20px; padding: 16px; border-radius: 6px;
+  flex: 1 1 calc(50% - 10px); min-width: 80px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  padding: 14px; border-radius: 6px; font-size: 28px;
+  transition: outline 0.12s, box-shadow 0.12s;
+}
+.rm-item-slots .loadout-token-item .item-slot-label {
+  font-size: 9px; letter-spacing: 1px; opacity: 0.85; line-height: 1.2; text-align: center; word-break: break-word;
+}
+.rm-item-slots .loadout-token-item.rm-item-swappable {
+  cursor: pointer; outline: 2px solid transparent;
+}
+.rm-item-slots .loadout-token-item.rm-item-swappable:hover {
+  outline: 2px solid currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+/* pulsante espandi slot oggetti (livello ≥ 50) */
+.rm-items-expand-btn {
+  font-family: 'Courier New', monospace; font-size: 11px; letter-spacing: 2px;
+  padding: 3px 9px; background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.18); border-radius: 4px; color: #9999bb;
+  cursor: pointer; transition: background 0.12s, border-color 0.12s; white-space: nowrap;
+}
+.rm-items-expand-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.35); }
+@keyframes rm-items-plus-blink {
+  0%, 100% { border-color: #fde68a; background: rgba(253,230,138,0.1); }
+  50%       { border-color: #fff;    background: rgba(253,230,138,0.28); }
+}
+.rm-items-expand-btn.rm-items-plus-over { animation: rm-items-plus-blink 0.3s ease-in-out infinite; }
+/* popup flottante slot oggetti livello ≥ 50 */
+#rm-items-popup {
+  display: none; position: fixed; z-index: 10080;
+  background: #0e0e1a; border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 8px; padding: 14px 16px;
+  flex-direction: column; gap: 10px;
+  min-width: 154px; box-shadow: 0 6px 28px rgba(0,0,0,0.75);
+}
+#rm-items-popup.on { display: flex; }
+.rm-items-popup-title { font-size: 10px; letter-spacing: 4px; color: #8888b0; font-weight: bold; }
+#rm-items-popup-slots { display: flex; flex-direction: column; gap: 8px; }
+.rm-popup-slot-row { display: flex; align-items: center; gap: 10px; }
+.rm-popup-slot-name { font-size: 11px; color: #b0b0d0; letter-spacing: 1px; white-space: nowrap; }
+#rm-items-popup .loadout-token-item { min-width: 44px; font-size: 22px; padding: 6px 10px; flex-shrink: 0; }
+/* marsupio slot in modalità assegnazione oggetto */
+.marsupio-slot.marsupio-assign {
+  cursor: pointer; position: relative;
+}
+.marsupio-slot.marsupio-assign::after {
+  content: 'COMPRA';
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; letter-spacing: 2px; font-weight: bold; color: #fde68a;
+  background: rgba(212,168,48,0.0); border-radius: 4px;
+  opacity: 0; transition: opacity 0.15s, background 0.15s;
+  pointer-events: none;
+}
+.marsupio-slot.marsupio-assign:hover::after {
+  opacity: 1; background: rgba(212,168,48,0.18);
+}
+.marsupio-slot.marsupio-assign:hover {
+  border-color: rgba(212,168,48,0.6);
 }
 /* scritte più grandi nella finestra GESTIONE ROT: token tipo, oggetti, drugs */
 #rot-manager-box .shop-rarity-badge { font-size: 12px; padding: 4px 12px; }
 #rot-manager-box .loadout-token { font-size: 12px; padding: 5px 12px; }
-#rot-manager-box .loadout-token-item { min-width: 76px; }
+#rot-manager-box .loadout-token-item { min-width: 44px; }
 #rot-manager-box .drug-icon { width: 13px; height: 13px; }
 /* finestra acquisto DRUGS: scritte dei box ROT più grandi, c'è molto spazio */
 #rot-manager-box.mode-drugs .rm-level { font-size: 18px; }
@@ -2650,7 +2707,7 @@ body {
 #rot-manager-box.mode-drugs .rm-stats { font-size: 16px; gap: 18px; }
 #rot-manager-box.mode-drugs .rm-loadout-row { font-size: 15px; gap: 10px; }
 #rot-manager-box.mode-drugs .loadout-token { font-size: 15px; padding: 6px 16px; }
-#rot-manager-box.mode-drugs .loadout-token-item { min-width: 90px; }
+#rot-manager-box.mode-drugs .loadout-token-item { min-width: 44px; }
 #rot-manager-box.mode-drugs .drug-icon,
 #rot-manager-box.mode-drugs .drug-icon-empty { width: 16px; height: 16px; }
 #rot-manager-box.mode-drugs .rot-manager-card { padding: 14px 22px; gap: 10px; }
@@ -2754,6 +2811,10 @@ body {
 #rot-manager-box.mode-drugs .rm-drug-slots .loadout-token-drug { font-size: 22px; padding: 20px 36px; gap: 16px; }
 #rot-manager-box.mode-drugs .rm-drug-slots .drug-icon,
 #rot-manager-box.mode-drugs .rm-drug-slots .drug-icon-empty { width: 36px; height: 36px; }
+#rot-manager-box.mode-drugs .rm-drug-slots .rm-drug-grid { gap: 10px; flex-wrap: wrap; }
+#rot-manager-box.mode-drugs .rm-drug-slots .rm-drug-slot { width: 58px; height: 46px; border-radius: 9px; gap: 5px; }
+#rot-manager-box.mode-drugs .rm-drug-slots .drug-icon { width: 14px; height: 14px; }
+#rot-manager-box.mode-drugs .rm-drug-slots .rm-stat-tok-count { font-size: 15px; }
 
 /* ── MARSUPIO: griglia 3x3 di slot quadrati ── */
 #marsupio-wrap { position: relative; width: 100%; aspect-ratio: 1; flex-shrink: 0; }
@@ -2925,6 +2986,269 @@ body {
 #shop-move-info-secondary-left .type-table-title { font-size: 28px; }
 #shop-move-info-secondary-left .type-table-name,
 #shop-move-info-secondary-left .type-table-cell { font-size: 15px; min-height: 38px; }
+
+/* ── BOSS WARNING OVERLAY ── */
+#boss-warning-overlay {
+  display: none; position: fixed; inset: 0; z-index: 30000;
+  background: rgba(0,0,0,0.93);
+  align-items: center; justify-content: center; flex-direction: column;
+}
+#boss-warning-overlay.on { display: flex; }
+#boss-warning-box { text-align: center; user-select: none; }
+#boss-warning-label {
+  font-family: 'Courier New', monospace; letter-spacing: 10px; font-size: 16px;
+  color: #ef4444; text-shadow: 0 0 20px #ef4444, 0 0 40px #dc2626;
+  animation: boss-label-pulse 0.65s ease-in-out infinite alternate;
+}
+#boss-warning-name {
+  font-family: 'Courier New', monospace; font-size: 54px; letter-spacing: 5px;
+  color: #fff; line-height: 1.25; margin: 30px 0 22px;
+  text-shadow: 0 0 30px rgba(220,80,80,0.9), 0 0 60px rgba(180,40,40,0.5);
+}
+#boss-countdown {
+  font-family: 'Courier New', monospace; font-size: 88px; color: #ef4444;
+  text-shadow: 0 0 30px #ef4444, 0 0 60px #dc2626; display: inline-block;
+  animation: boss-count-pop 0.9s cubic-bezier(0.22,1,0.36,1);
+}
+@keyframes boss-label-pulse {
+  from { opacity: 0.55; text-shadow: 0 0 12px #ef4444; }
+  to   { opacity: 1;    text-shadow: 0 0 28px #ef4444, 0 0 50px #dc2626; }
+}
+@keyframes boss-count-pop {
+  0%   { transform: scale(1.8); opacity: 0.2; }
+  60%  { transform: scale(0.9); opacity: 1; }
+  100% { transform: scale(1);   opacity: 1; }
+}
+
+/* ── BOSS CARD ── */
+.boss-card {
+  flex: 1 1 auto; width: 100%; max-width: 100%;
+}
+.boss-card .rot-sprite {
+  width: 100%; height: 260px;
+}
+.boss-card .hp-bar-track { height: 18px; }
+.boss-card .rot-name-token { font-size: 15px !important; padding: 4px 10px; }
+.boss-card .bars-frame { width: 100%; box-sizing: border-box; }
+
+/* ── FUSIONE OGGETTI ── */
+@keyframes fusible-blink {
+  0%, 100% {
+    box-shadow: 0 0 0 2px #ff0000, 0 0 8px 2px #ff0000, 0 0 22px 4px rgba(255,0,0,0.7);
+    color: inherit;
+  }
+  50% {
+    box-shadow: 0 0 0 3px #ff6060, 0 0 20px 6px #ff2020, 0 0 50px 10px rgba(255,30,30,0.9);
+    color: #fff;
+    text-shadow: 0 0 8px #ff4444;
+  }
+}
+.fusible-item {
+  animation: fusible-blink 0.55s ease-in-out infinite;
+  outline: none;
+  position: relative;
+  cursor: context-menu;
+  border-radius: 3px;
+}
+.fusible-item::after {
+  content: '🔥'; font-size: 9px; position: absolute; top: -6px; right: -5px;
+  line-height: 1; pointer-events: none;
+}
+.fusible-item::before {
+  content: 'CLICCA DX MOUSE, FONDIMIIIII!!!!';
+  position: absolute;
+  bottom: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a0000;
+  color: #ff4040;
+  border: 1px solid #ff2020;
+  box-shadow: 0 0 14px rgba(255,0,0,0.6), 0 0 4px rgba(255,0,0,0.9) inset;
+  font-size: 10px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  padding: 4px 8px;
+  border-radius: 3px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 9999;
+}
+.fusible-item:hover::before {
+  opacity: 1;
+}
+.item-lv-badge {
+  font-size: 0.65em; vertical-align: super; opacity: 0.9; color: #fde68a;
+  font-weight: bold; margin-left: 2px;
+}
+
+/* Fusion overlays */
+#fusion-confirm-overlay, #fusion-anim-overlay, #fusion-result-overlay {
+  display: none; position: fixed; inset: 0; z-index: 40000;
+  background: rgba(0,0,0,0.88);
+  align-items: center; justify-content: center;
+}
+#fusion-confirm-overlay.on, #fusion-anim-overlay.on, #fusion-result-overlay.on { display: flex; }
+
+#fusion-confirm-box, #fusion-result-box {
+  background: #0d0d1a; border: 1px solid rgba(239,68,68,0.5);
+  border-radius: 8px; padding: 28px 32px; text-align: center;
+  font-family: 'Courier New', monospace; max-width: 420px;
+  box-shadow: 0 0 40px rgba(239,68,68,0.2);
+}
+#fusion-confirm-text { font-size: 15px; color: #e5e7eb; line-height: 1.6; margin-bottom: 22px; }
+.fusion-confirm-btns { display: flex; gap: 14px; justify-content: center; }
+.fusion-confirm-btns button {
+  font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 3px;
+  padding: 10px 28px; border: 1px solid currentColor; background: transparent; cursor: pointer;
+  border-radius: 3px; transition: background 0.15s;
+}
+.fusion-btn-si { color: #4ade80; }
+.fusion-btn-si:hover { background: rgba(74,222,128,0.15); }
+.fusion-btn-no { color: #f87171; }
+.fusion-btn-no:hover { background: rgba(248,113,113,0.15); }
+
+#fusion-anim-box {
+  text-align: center; font-family: 'Courier New', monospace;
+  animation: fusion-anim-pulse 0.7s ease-in-out infinite alternate;
+}
+#fusion-anim-icon { font-size: 64px; display: block; margin-bottom: 18px; }
+#fusion-anim-text { font-size: 20px; letter-spacing: 8px; color: #fde68a; }
+@keyframes fusion-anim-pulse {
+  from { transform: scale(1); opacity: 0.7; filter: brightness(1); }
+  to   { transform: scale(1.08); opacity: 1; filter: brightness(1.4); }
+}
+
+#fusion-result-box { border-color: rgba(253,230,138,0.5); box-shadow: 0 0 40px rgba(253,230,138,0.15); }
+#fusion-result-name { font-size: 22px; font-weight: bold; margin-bottom: 10px; letter-spacing: 2px; }
+.fusion-result-lv { color: #fde68a; font-size: 16px; }
+#fusion-result-desc { font-size: 13px; color: #d1d5db; line-height: 1.6; margin: 14px 0 22px; }
+.fusion-result-close { font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 3px; padding: 10px 28px; border: 1px solid rgba(253,230,138,0.5); background: transparent; color: #fde68a; cursor: pointer; border-radius: 3px; }
+.fusion-result-close:hover { background: rgba(253,230,138,0.1); }
+
+/* ── Pulsante Enciclopedia ── */
+#shop-enc-btn {
+  display: flex !important; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  width: 64px; height: 64px; flex-shrink: 0;
+  background: rgba(20,60,45,0.7); border: 1px solid #6ee7b7;
+  border-radius: 6px; cursor: pointer; color: #6ee7b7;
+  font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 2px; font-weight: bold;
+  transition: background 0.12s, border-color 0.12s;
+  box-shadow: 0 0 6px rgba(110,231,183,0.25);
+}
+#shop-enc-btn .enc-icon { font-size: 26px; line-height: 1; }
+#shop-enc-btn:hover { background: rgba(80,180,140,0.3); border-color: #a7f3d0; box-shadow: 0 0 12px rgba(110,231,183,0.5); }
+
+/* ── Overlay Enciclopedia ── */
+#enc-overlay {
+  display: none; position: fixed; inset: 0; z-index: 200;
+  background: rgba(0,0,0,0.92);
+  align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+}
+#enc-overlay.on { display: flex; }
+#enc-box {
+  display: flex; flex-direction: column;
+  width: 94vw; max-width: 1400px; height: 90vh;
+  background: #080812; border: 1px solid rgba(110,231,183,0.2);
+  border-radius: 8px; overflow: hidden;
+  box-shadow: 0 0 60px rgba(110,231,183,0.08);
+}
+#enc-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 22px; border-bottom: 1px solid rgba(110,231,183,0.15);
+  flex-shrink: 0;
+}
+#enc-title { font-size: 22px; letter-spacing: 8px; color: #6ee7b7; font-weight: bold; }
+#enc-close-btn {
+  font-family: 'Courier New', monospace; font-size: 12px; letter-spacing: 3px;
+  padding: 7px 18px; border: 1px solid rgba(110,231,183,0.4);
+  background: transparent; color: #6ee7b7; cursor: pointer; border-radius: 3px;
+}
+#enc-close-btn:hover { background: rgba(110,231,183,0.1); }
+#enc-body { display: flex; flex: 1; min-height: 0; }
+#enc-list {
+  width: 290px; flex-shrink: 0;
+  border-right: 1px solid rgba(110,231,183,0.12);
+  overflow-y: auto; padding: 8px 0;
+}
+/* Sezioni principali */
+.enc-section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 18px; cursor: pointer;
+  font-size: 14px; letter-spacing: 4px; font-weight: bold; color: #6ee7b7;
+  user-select: none;
+  border-bottom: 1px solid rgba(110,231,183,0.1);
+  transition: background 0.1s;
+}
+.enc-section-head:hover { background: rgba(110,231,183,0.06); }
+.enc-section-arrow { font-size: 10px; }
+.enc-section-body { display: none; }
+.enc-section-body.open { display: block; }
+/* Voci dirette (ROT) */
+.enc-entry {
+  padding: 9px 26px; font-size: 13px; letter-spacing: 1px;
+  color: #9ca3af; cursor: pointer; border-bottom: 1px solid rgba(255,255,255,0.03);
+  transition: color 0.1s, background 0.1s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.enc-entry:hover { color: #e5e7eb; background: rgba(255,255,255,0.05); }
+.enc-entry.active { color: #fff; background: rgba(110,231,183,0.1); border-left: 2px solid #6ee7b7; padding-left: 24px; }
+/* Sotto-sezioni (OGGETTI / DRUGS / MOSSE) */
+.enc-subsection-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 18px 10px 32px; cursor: pointer;
+  font-size: 13px; letter-spacing: 3px; font-weight: bold; color: #a7f3d0;
+  user-select: none;
+  border-bottom: 1px solid rgba(110,231,183,0.06);
+  background: rgba(110,231,183,0.02);
+  transition: background 0.1s;
+}
+.enc-subsection-head:hover { background: rgba(110,231,183,0.08); }
+.enc-subsection-body { display: none; }
+.enc-subsection-body.open { display: block; }
+.enc-subentry {
+  padding: 8px 18px 8px 44px; font-size: 13px; letter-spacing: 1px;
+  color: #9ca3af; cursor: pointer;
+  transition: color 0.1s, background 0.1s;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.enc-subentry:hover { color: #e5e7eb; background: rgba(255,255,255,0.05); }
+.enc-subentry.active { color: #fff; background: rgba(110,231,183,0.1); border-left: 2px solid #6ee7b7; padding-left: 42px; }
+/* Pannello dettaglio */
+#enc-detail {
+  flex: 1; min-width: 0; overflow-y: auto; padding: 28px 38px;
+  color: #c9d1d9;
+}
+#enc-detail .info-title { font-size: 28px; font-weight: bold; letter-spacing: 3px; margin-bottom: 14px; }
+#enc-detail .info-section { font-size: 12px; letter-spacing: 4px; color: #6b7280; margin: 22px 0 10px; }
+#enc-detail .info-text { font-size: 16px; line-height: 1.75; color: #c9d1d9; }
+#enc-detail .info-stat-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
+#enc-detail .info-stat { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); border-radius: 4px; padding: 8px 16px; min-width: 72px; }
+#enc-detail .info-stat-lbl { font-size: 10px; letter-spacing: 2px; color: #6b7280; }
+#enc-detail .info-stat-val { font-size: 20px; font-weight: bold; color: #e5e7eb; }
+#enc-detail .info-badge { font-size: 12px; letter-spacing: 3px; padding: 4px 12px; border-radius: 3px; display: inline-block; margin-right: 8px; margin-bottom: 12px; }
+#enc-detail .enc-fusion-tree { margin-top: 14px; }
+#enc-detail .enc-fusion-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); }
+#enc-detail .enc-fusion-lv { font-size: 13px; font-weight: bold; letter-spacing: 2px; flex-shrink: 0; width: 40px; padding-top: 3px; }
+#enc-detail .enc-fusion-arrow { font-size: 15px; color: #4b5563; flex-shrink: 0; padding-top: 2px; }
+#enc-detail .enc-fusion-desc { font-size: 15px; line-height: 1.65; color: #c9d1d9; }
+#enc-detail .enc-fusion-req { font-size: 11px; color: #4b5563; letter-spacing: 1px; margin: 6px 0 4px; padding-left: 52px; }
+/* Sprite ROT nell'enciclopedia */
+.enc-rot-sprite {
+  width: 220px; height: 220px; position: relative; overflow: hidden;
+  border-radius: 8px; margin: 0 0 22px;
+  background-image: linear-gradient(160deg, rgba(255,255,255,0.07) 0%, transparent 55%);
+}
+.enc-rot-sprite.sprite-mode { background: none; background-image: none; }
+.enc-rot-sprite-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.enc-rot-sprite-canvas.mirrored { transform: scaleX(-1); }
+#enc-placeholder {
+  color: #374151; font-size: 16px; letter-spacing: 3px; text-align: center;
+  margin-top: 80px;
+}
 </style>
 </head>
 <body ondblclick="onStageBackgroundClick(event)">
@@ -3063,6 +3387,9 @@ body {
         <button id="shop-rot-manager-btn" onclick="openRotManager()" title="Gestisci la tua squadra di ROT: vendi, riequipaggia oggetti e usa il marsupio.">
           <span class="shop-rot-manager-icon">👾</span><span>ROT</span>
         </button>
+        <button id="shop-enc-btn" onclick="openEnciclopedia()" title="Enciclopedia — tutte le voci di gioco">
+          <span class="enc-icon">📜</span><span>ENC</span>
+        </button>
       </div>
       <div id="shop-gold"></div>
     </div>
@@ -3077,6 +3404,14 @@ body {
 </div>
 
 <div id="rm-drug-tooltip"></div>
+
+<div id="boss-warning-overlay">
+  <div id="boss-warning-box">
+    <div id="boss-warning-label">⚠ ATTENZIONE ⚠</div>
+    <div id="boss-warning-name">BEPPE SALA<br>SI AVVICINA</div>
+    <div id="boss-countdown">3</div>
+  </div>
+</div>
 
 <div id="talent-overlay" onclick="closeTalentOverlay(event)">
   <div id="talent-box">
@@ -3105,6 +3440,10 @@ body {
       </div>
     </div>
     <div id="rot-manager-sellzone" ondragover="onSellZoneDragOver(event)" ondragleave="onSellZoneDragLeave(event)" ondrop="onSellDrop(event)">VENDI <span id="rot-manager-sell-price"></span></div>
+  </div>
+  <div id="rm-items-popup">
+    <div class="rm-items-popup-title">OGGETTI</div>
+    <div id="rm-items-popup-slots"></div>
   </div>
 </div>
 
@@ -3186,6 +3525,7 @@ const TYPE_COLORS = {
   MOG:    { bg:'#1e3a8a', text:'#bfdbfe' },
   VAPE:   { bg:'#164e63', text:'#a5f3fc' },
   BASED:  { bg:'#7c2d12', text:'#fed7aa' },
+  BOSS:   { bg:'#3b0764', text:'#d8b4fe' },
 };
 
 // ── Effetti delle mosse senza tipo che curano (testo verde) vs altre utility/buff/scudo (testo blu) ──
@@ -3213,14 +3553,15 @@ function moveTextStyle(move) {
 
 // ── Colore di sfondo del token nome ROT, in base al tipo ──
 const NAME_TOKEN_COLORS = {
-  MOG:    '#7f1d1d', // rosso scuro
-  CRYPTO: '#c2410c', // arancione
-  NORMIE: '#1d4ed8', // blu
-  VAPE:   '#7c3aed', // viola
-  SCHIZO: '#15803d', // verde
-  TROLL:  '#b45309', // giallo ocra
-  PSYCHO: '#dc2626', // rosso
-  BASED:  '#5c3a21', // marrone
+  MOG:    '#7f1d1d',
+  CRYPTO: '#c2410c',
+  NORMIE: '#1d4ed8',
+  VAPE:   '#7c3aed',
+  SCHIZO: '#15803d',
+  TROLL:  '#b45309',
+  PSYCHO: '#dc2626',
+  BASED:  '#5c3a21',
+  BOSS:   '#4a044e',
 };
 
 const TYPE_CHART = {
@@ -3446,16 +3787,23 @@ function computeTalentInfo(rot) {
 // ═══════════════════════════════════════════════════
 
 const RARITY_COLOR = {
-  comune: '#9ca3af',
-  rara: '#60a5fa',
-  atomica: '#c084fc',
+  comune:       '#9ca3af',
+  combo:        '#facc15',
+  atomico:      '#c084fc',
+  apocalittico: '#f87171',
+  // legacy aliases (per mosse/drugs che usano ancora i vecchi nomi)
+  rara:         '#facc15',
+  atomica:      '#c084fc',
   apocalittica: '#f87171',
 };
 
-// Stile unificato per badge/token di rarità nel negozio: stesso codice colore
-// e stessa forma per oggetti, mosse e drugs.
+// Stile unificato per badge/token di rarità nel negozio
 const RARITY_STYLE = {
   comune:       { bg: '#26262f', text: '#b8b8cf' },
+  combo:        { bg: '#5a4310', text: '#fde68a' },
+  atomico:      { bg: '#6e2410', text: '#ffb38a' },
+  apocalittico: { bg: '#4a1268', text: '#e6b8ff' },
+  // legacy aliases
   rara:         { bg: '#5a4310', text: '#fde68a' },
   atomica:      { bg: '#6e2410', text: '#ffb38a' },
   apocalittica: { bg: '#4a1268', text: '#e6b8ff' },
@@ -3463,120 +3811,158 @@ const RARITY_STYLE = {
 };
 
 const ITEM_DEFS = {
-  // ── COMUNI (80%) ──
-  TUTINA: {
-    name: 'TUTINA', short: 'TUTINA', rarity: 'comune',
-    desc: 'Riduce il danno fisico ricevuto del 20%.', color: RARITY_COLOR.comune,
-  },
-  OCCHIALI_DA_SOLE: {
-    name: 'OCCHIALI DA SOLE', short: 'OCCHIALI', rarity: 'comune',
-    desc: 'Riduce il danno speciale ricevuto del 20%.', color: RARITY_COLOR.comune,
-  },
-  MANUBRIETTO: {
-    name: 'MANUBRIETTO', short: 'MANUBR', rarity: 'comune',
-    desc: '+20% danno fisico inflitto.', color: RARITY_COLOR.comune,
-  },
-  LENTINE: {
-    name: 'LENTINE', short: 'LENTINE', rarity: 'comune',
-    desc: '+20% danno speciale inflitto.', color: RARITY_COLOR.comune,
+  // ── COMUNE (60%) — non fondibili ──
+  SPECCHIO: {
+    name: 'SPECCHIO', icon: '🪞', rarity: 'comune', maxFusion: 1,
+    desc: '50% di probabilità di riflettere uno status negativo all\'attaccante.', color: RARITY_COLOR.comune,
   },
   SCARPE_DA_GINNASTICA: {
-    name: 'SCARPE DA GINNASTICA', short: 'SCARPE', rarity: 'comune',
-    desc: 'Il ROT attacca sempre per primo in assoluto, indipendentemente dalla velocità. Nella barra velocità appare sempre in prima posizione.',
-    color: RARITY_COLOR.comune,
-  },
-  CEROTTO: {
-    name: 'CEROTTO', short: 'CEROTTO', rarity: 'comune',
-    desc: 'Se scende sotto il 25% degli HP recupera il 20% HP, una volta per battaglia.', color: RARITY_COLOR.comune,
-  },
-  PORTAFORTUNA: {
-    name: 'PORTAFORTUNA', short: 'PORTAF', rarity: 'comune',
-    desc: '+25% di probabilità che gli status applicati vadano a segno.', color: RARITY_COLOR.comune,
+    name: 'SCARPE DA GINNASTICA', icon: '👟', rarity: 'comune', maxFusion: 1,
+    desc: 'Attacca sempre per primo, una volta per battaglia.', color: RARITY_COLOR.comune,
   },
   ASSICURAZIONE: {
-    name: 'ASSICURAZIONE', short: 'ASSIC', rarity: 'comune',
-    desc: 'Se il ROT va KO si riprende una volta con il 25% HP.', color: RARITY_COLOR.comune,
-  },
-  PIGGYBANK: {
-    name: 'PIGGYBANK', short: 'PIGGY', rarity: 'comune',
-    desc: '+3 gold alla fine di ogni turno di battaglia.', color: RARITY_COLOR.comune,
+    name: 'ASSICURAZIONE', icon: '📋', rarity: 'comune', maxFusion: 1,
+    desc: 'Se il ROT muore in battaglia non viene perso definitivamente. Si attiva una volta per run, poi l\'oggetto si consuma.', color: RARITY_COLOR.comune,
   },
   PELLE_DI_ROSPO: {
-    name: 'PELLE DI ROSPO', short: 'PELLE', rarity: 'comune',
+    name: 'PELLE DI ROSPO', icon: '🐸', rarity: 'comune', maxFusion: 1,
     desc: 'Immunità a tutti gli status negativi.', color: RARITY_COLOR.comune,
   },
   ZOCCOLI_DI_LEGNO: {
-    name: 'ZOCCOLI DI LEGNO', short: 'ZOCCOLI', rarity: 'comune',
-    desc: 'Il ROT attacca sempre per ultimo in assoluto, indipendentemente dalla velocità. Nella barra velocità appare sempre in ultima posizione.',
-    color: RARITY_COLOR.comune,
+    name: 'ZOCCOLI DI LEGNO', icon: '🪵', rarity: 'comune', maxFusion: 1,
+    desc: 'Il ROT attacca sempre per ultimo, indipendentemente dalla velocità.', color: RARITY_COLOR.comune,
   },
 
-  // ── RARE (15%) ──
-  GIUBBOTTO_ANTIPROIETTILE: {
-    name: 'GIUBBOTTO ANTIPROIETTILE', short: 'GIUBBOTTO', rarity: 'rara',
-    desc: 'Riduce il danno fisico ricevuto del 40%.', color: RARITY_COLOR.rara,
+  // ── COMBO (35%) — fondibili fino a livello 4 ──
+  OCCHIALI_DA_SOLE: {
+    name: 'OCCHIALI DA SOLE', icon: '🕶', rarity: 'combo', maxFusion: 4,
+    desc: 'Riduce il danno speciale ricevuto del 20%.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Riduce il danno speciale ricevuto del 35%.', '50%.', '80%.'],
   },
-  LENTI_A_CONTATTO: {
-    name: 'LENTI A CONTATTO', short: 'LENTI', rarity: 'rara',
-    desc: 'Riduce il danno speciale ricevuto del 40%.', color: RARITY_COLOR.rara,
+  GIUBBOTTO_ANTIPROIETTILE: {
+    name: 'GIUBBOTTO ANTIPROIETTILE', icon: '🦺', rarity: 'combo', maxFusion: 4,
+    desc: 'Riduce il danno fisico ricevuto del 20%.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Riduce il danno fisico ricevuto del 35%.', '50%.', '80%.'],
   },
   BILANCIERE: {
-    name: 'BILANCIERE', short: 'BILAN', rarity: 'rara',
-    desc: '+40% danno fisico inflitto.', color: RARITY_COLOR.rara,
+    name: 'BILANCIERE', icon: '🏋', rarity: 'combo', maxFusion: 4,
+    desc: '+50% danno fisico inflitto.', color: RARITY_COLOR.combo,
+    fusionDescs: ['+75% danno fisico inflitto.', '+100%.', '+200%.'],
   },
   TELESCOPIO: {
-    name: 'TELESCOPIO', short: 'TELE', rarity: 'rara',
-    desc: '+40% danno speciale inflitto.', color: RARITY_COLOR.rara,
+    name: 'TELESCOPIO', icon: '🔭', rarity: 'combo', maxFusion: 4,
+    desc: '+50% danno speciale inflitto.', color: RARITY_COLOR.combo,
+    fusionDescs: ['+75% danno speciale inflitto.', '+100%.', '+200%.'],
   },
-  SPECCHIO: {
-    name: 'SPECCHIO', short: 'SPECC', rarity: 'rara',
-    desc: '50% di probabilità di riflettere uno status negativo all\'attaccante.', color: RARITY_COLOR.rara,
+  CER8: {
+    name: 'CER8', icon: '💉', rarity: 'combo', maxFusion: 4,
+    desc: 'Sotto il 25% HP cura il 20% HP, una volta per battaglia.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Sotto il 30% HP cura il 33% HP.', 'Sotto il 35% HP cura il 47% HP.', 'Sotto il 40% HP cura il 60% HP. Se a HP pieni, non può essere ucciso in un solo colpo.'],
   },
-  SPINACIO: {
-    name: 'SPINACIO', short: 'SPIN', rarity: 'rara',
-    desc: 'Restituisce il 20% del danno subito ad ogni attacco.', color: RARITY_COLOR.rara,
+  PORTAFORTUNA: {
+    name: 'PORTAFORTUNA', icon: '🍀', rarity: 'combo', maxFusion: 4,
+    desc: '+25% di probabilità che gli status applicati vadano a segno.', color: RARITY_COLOR.combo,
+    fusionDescs: ['+50% di probabilità.', '+75%.', '+100% (status garantiti). I malus applicati a un nemico si replicano automaticamente su tutti gli altri nemici.'],
+  },
+  PIGGYBANK: {
+    name: 'PIGGYBANK', icon: '🐷', rarity: 'combo', maxFusion: 4,
+    desc: '+5 gold alla fine di ogni turno di battaglia.', color: RARITY_COLOR.combo,
+    fusionDescs: ['+10 gold a fine turno.', '+15 gold.', '+30 gold.'],
   },
   WELFARE_GRATUITO: {
-    name: 'WELFARE GRATUITO', short: 'WELFARE', rarity: 'rara',
-    desc: 'Amplifica del 50% l\'efficacia di tutte le cure e gli scudi applicati dal o al ROT che lo possiede.', color: RARITY_COLOR.rara,
+    name: 'WELFARE GRATUITO', icon: '💊', rarity: 'combo', maxFusion: 4,
+    desc: '+25% efficacia di tutte le cure e gli scudi applicati dal o al ROT.', color: RARITY_COLOR.combo,
+    fusionDescs: ['+50% efficacia cure e scudi.', '+100%.', '+200%.'],
   },
-
-  // ── ATOMICHE (4%) ──
-  TUTA_BULLETPROOF: {
-    name: 'TUTA BULLETPROOF', short: 'BULLETPROOF', rarity: 'atomica',
-    desc: 'Riduce tutto il danno ricevuto del 20%.', color: RARITY_COLOR.atomica,
-  },
-  FENICE: {
-    name: 'FENICE', short: 'FENICE', rarity: 'atomica',
-    desc: 'Se il ROT va KO si riprende una volta con il 50% HP.', color: RARITY_COLOR.atomica,
-  },
-  CARTA_DI_CREDITO: {
-    name: 'CARTA DI CREDITO', short: 'CARTA', rarity: 'atomica',
-    desc: 'Raddoppia il gold guadagnato per tutta la run.', color: RARITY_COLOR.atomica,
-  },
-  AMULETO_OSCURO: {
-    name: 'AMULETO OSCURO', short: 'AMULETO', rarity: 'atomica',
-    desc: 'Ogni attacco ha il 15% di applicare uno status casuale al nemico.', color: RARITY_COLOR.atomica,
+  COTTA: {
+    name: 'COTTA', icon: '⛓', rarity: 'combo', maxFusion: 4,
+    desc: 'Restituisce il 20% del danno subito all\'attaccante.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Restituisce il 40% del danno subito.', '60%.', '80%.'],
   },
   AVANZI: {
-    name: 'AVANZI', short: 'AVANZI', rarity: 'atomica',
-    desc: 'Ogni turno il ROT recupera il 10% dei propri HP massimi.', color: RARITY_COLOR.atomica,
+    name: 'AVANZI', icon: '🍕', rarity: 'combo', maxFusion: 4,
+    desc: 'Ogni turno il ROT recupera il 10% dei propri HP massimi.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Recupera il 15% HP a fine turno, esteso a tutta la squadra alleata.', '20% HP a tutta la squadra.', '25% HP a tutta la squadra.'],
   },
   ZECCA_COMUNISTA: {
-    name: 'ZECCA COMUNISTA', short: 'ZECCA', rarity: 'atomica',
-    desc: 'Drena il 50% del danno infierito da qualsiasi mossa come HP per il ROT attaccante, anche per ogni singolo colpo delle mosse multiple.', color: RARITY_COLOR.atomica,
-  },
-  COLBACCO: {
-    name: 'COLBACCO', short: 'COLBACCO', rarity: 'atomica',
-    desc: 'Ogni cura, scudo o effetto positivo ricevuto dal ROT viene replicato automaticamente su tutta la squadra alleata.', color: RARITY_COLOR.atomica,
+    name: 'ZECCA COMUNISTA', icon: '🦟', rarity: 'combo', maxFusion: 4,
+    desc: 'Drena il 50% del danno infierito come HP per il ROT attaccante.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Drena il 83% del danno inflitto.', 'Drena il 100% del danno inflitto.', 'Drena il 150% del danno inflitto — l\'eccesso oltre 100% diventa scudo.'],
   },
 
-  // ── APOCALITTICA (1%) ──
+  // ── ATOMICO (4%) — non fondibili ──
+  FENICE: {
+    name: 'FENICE', icon: '🔥', rarity: 'atomico', maxFusion: 1,
+    desc: 'Se il ROT va KO si riprende una volta per battaglia con il 25% HP.', color: RARITY_COLOR.atomico,
+  },
+  CARTA_DI_CREDITO: {
+    name: 'CARTA DI CREDITO', icon: '💳', rarity: 'atomico', maxFusion: 1,
+    desc: 'Raddoppia il gold guadagnato da ogni fonte per tutta la run.', color: RARITY_COLOR.atomico,
+  },
+  DIFRATTORE: {
+    name: 'DIFRATTORE', icon: '🔮', rarity: 'atomico', maxFusion: 1,
+    desc: 'Trasforma tutte le mosse a bersaglio singolo in mosse ad area. Le mosse offensive colpiscono tutti i nemici; utility/cura/buff si applicano a tutta la squadra. Si combina con SBUBBO.', color: RARITY_COLOR.atomico,
+  },
+  COLBACCO: {
+    name: 'COLBACCO', icon: '🎩', rarity: 'atomico', maxFusion: 1,
+    desc: 'Ogni cura, scudo o buff ricevuto dal ROT viene replicato automaticamente su tutta la squadra alleata.', color: RARITY_COLOR.atomico,
+  },
+
+  // ── APOCALITTICO (1%) — fondibile fino a livello 4 ──
   SBUBBO: {
-    name: 'SBUBBO', short: 'SBUBBO', rarity: 'apocalittica',
-    desc: 'Il ROT attacca due volte consecutivamente per ogni attacco.', color: RARITY_COLOR.apocalittica,
+    name: 'SBUBBO', icon: '✨', rarity: 'apocalittico', maxFusion: 4,
+    desc: 'Qualsiasi mossa viene eseguita 2 volte consecutive. Ogni esecuzione consuma PP separatamente.', color: RARITY_COLOR.apocalittico,
+    fusionDescs: ['Mossa eseguita 3 volte.', '4 volte.', '5 volte.'],
   },
 };
+
+// ═══════════════════════════════════════════════════
+// ITEM POWER — valori meccanici per livello di fusione (indice 0 = lv1, 3 = lv4)
+// ═══════════════════════════════════════════════════
+const ITEM_POWER = {
+  OCCHIALI_DA_SOLE:        [0.20, 0.35, 0.50, 0.80],
+  GIUBBOTTO_ANTIPROIETTILE:[0.20, 0.35, 0.50, 0.80],
+  BILANCIERE:              [0.50, 0.75, 1.00, 2.00],
+  TELESCOPIO:              [0.50, 0.75, 1.00, 2.00],
+  CER8:                    null, // uses CER8_PARAMS
+  PORTAFORTUNA:            [0.25, 0.50, 0.75, 1.00],
+  PIGGYBANK:               [5,    10,   15,   30  ],
+  WELFARE_GRATUITO:        [1.25, 1.50, 2.00, 3.00],
+  COTTA:                   [0.20, 0.40, 0.60, 0.80],
+  AVANZI:                  [0.10, 0.15, 0.20, 0.25],
+  ZECCA_COMUNISTA:         [0.50, 0.83, 1.00, 1.50],
+  SBUBBO:                 [2,    3,    4,    5   ],
+};
+
+const CER8_PARAMS = [
+  { threshold: 0.25, heal: 0.20 },
+  { threshold: 0.30, heal: 0.33 },
+  { threshold: 0.35, heal: 0.47 },
+  { threshold: 0.40, heal: 0.60 },
+];
+
+function fusionTokenColor(key, lv) {
+  if (lv >= 4) return '#1d4ed8';
+  if (lv === 3) return '#9f1239';
+  if (lv === 2) return '#f97316';
+  return RARITY_COLOR[ITEM_DEFS[key]?.rarity] || '#9ca3af';
+}
+
+function itemLvAt(items, lvls, idx) {
+  return (items?.[idx] && lvls?.[idx]) ? (lvls[idx] || 1) : 1;
+}
+function rotItemLvl(rot, key) {
+  const idx = rot.items.indexOf(key);
+  return idx >= 0 ? itemLvAt(rot.items, rot.itemLevels, idx) : null;
+}
+function itemPow(rot, key) {
+  const lv = rotItemLvl(rot, key);
+  return lv != null ? (ITEM_POWER[key]?.[lv - 1] ?? null) : null;
+}
+function tgtItemPow(tgt, key) {
+  const lv = rotItemLvl(tgt, key);
+  return lv != null ? (ITEM_POWER[key]?.[lv - 1] ?? null) : null;
+}
 
 // Aiuta ad applicare l'effetto permanente di un drug, gestendo HP max/correnti
 function adjustMaxHp(rot, delta) {
@@ -3736,10 +4122,10 @@ const GENERIC_MOVE_DEFS = {
     effect:'stage', stages:[ { stat:'def', delta:1, team:'ALLY' }, { stat:'spDef', delta:1, team:'ALLY' } ],
     desc:'+1 stadio DEF e SP.DEF a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
   SHOTTINI:         { name:'SHOTTINI',        type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
-    effect:'stage', stages:[ { stat:'atk', delta:1, team:'ALLY' }, { stat:'spAtk', delta:1, team:'ALLY' } ],
-    desc:'+1 stadio ATK e SP.ATK a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
+    effect:'stage', stages:[ { stat:'atk', delta:2, team:'ALLY' }, { stat:'spAtk', delta:2, team:'ALLY' } ],
+    desc:'+2 stadi ATK e SP.ATK a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
   REDBULL:          { name:'REDBULL',         type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
-    effect:'stage', stages:[ { stat:'spd', delta:1, team:'ALLY' } ], desc:'+1 stadio Velocità a tutto il team.' },
+    effect:'stage', stages:[ { stat:'spd', delta:2, team:'ALLY' } ], desc:'+2 stadi Velocità a tutto il team alleato. Gli stadi persistono fino alla fine della battaglia.' },
 
   // ── ATOMICHE ──
   BESTEMMIA:        { name:'BESTEMMIA',       type:null, cat:'UTILITY', power:0, pp:10, target:'SELF',     rarity:'atomica', effect:'immunity', nonConsecutive:true, desc:'Protezione completa da qualsiasi attacco per 1 turno. Non usabile consecutivamente.' },
@@ -3822,12 +4208,33 @@ const TYPE_MOVE_DEFS = {
 };
 
 // ═══════════════════════════════════════════════════
+// BOSS MOVES — non compaiono mai nel negozio
+// ═══════════════════════════════════════════════════
+
+const BEPPE_SALA_MOVES = {
+  SALONE_DEL_MOBILE: { name:'SALONE DEL MOBILE', type:null, cat:'PHYSICAL', power:25, pp:Infinity, curPp:Infinity, target:'ENEMY_ALL', desc:'Attacco fisico a tutta la squadra avversaria.' },
+  AREA_C:            { name:'AREA C',             type:null, cat:'SPECIAL',  power:25, pp:Infinity, curPp:Infinity, target:'ENEMY_ALL', desc:'Attacco speciale a tutta la squadra avversaria.' },
+  RELAX:             { name:'RELAX',              type:null, cat:'UTILITY',  power:0,  pp:Infinity, curPp:Infinity, target:'SELF', effect:'heal', healPct:0.35, desc:'Recupera il 35% degli HP massimi.' },
+  GENTRIFICARE:      { name:'GENTRIFICARE',       type:null, cat:'UTILITY',  power:0,  pp:Infinity, curPp:Infinity, target:'SELF', effect:'stage',
+    stages:[{stat:'atk',delta:1,team:'SELF'},{stat:'spAtk',delta:1,team:'SELF'},{stat:'def',delta:1,team:'SELF'},{stat:'spDef',delta:1,team:'SELF'},{stat:'spd',delta:1,team:'SELF'}],
+    desc:'+1 stadio a ATK, SP.ATK, DEF, SP.DEF e SPD.' },
+};
+
+// ═══════════════════════════════════════════════════
 // BATTLE STATE
 // ═══════════════════════════════════════════════════
 
 let B = null;
 let turnNum = 1;
 let kbSelIndex = -1; // indice dell'opzione evidenziata via tastiera (-1 = nessuna)
+
+function rotItemSlotCount(level) {
+  if (level >= 200) return 6;
+  if (level >= 150) return 5;
+  if (level >= 100) return 4;
+  if (level >= 50)  return 3;
+  return 2;
+}
 
 function mkRot(def, level, isPlayer) {
   const s = {
@@ -3858,7 +4265,8 @@ function mkRot(def, level, isPlayer) {
     salsaBaseTurns: 0,
     comboCount: 0,
     drugs: [],
-    items: [null, null],
+    items: new Array(rotItemSlotCount(level)).fill(null),
+    itemLevels: new Array(rotItemSlotCount(level)).fill(null),
     moves: [
       { ...BASE_ATCK, curPp: Infinity },
       { ...def.uniqueMove, curPp: def.uniqueMove.pp },
@@ -3866,6 +4274,39 @@ function mkRot(def, level, isPlayer) {
     isAlive: true,
     action: null,
     lastMove: null,
+  };
+}
+
+function mkBossRot(level) {
+  const multiplier = Math.pow(level / 50, 1.5);
+  const baseStat = Math.round((50 + level) * 5 * multiplier);
+  // ATK/SP.ATK capped separately to avoid one-shot AoE at higher levels
+  const atkStat = Math.min(baseStat, Math.round((level + 50) * 2));
+  const def = {
+    name: 'BEPPE SALA', type: 'BOSS', isBoss: true,
+    base: { hp: baseStat, atk: atkStat, spAtk: atkStat, def: baseStat, spDef: baseStat, spd: baseStat },
+    sprite: null, talent: null,
+    uniqueMove: BEPPE_SALA_MOVES.SALONE_DEL_MOBILE,
+  };
+  return {
+    uid: 'boss_' + Math.random().toString(36).slice(2, 8),
+    def, level, isPlayer: false,
+    maxHp: baseStat, curHp: baseStat,
+    stats: { hp: baseStat, atk: atkStat, spAtk: atkStat, def: baseStat, spDef: baseStat, spd: baseStat },
+    stages: { atk:0, spAtk:0, def:0, spDef:0, spd:0 },
+    statuses: [], shield: 0,
+    guardNext: null, guardTurn: null, immuneTurn: null, counterNext: null, critChanceOverride: null,
+    landlordareTurns: 0, lampioneTurns: 0, centroSocialeTurns: 0,
+    coronavirusActive: false, salsaBaseTurns: 0, comboCount: 0,
+    evasion: 0, critBonus: 0,
+    drugs: [], items: [],
+    moves: [
+      { ...BEPPE_SALA_MOVES.SALONE_DEL_MOBILE },
+      { ...BEPPE_SALA_MOVES.AREA_C },
+      { ...BEPPE_SALA_MOVES.RELAX },
+      { ...BEPPE_SALA_MOVES.GENTRIFICARE },
+    ],
+    isAlive: true, action: null, lastMove: null,
   };
 }
 
@@ -3893,7 +4334,7 @@ function effStat(rot, s) {
 // SCARPE DA GINNASTICA: il ROT va sempre per primo (velocità effettiva = +∞ per il sort)
 // ZOCCOLI DI LEGNO: il ROT va sempre per ultimo (velocità effettiva = -∞ per il sort)
 function spdForSort(rot) {
-  if (rot.items.includes('SCARPE_DA_GINNASTICA')) return Infinity;
+  if (rot.items.includes('SCARPE_DA_GINNASTICA') && !rot.scarpeActedThisBattle) return Infinity;
   if (rot.items.includes('ZOCCOLI_DI_LEGNO')) return -Infinity;
   return effStat(rot, 'spd');
 }
@@ -3925,7 +4366,7 @@ function calcDmg(atk, def, move) {
   // Type effectiveness: solo mosse tipizzate
   const tm = move.type !== null ? typeMult(move.type, def.def.type) : 1;
   dmg *= tm;
-  // Critico: 10% base (+1% per critBonus stackabile), o probabilità fissa con POTERI FORTI. Moltiplicatore x1.5 dopo tutti gli altri
+  // Critico
   const critChance = atk.critChanceOverride != null ? atk.critChanceOverride : (0.10 + (atk.critBonus || 0) * 0.01);
   const crit = Math.random() < critChance;
   if (crit) dmg *= 1.5;
@@ -3935,6 +4376,22 @@ function calcDmg(atk, def, move) {
     const brasatoMod = Math.max(1, playerTalentTier(ROT_DEFS.BRASATO) || 1);
     dmg *= (1 + ferite.stacks * 0.10 * brasatoMod);
   }
+  // BILANCIERE: +X% danno fisico inflitto dall'attaccante
+  if (move.cat === 'PHYSICAL' && atk.items.includes('BILANCIERE')) {
+    dmg *= (1 + (itemPow(atk, 'BILANCIERE') ?? 0.50));
+  }
+  // TELESCOPIO: +X% danno speciale inflitto dall'attaccante
+  if (move.cat === 'SPECIAL' && atk.items.includes('TELESCOPIO')) {
+    dmg *= (1 + (itemPow(atk, 'TELESCOPIO') ?? 0.50));
+  }
+  // GIUBBOTTO ANTIPROIETTILE: -X% danno fisico ricevuto dal difensore
+  if (move.cat === 'PHYSICAL' && def.items.includes('GIUBBOTTO_ANTIPROIETTILE')) {
+    dmg *= (1 - (tgtItemPow(def, 'GIUBBOTTO_ANTIPROIETTILE') ?? 0.20));
+  }
+  // OCCHIALI DA SOLE: -X% danno speciale ricevuto dal difensore
+  if (move.cat === 'SPECIAL' && def.items.includes('OCCHIALI_DA_SOLE')) {
+    dmg *= (1 - (tgtItemPow(def, 'OCCHIALI_DA_SOLE') ?? 0.20));
+  }
   // GIANNI — SAGGEZZA POPOLARE: riduce il danno subito da GIANNI del 5% per tier
   if (def.def === ROT_DEFS.GIANNI) {
     const gianniTier = talentTier(def);
@@ -3942,7 +4399,6 @@ function calcDmg(atk, def, move) {
   }
   // Buff iniziale: +50% al turno 1, -1% per turno, 0% dal turno 50 in poi (solo giocatore)
   if (atk.isPlayer) dmg *= earlyTurnDamageBuff();
-  // Buff difensivo iniziale: -25% danno subito al turno 1, -0.5% per turno, 0% dal turno 50 in poi (solo giocatore)
   if (def.isPlayer) dmg *= earlyTurnDefenseBuff();
   return { dmg: Math.max(1, Math.floor(dmg)), stab, tm, crit };
 }
@@ -3968,30 +4424,57 @@ function takeDmg(rot, amount) {
     rot.shield = 0;
   }
   if (amount > 0) playSfx('damage');
+  const _cer8Sturdy = rot.isPlayer && rot.items.includes('CER8') && (rotItemLvl(rot, 'CER8') ?? 1) >= 4 && rot.curHp === rot.maxHp;
   rot.curHp = Math.max(0, rot.curHp - amount);
+  if (_cer8Sturdy && rot.curHp === 0) rot.curHp = 1;
+
+  // ── CER8: se scende sotto la soglia, cura una volta per battaglia ──
+  if (rot.isPlayer && rot.items.includes('CER8') && !rot.cer8UsedThisBattle && rot.isAlive && rot.curHp > 0) {
+    const cer8Lv = (rotItemLvl(rot, 'CER8') ?? 1) - 1;
+    const params = CER8_PARAMS[cer8Lv] || CER8_PARAMS[0];
+    if (rot.curHp / rot.maxHp < params.threshold) {
+      rot.cer8UsedThisBattle = true;
+      const healed = applyHealPct(rot, params.heal, rot);
+      if (healed > 0) {
+        logRich([
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' → ' },
+          { text: 'CER8', onclick: () => showItemInfo('CER8') },
+          { text: `: +${healed} HP` }
+        ], 'info');
+      }
+    }
+  }
+
   if (rot.curHp === 0 && rot.isAlive) {
-    // ── FENICE: resurrezione una tantum al 50% HP, consuma l'oggetto ──
+    // ── FENICE: resurrezione una volta per battaglia al 25% HP (non si consuma) ──
     const feniceIdx = rot.isPlayer ? rot.items.indexOf('FENICE') : -1;
-    // ── ASSICURAZIONE: resurrezione una tantum al 25% HP, consuma l'oggetto ──
+    // ── ASSICURAZIONE: consuma l'oggetto, marca rot come salvato (non muore definitivamente) ──
     const assicIdx  = rot.isPlayer ? rot.items.indexOf('ASSICURAZIONE') : -1;
-    if (feniceIdx !== -1) {
-      rot.items[feniceIdx] = null;
-      rot.curHp = Math.ceil(rot.maxHp * 0.5);
-      setTimeout(() => playCardAnim(rot.uid, 'resurrecting', 1200), 80);
-    } else if (assicIdx !== -1) {
-      rot.items[assicIdx] = null;
+    if (feniceIdx !== -1 && !rot.feniceUsedThisBattle) {
+      rot.feniceUsedThisBattle = true;
       rot.curHp = Math.ceil(rot.maxHp * 0.25);
       setTimeout(() => playCardAnim(rot.uid, 'resurrecting', 1200), 80);
+    } else if (assicIdx !== -1) {
+      // Consuma ASSICURAZIONE — il ROT muore in battaglia ma non nella run
+      if (rot.itemLevels) rot.itemLevels[assicIdx] = null;
+      rot.items[assicIdx] = null;
+      rot.savedByAssicurazione = true;
+      rot.isAlive = false;
     } else {
       rot.isAlive = false;
-      // ── morte definitiva: gli oggetti dell'alleato passano nel primo slot libero del marsupio ──
+      // ── morte definitiva: gli oggetti passano nel primo slot libero del marsupio ──
       if (rot.isPlayer) {
         for (let i = 0; i < rot.items.length; i++) {
           const key = rot.items[i];
           if (!key) continue;
           const emptySlot = runState.marsupio.findIndex(s => s === null);
-          if (emptySlot !== -1) runState.marsupio[emptySlot] = key;
+          if (emptySlot !== -1) {
+            runState.marsupio[emptySlot] = key;
+            runState.marsupioLevels[emptySlot] = rot.itemLevels?.[i] || 1;
+          }
           rot.items[i] = null;
+          if (rot.itemLevels) rot.itemLevels[i] = null;
         }
       }
     }
@@ -4001,8 +4484,8 @@ function takeDmg(rot, amount) {
 // ── WELFARE GRATUITO: +50% efficacia di cure/scudi applicati dal o al possessore ──
 function welfareMult(rot, source) {
   let mult = 1;
-  if (rot.items.includes('WELFARE_GRATUITO')) mult *= 1.5;
-  if (source && source !== rot && source.items.includes('WELFARE_GRATUITO')) mult *= 1.5;
+  if (rot.items.includes('WELFARE_GRATUITO')) mult *= (itemPow(rot, 'WELFARE_GRATUITO') ?? 1.5);
+  if (source && source !== rot && source.items.includes('WELFARE_GRATUITO')) mult *= (itemPow(source, 'WELFARE_GRATUITO') ?? 1.5);
   return mult;
 }
 
@@ -4053,6 +4536,7 @@ function applyShieldPct(rot, pct, source, skipReplicate) {
 }
 
 function addStatus(rot, type) {
+  if (rot.items.includes('PELLE_DI_ROSPO')) return false;
   const ex = rot.statuses.find(s => s.type === type);
   if (type === 'BRUCIATO') {
     // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici
@@ -4196,31 +4680,39 @@ function endTurnStatuses(rot) {
   if (rot.centroSocialeTurns > 0) rot.centroSocialeTurns--;
   // coronavirusActive is permanent (no decrement)
   if (rot.salsaBaseTurns > 0) rot.salsaBaseTurns--;
-  // ── AVANZI: il ROT recupera il 10% degli HP massimi a fine turno ──
+  // ── AVANZI: il ROT (lv1) o tutta la squadra alleata (lv2+) recupera HP a fine turno ──
   if (rot.items.includes('AVANZI')) {
-    const heal = applyHealPct(rot, 0.10, rot);
-    if (heal > 0) {
-      logs.push({ parts:[
-        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
-        { text: ' recupera ' },
-        { text: `${heal} HP` },
-        { text: ' grazie a ' },
-        { text: 'AVANZI', onclick: () => showItemInfo('AVANZI') },
-        { text: '!' }
-      ], cls:'info' });
+    const avanziLv = rotItemLvl(rot, 'AVANZI') ?? 1;
+    const avanziPct = itemPow(rot, 'AVANZI') ?? 0.10;
+    const avanziTargets = avanziLv >= 2
+      ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive)
+      : [rot];
+    for (const tgt of avanziTargets) {
+      const heal = applyHealPct(tgt, avanziPct, rot);
+      if (heal > 0) {
+        logs.push({ parts:[
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ' recupera ' },
+          { text: `${heal} HP` },
+          { text: ' grazie a ' },
+          { text: 'AVANZI', onclick: () => showItemInfo('AVANZI') },
+          { text: '!' }
+        ], cls:'info' });
+      }
     }
   }
-  // ── PIGGYBANK: a fine turno il ROT proprietario guadagna 3 gold ──
+  // ── PIGGYBANK: a fine turno il ROT proprietario guadagna gold ──
   if (rot.isPlayer && rot.items.includes('PIGGYBANK') && runState) {
-    runState.gold += 3;
-    recordGoldGain('PIGGYBANK', 3);
+    const piggyAmt = itemPow(rot, 'PIGGYBANK') ?? 5;
+    runState.gold += piggyAmt;
+    recordGoldGain('PIGGYBANK', piggyAmt);
     updateHud();
-    showGoldFloat(3);
+    showGoldFloat(piggyAmt);
     logs.push({ parts:[
       { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
       { text: ' attiva ' },
       { text: 'PIGGYBANK', onclick: () => showItemInfo('PIGGYBANK') },
-      { text: '! Guadagni 3 gold' }
+      { text: `! Guadagni ${piggyAmt} gold` }
     ], cls:'status' });
   }
   rot.statuses = rot.statuses.filter(s => !toRemove.includes(s));
@@ -4401,11 +4893,14 @@ function showRotInfo(rotDef) {
 function showRotBattleInfo(rot) {
   const tc = TYPE_COLORS[rot.def.type] || { bg:'#333', text:'#aaa' };
 
-  // ── OGGETTI equipaggiati su questo ROT (max 2) ──
-  const equippedItems = (rot.items || []).filter(key => key && ITEM_DEFS[key]);
-  const itemsHtml = equippedItems.length
-    ? equippedItems.map(key => `<span class="loadout-token loadout-token-item" style="color:${ITEM_DEFS[key].color}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`).join('')
-    : '<span class="loadout-empty">NESSUNO</span>';
+  // ── OGGETTI equipaggiati su questo ROT ──
+  const itemsHtmlParts = (rot.items || []).map((key, i) => {
+    if (!key || !ITEM_DEFS[key]) return '';
+    const lv = itemLvAt(rot.items, rot.itemLevels, i);
+    const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
+    return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+  }).filter(Boolean);
+  const itemsHtml = itemsHtmlParts.length ? itemsHtmlParts.join('') : '<span class="loadout-empty">NESSUNO</span>';
 
   // ── DRUGS equipaggiate su questo ROT, con moltiplicatore per copie ──
   const drugCounts = {};
@@ -4866,7 +5361,10 @@ function showTypeInfo(type) {
   openSecondaryInfo(html);
 }
 
-const ITEM_RARITY_LABEL = { apocalittica: 'APOCALITTICO' };
+const ITEM_RARITY_LABEL = {
+  comune: 'COMUNE', combo: 'COMBO', atomico: 'ATOMICO', apocalittico: 'APOCALITTICO',
+  rara: 'COMBO', atomica: 'ATOMICO', apocalittica: 'APOCALITTICO',
+};
 
 function itemInfoHtml(itemKey) {
   const item = ITEM_DEFS[itemKey];
@@ -4921,20 +5419,25 @@ function linkifyEffectDesc(desc) {
   }
   return result;
 }
-function itemInfoHtmlCentered(itemKey) {
+function itemInfoHtmlCentered(itemKey, itemLevel) {
   const item = ITEM_DEFS[itemKey];
   if (!item) return '';
   const rarityLabel = ITEM_RARITY_LABEL[item.rarity] || item.rarity.toUpperCase();
+  const lv = itemLevel || 1;
+  const desc = lv > 1 ? (item.fusionDescs?.[lv - 2] || item.desc) : item.desc;
+  const lvLabel = lv > 1 ? ` <span class="item-lv-badge" style="font-size:0.75em">Lv${lv}</span>` : '';
+  const tokenColor = fusionTokenColor(itemKey, lv);
   return `
-    <div class="info-title" style="color:${item.color}">${item.name}</div>
-    <span class="info-badge" style="background:rgba(80,55,15,0.9);color:${item.color}">OGGETTO ${rarityLabel}</span>
+    <div class="info-title" style="color:${tokenColor}">${item.name}${lvLabel}</div>
+    <span class="info-badge" style="background:rgba(80,55,15,0.9);color:${tokenColor}">OGGETTO ${rarityLabel}</span>
     <div class="info-section">EFFETTO</div>
-    <div class="info-text">${linkifyEffectDesc(item.desc)}</div>
+    <div class="info-text">${linkifyEffectDesc(desc)}</div>
   `;
 }
 function showItemInfoCentered(event, itemKey) {
   if (event) event.stopPropagation();
-  const html = itemInfoHtmlCentered(itemKey);
+  const lv = event?.currentTarget?.dataset?.itemLevel ? parseInt(event.currentTarget.dataset.itemLevel, 10) : 1;
+  const html = itemInfoHtmlCentered(itemKey, lv);
   if (html) openShopMoveInfo(html);
 }
 function drugInfoHtmlCentered(drugKey) {
@@ -5314,7 +5817,6 @@ async function executePhase() {
         { text: ' ma non può ripeterla due volte di fila e fallisce!' }
       ], 'status');
       render(); await wait(500);
-      rot.lastMove = move;
       const failTok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
       if (failTok) failTok.classList.add('acted');
       await wait(250);
@@ -5323,13 +5825,27 @@ async function executePhase() {
     rot.comboCount = (rot.lastMove?.name === move.name) ? (rot.comboCount || 0) + 1 : 0;
     rot.lastMove = move;
 
+    const difrattore = rot.items.includes('DIFRATTORE');
+
+    // ── SBUBBO: esegui qualsiasi mossa due volte consecutive ──
+    const sbubboHits = rot.items.includes('SBUBBO') ? (itemPow(rot, 'SBUBBO') ?? 2) : 1;
+    for (let sbubboHit = 0; sbubboHit < sbubboHits; sbubboHit++) {
+    if (sbubboHit > 0 && !rot.isAlive) break;
+
+    // ── DIFRATTORE: espande bersaglio singolo ad area (ricalcolato ad ogni hit SBUBBO) ──
+    if (difrattore) {
+      if (move.target === 'ENEMY') targets = (rot.isPlayer ? B.enemy : B.player).filter(r => r.isAlive);
+      else if (move.target === 'ALLY' || move.target === 'SELF') targets = (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive);
+    }
+    const dfAlly = difrattore && (move.target === 'ALLY' || move.target === 'SELF');
+
     if (move.curPp !== Infinity) move.curPp--;
     if (burnout && move.curPp !== Infinity && move.curPp > 0) move.curPp--;
 
     // ── HEAL ──
     if (move.effect === 'heal') {
       const healTeam = rot.isPlayer ? B.player : B.enemy;
-      const healTargets = move.target === 'ALLY_ALL' ? healTeam.filter(r => r.isAlive) : [rot];
+      const healTargets = (move.target === 'ALLY_ALL' || dfAlly) ? healTeam.filter(r => r.isAlive) : [rot];
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' usa ' },
@@ -5380,7 +5896,7 @@ async function executePhase() {
     // ── SHIELD ──
     } else if (move.effect === 'shield') {
       const shieldTeam = rot.isPlayer ? B.player : B.enemy;
-      const shieldTargets = move.target === 'ALLY_ALL' ? shieldTeam.filter(r => r.isAlive) : [rot];
+      const shieldTargets = (move.target === 'ALLY_ALL' || dfAlly) ? shieldTeam.filter(r => r.isAlive) : [rot];
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' usa ' },
@@ -5406,7 +5922,8 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      rot.guardNext = { reduction: move.reduction };
+      const gnTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : [rot];
+      for (const t of gnTgts) t.guardNext = { reduction: move.reduction };
       render(); await wait(600);
 
     // ── GUARD TURN (SHAKER PROTEICO ecc.): -50% danno per il turno + status all'attaccante ──
@@ -5417,7 +5934,8 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      rot.guardTurn = { reduction: move.reduction, counterStatus: move.counterStatus };
+      const gtTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : [rot];
+      for (const t of gtTgts) t.guardTurn = { reduction: move.reduction, counterStatus: move.counterStatus };
       render(); await wait(600);
 
     // ── IMMUNITY (BESTEMMIA): protezione completa per 1 turno ──
@@ -5428,7 +5946,8 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      rot.immuneTurn = true;
+      const imTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : [rot];
+      for (const t of imTgts) t.immuneTurn = true;
       render(); await wait(600);
 
     // ── COUNTER (PROVACI): +X% danno subito dal prossimo attacco, restituisce Y% del danno subito ──
@@ -5439,7 +5958,8 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      rot.counterNext = { vulnPct: move.vulnPct, returnPct: move.returnPct };
+      const ctTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : [rot];
+      for (const t of ctTgts) t.counterNext = { vulnPct: move.vulnPct, returnPct: move.returnPct };
       render(); await wait(600);
 
     // ── STAGE ──
@@ -5468,7 +5988,7 @@ async function executePhase() {
         return true;
       };
       for (const stg of move.stages) {
-        const team = stg.team === 'SELF' ? [rot] : stg.team === 'ALLY' ? allyTeam : enemyTeam;
+        const team = (stg.team === 'SELF' && dfAlly) ? allyTeam : stg.team === 'SELF' ? [rot] : stg.team === 'ALLY' ? allyTeam : enemyTeam;
         for (const r of team.filter(r => r.isAlive)) {
           // ── LAMPIONE: il team è immune agli abbassamenti di statistiche provenienti dai nemici ──
           if (stg.delta < 0 && stg.team === 'ENEMY' && r.lampioneTurns > 0) continue;
@@ -5622,39 +6142,43 @@ async function executePhase() {
 
     // ── HEAL SINGLE (CHINOTTO) ──
     } else if (move.effect === 'heal_single') {
-      const tgt = targets[0];
+      const hsTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : (targets[0] ? [targets[0]] : []);
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' usa ' },
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      const healAmt = applyHealPct(tgt, move.healPct, rot);
-      logRich([
-        { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
-        { text: ` recupera ${healAmt} HP!` }
-      ], 'info');
-      buffHopAnim([tgt]);
+      for (const tgt of hsTgts) {
+        const healAmt = applyHealPct(tgt, move.healPct, rot);
+        logRich([
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ` recupera ${healAmt} HP!` }
+        ], 'info');
+      }
+      buffHopAnim(hsTgts);
       await wait(250);
       render(); await wait(350);
 
     // ── CLEANSE SINGLE (TERME) ──
     } else if (move.effect === 'cleanse_single') {
-      const tgt = targets[0];
+      const csTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : (targets[0] ? [targets[0]] : []);
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' usa ' },
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      tgt.statuses = [];
-      for (const stat of Object.keys(tgt.stages)) {
-        if (tgt.stages[stat] < 0) tgt.stages[stat] = 0;
+      for (const tgt of csTgts) {
+        tgt.statuses = [];
+        for (const stat of Object.keys(tgt.stages)) {
+          if (tgt.stages[stat] < 0) tgt.stages[stat] = 0;
+        }
+        logRich([
+          { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+          { text: ' viene purificato!' }
+        ], 'info');
       }
-      logRich([
-        { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
-        { text: ' viene purificato!' }
-      ], 'info');
       render(); await wait(600);
 
     // ── GOLD PCT (SCHEDINA) ──
@@ -5742,10 +6266,11 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      rot.salsaBaseTurns = move.turns;
+      const sbTgts = dfAlly ? (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive) : [rot];
+      for (const t of sbTgts) t.salsaBaseTurns = move.turns;
       logRich([
-        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
-        { text: `: per ${move.turns} turni ogni colpo ha il ${Math.round(move.chance * 100)}% di probabilità di stunnare il bersaglio!` }
+        { text: dfAlly ? 'La squadra:' : rot.def.name, onclick: dfAlly ? null : () => showRotInfo(rot.def) },
+        { text: ` per ${move.turns} turni ogni colpo ha il ${Math.round(move.chance * 100)}% di probabilità di stunnare il bersaglio!` }
       ], 'status');
       render(); await wait(600);
 
@@ -5759,10 +6284,6 @@ async function executePhase() {
         : move.rampDamage
         ? { ...move, power: move.power + move.rampDamage * rot.comboCount }
         : move;
-      // ── SBUBBO: il ROT attacca due volte consecutivamente con la stessa mossa ──
-      const sbubboHits = rot.items.includes('SBUBBO') ? 2 : 1;
-      for (let sbubboHit = 0; sbubboHit < sbubboHits; sbubboHit++) {
-      if (sbubboHit > 0 && !rot.isAlive) break;
       const hitTargets = targets.filter(t => t.isAlive);
       if (!hitTargets.length) break;
       attackAnim(rot);
@@ -5890,14 +6411,23 @@ async function executePhase() {
           }
         }
 
-        // ── ZECCA COMUNISTA: l'attaccante drena il 50% del danno infierito come HP ──
+        // ── ZECCA COMUNISTA: drena X% del danno infierito come HP; lv3/4 l'eccesso diventa scudo ──
         if (dmg > 0 && rot.items.includes('ZECCA_COMUNISTA') && rot.isAlive) {
-          const drainAmt = applyHealAmount(rot, dmg * 0.5, rot);
-          if (drainAmt > 0) {
+          const zeccaLv = rotItemLvl(rot, 'ZECCA_COMUNISTA') ?? 1;
+          const zeccaRate = itemPow(rot, 'ZECCA_COMUNISTA') ?? 0.50;
+          const zeccaRaw = Math.floor(dmg * zeccaRate);
+          const before = rot.curHp;
+          const drainAmt = applyHealAmount(rot, zeccaRaw, rot);
+          if (zeccaLv >= 4 && zeccaRaw > rot.maxHp - before) {
+            const excess = zeccaRaw - (rot.maxHp - before);
+            if (excess > 0) rot.shield += excess;
+          }
+          if (drainAmt > 0 || (zeccaLv >= 4 && zeccaRaw > rot.maxHp - before)) {
             logRich([
               { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
               { text: ' recupera ' },
               { text: `${drainAmt} HP` },
+              { text: zeccaLv >= 4 ? ` (+${Math.max(0,zeccaRaw-drainAmt)} scudo)` : '' },
               { text: ' grazie a ' },
               { text: 'ZECCA COMUNISTA', onclick: () => showItemInfo('ZECCA_COMUNISTA') },
               { text: '!' }
@@ -5907,16 +6437,16 @@ async function executePhase() {
           }
         }
 
-        // ── SPINACIO: restituisce il 20% del danno subito all'attaccante ──
-        if (dmg > 0 && tgt.items.includes('SPINACIO') && rot.isAlive) {
-          const reflectDmg = Math.max(1, Math.floor(dmg * 0.20));
+        // ── COTTA: restituisce X% del danno subito all'attaccante ──
+        if (dmg > 0 && tgt.items.includes('COTTA') && rot.isAlive) {
+          const reflectDmg = Math.max(1, Math.floor(dmg * (tgtItemPow(tgt, 'COTTA') ?? 0.20)));
           takeDmg(rot, reflectDmg);
           logRich([
             { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
             { text: ' subisce ' },
             { text: `${reflectDmg} danni` },
             { text: ' di ' },
-            { text: 'SPINACIO', onclick: () => showItemInfo('SPINACIO') },
+            { text: 'COTTA', onclick: () => showItemInfo('COTTA') },
             { text: '!' }
           ], 'dmg');
           render();
@@ -5925,7 +6455,7 @@ async function executePhase() {
             logRich([
               { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
               { text: ' è KO per ' },
-              { text: 'SPINACIO', onclick: () => showItemInfo('SPINACIO') },
+              { text: 'COTTA', onclick: () => showItemInfo('COTTA') },
               { text: '!' }
             ], 'dmg');
             render();
@@ -5969,7 +6499,7 @@ async function executePhase() {
           }
         }
 
-        const statusChance = move.status ? move.status.chance + (rot.items.includes('PORTAFORTUNA') ? 0.25 : 0) : 0;
+        const statusChance = move.status ? move.status.chance + (rot.items.includes('PORTAFORTUNA') ? (itemPow(rot, 'PORTAFORTUNA') ?? 0.25) : 0) : 0;
         if (move.status && Math.random() < statusChance) {
           const stType = move.status.type === 'RANDOM'
             ? RANDOM_STATUSES[Math.floor(Math.random() * RANDOM_STATUSES.length)]
@@ -6007,6 +6537,27 @@ async function executePhase() {
                     { text: stType, onclick: () => showStatusInfo(stType) },
                     { text: `${st2&&st2.stacks>1?' (x'+st2.stacks+')':''} per ` },
                     { text: 'CORONAVIRUS', onclick: () => showMoveInfo(GENERIC_MOVE_DEFS.CORONAVIRUS) },
+                    { text: '!' }
+                  ], 'status');
+                  render();
+                  await wait(350);
+                }
+              }
+            }
+            // ── PORTAFORTUNA lv4: il malus applicato si replica su tutti gli altri nemici ──
+            if (rot.items.includes('PORTAFORTUNA') && (rotItemLvl(rot, 'PORTAFORTUNA') ?? 1) >= 4) {
+              const enemyTeam = tgt.isPlayer ? B.player : B.enemy;
+              const others = enemyTeam.filter(o => o.isAlive && o !== tgt);
+              for (const other of others) {
+                const ok2 = addStatus(other, stType);
+                if (ok2) {
+                  const st2 = other.statuses.find(s => s.type === stType);
+                  logRich([
+                    { text: other.def.name, onclick: () => showRotInfo(other.def) },
+                    { text: stType === 'FERITE' ? ' ha ' : ' è ' },
+                    { text: stType, onclick: () => showStatusInfo(stType) },
+                    { text: `${st2&&st2.stacks>1?' (x'+st2.stacks+')':''} per ` },
+                    { text: 'PORTAFORTUNA', onclick: () => showItemInfo('PORTAFORTUNA') },
                     { text: '!' }
                   ], 'status');
                   render();
@@ -6117,9 +6668,10 @@ async function executePhase() {
           if (checkEnd()) return;
         }
       }
-      }
+    }
     }
 
+    if (rot.items.includes('SCARPE_DA_GINNASTICA')) rot.scarpeActedThisBattle = true;
     const tok = document.querySelector(`.spd-token[data-uid="${rot.uid}"]`);
     if (tok) tok.classList.add('acted');
     await wait(250);
@@ -6239,6 +6791,14 @@ function applyVictoryProgression() {
   const goldEarned = calcGoldReward(turnNum, runState.level);
   runState.gold += goldEarned + interestEarned;
 
+  // savedByAssicurazione ROTs survive the run but were KO'd in battle
+  for (const rot of runState.roster) {
+    if (rot.savedByAssicurazione) {
+      rot.isAlive = true;
+      rot.savedByAssicurazione = false;
+      rot.curHp = Math.ceil(rot.maxHp * 0.25);
+    }
+  }
   const survivors = runState.roster.filter(r => r.isAlive);
   const dead      = runState.roster.filter(r => !r.isAlive);
   runState.roster = survivors;
@@ -6247,6 +6807,8 @@ function applyVictoryProgression() {
   for (const rot of survivors) {
     const oldStats = { ...rot.stats };
     rot.level += 1;
+    const newSlotCount = rotItemSlotCount(rot.level);
+    while (rot.items.length < newSlotCount) { rot.items.push(null); rot.itemLevels.push(null); }
     const newStats = {
       hp:    rot.def.base.hp    + rot.level,
       atk:   rot.def.base.atk   + rot.level,
@@ -6365,7 +6927,24 @@ function showVictoryScreen() {
   document.getElementById('battle-log-secondary')?.classList.remove('open');
   closeShopMoveInfoSecondary?.();
 
+  // controlla CARTA DI CREDITO prima che applyVictoryProgression rimuova i ROT caduti
+  const hasCartaCredito = (runState.roster || []).some(r => r.items && r.items.includes('CARTA_DI_CREDITO'));
+
+  // calcola ALTRO prima di applyVictoryProgression (già sommato a runState.gold durante la battaglia)
+  const goldSources = {};
+  for (const { label, amount } of B.goldLog || []) {
+    goldSources[label] = (goldSources[label] || 0) + amount;
+  }
+  const altroEntries = Object.entries(goldSources);
+  const altroTotal = altroEntries.reduce((sum, [, amount]) => sum + amount, 0);
+  VICTORY_GOLD_ALTRO = altroEntries;
+
   const { goldEarned, interestEarned, survivors, dead, levelUps } = applyVictoryProgression();
+
+  const battleTotal = goldEarned + interestEarned + altroTotal;
+  const cartaBonus = hasCartaCredito ? battleTotal : 0;
+  if (cartaBonus) runState.gold += cartaBonus;
+
   updateHud();
   saveRun();
 
@@ -6393,23 +6972,16 @@ function showVictoryScreen() {
     <div class="surv-grid">${survHtml}${emptySurvHtml}</div>
   `;
 
-  // ── riepilogo dettagliato del gold guadagnato in battaglia, per fonte (mosse/effetti/oggetti) ──
-  const goldSources = {};
-  for (const { label, amount } of B.goldLog || []) {
-    goldSources[label] = (goldSources[label] || 0) + amount;
-  }
-  const altroEntries = Object.entries(goldSources);
-  const altroTotal = altroEntries.reduce((sum, [, amount]) => sum + amount, 0);
-  const battleTotal = goldEarned + interestEarned + altroTotal;
-  VICTORY_GOLD_ALTRO = altroEntries;
+  if (cartaBonus) VICTORY_GOLD_ALTRO = [...altroEntries, ['CARTA DI CREDITO x2', cartaBonus]];
+  const altroDisplay = altroTotal + cartaBonus;
 
   document.getElementById('progress-gold-boxes').style.display = '';
   document.getElementById('progress-gold-battle').innerHTML = `
     <div class="gold-box-title">GOLD BATTAGLIA</div>
     <div class="progress-gold-line divider">RICOMPENSA VITTORIA<span>+${goldEarned}g</span></div>
     <div class="progress-gold-line interest interest-row" onclick="showVictoryGoldInterestInfo()" onmouseenter="showVictoryGoldInterestInfo()" onmouseleave="closeShopMoveInfoSecondary()">INTERESSI<span>+${interestEarned}g</span></div>
-    <div class="progress-gold-line altro-row divider" onmouseenter="showVictoryGoldAltroInfo()" onmouseleave="closeShopMoveInfoSecondary()">ALTRO<span>+${altroTotal}g</span></div>
-    <div class="progress-gold-line total">TOTALE BATTAGLIA<span>+${battleTotal}g</span></div>
+    <div class="progress-gold-line altro-row divider" onmouseenter="showVictoryGoldAltroInfo()" onmouseleave="closeShopMoveInfoSecondary()">ALTRO<span>+${altroDisplay}g</span></div>
+    <div class="progress-gold-line total">TOTALE BATTAGLIA<span>+${battleTotal + cartaBonus}g</span></div>
   `;
 
   document.getElementById('progress-continue-btn').style.display = '';
@@ -6474,6 +7046,7 @@ function shopContinue() {
   document.getElementById('shop-overlay').classList.remove('on');
   shopState = null;
   runState.enemyCount = Math.min(3, runState.enemyCount + 1);
+  saveRun();
   startNextBattle();
 }
 
@@ -6482,11 +7055,11 @@ function shopContinue() {
 // ═══════════════════════════════════════════════════
 
 const ROT_PRICE   = 3;
-const ITEM_PRICE  = { comune:2, rara:4, atomica:7, apocalittica:15 };
+const ITEM_PRICE  = { comune:2, combo:4, atomico:7, apocalittico:15, rara:4, atomica:7, apocalittica:15 };
 const DRUG_PRICE  = { comune:1, rara:3, atomica:6 };
 const MOVE_PRICE  = { comune:2, rara:4, atomica:7, tipo:2 };
 
-const ITEM_RARITY_WEIGHTS = { comune:80, rara:15, atomica:4, apocalittica:1 };
+const ITEM_RARITY_WEIGHTS = { comune:60, combo:35, atomico:4, apocalittico:1 };
 const DRUG_RARITY_WEIGHTS = { comune:80, rara:15, atomica:5 };
 const MOVE_RARITY_WEIGHTS = { comune:70, rara:15, atomica:5, tipo:10 };
 
@@ -6638,8 +7211,24 @@ function cancelRotReplaceTarget() {
 function completeRotReplace() {
   const idx = runState.roster.findIndex(r => r.uid === pendingRotReplaceTarget);
   if (idx === -1) return;
+  const oldRot = runState.roster[idx];
+  // Salva gli oggetti del ROT sostituito nel marsupio; solo se pieno vengono venduti
+  for (let i = 0; i < oldRot.items.length; i++) {
+    const key = oldRot.items[i];
+    if (!key) continue;
+    const emptySlot = runState.marsupio.findIndex(s => s === null);
+    if (emptySlot !== -1) {
+      runState.marsupio[emptySlot] = key;
+      if (!runState.marsupioLevels) runState.marsupioLevels = new Array(9).fill(null);
+      runState.marsupioLevels[emptySlot] = oldRot.itemLevels?.[i] || 1;
+    } else {
+      // marsupio pieno: vendi l'oggetto
+      const rarity = ITEM_DEFS[key]?.rarity || 'comune';
+      runState.gold += ITEM_PRICE[rarity] || 1;
+    }
+  }
   runState.gold -= shopState.rot.price;
-  runState.gold += ROT_PRICE; // accredita la vendita del ROT sostituito
+  runState.gold += ROT_PRICE;
   const def = ROT_DEFS[shopState.rot.key];
   runState.roster[idx] = mkRot(def, runState.level, true);
   shopState.bought.rot = true;
@@ -6657,10 +7246,14 @@ function sellRot(uid) {
   if (idx === -1) return;
   const rot = runState.roster[idx];
   // ── gli oggetti del ROT venduto tornano nel marsupio, se pieno vengono persi ──
-  for (const key of rot.items) {
+  for (let i = 0; i < rot.items.length; i++) {
+    const key = rot.items[i];
     if (!key) continue;
     const emptySlot = runState.marsupio.findIndex(s => s === null);
-    if (emptySlot !== -1) runState.marsupio[emptySlot] = key;
+    if (emptySlot !== -1) {
+      runState.marsupio[emptySlot] = key;
+      runState.marsupioLevels[emptySlot] = rot.itemLevels?.[i] || 1;
+    }
   }
   runState.roster.splice(idx, 1);
   runState.gold += ROT_PRICE;
@@ -6717,6 +7310,7 @@ function closeRotManager() {
   document.getElementById('rot-manager-overlay').classList.remove('on');
   document.getElementById('rot-manager-overlay').classList.remove('dragging');
   closeRotManagerSecondaryInfo();
+  closeRmItemsPopup();
   rotManagerDrag = null;
   moveAssignState = null;
   pendingRotReplace = false;
@@ -6805,7 +7399,7 @@ function rotDrugStatTokensHtml(r) {
       return `<div class="rm-drug-slot" title="${s.label}"><span class="drug-icon rm-drug-icon-empty" style="background:${s.color}"></span></div>`;
     }
     const totalVal = info.total % 1 === 0 ? info.total : parseFloat(info.total.toFixed(1));
-    const tipData = JSON.stringify({ stat: s.label, color: s.color, total: `+${totalVal}${s.unit}`, drugs: info.drugs });
+    const tipData = JSON.stringify({ stat: s.label, color: s.color, total: `+${totalVal}${s.unit}` });
     return `<div class="rm-drug-slot rm-drug-slot-active" data-tip='${tipData}' onmouseenter="showRmStatTooltip(event)" onmouseleave="hideRmStatTooltip()"><span class="drug-icon" style="background:${s.color}"></span><span class="rm-stat-tok-count">${info.count}</span></div>`;
   }).join('');
 }
@@ -6815,8 +7409,7 @@ function showRmStatTooltip(event) {
   if (!d.stat) return;
   const t = document.getElementById('rm-drug-tooltip');
   if (!t) return;
-  const drugsLine = d.drugs?.length ? `<span class="rdt-desc">${d.drugs.join(', ')}</span>` : '';
-  t.innerHTML = `<span class="rdt-name" style="color:${d.color}">${d.stat} <span style="opacity:0.8">${d.total}</span></span>${drugsLine}`;
+  t.innerHTML = `<span class="rdt-name" style="color:${d.color}">${d.stat} <span style="opacity:0.8">${d.total}</span></span>`;
   t.style.display = 'flex';
   const rect = el.getBoundingClientRect();
   const tw = t.offsetWidth || 160;
@@ -6865,42 +7458,67 @@ function rotCardMovesHtml(r, selectable) {
   return `<div class="rm-moves">${rows}</div>`;
 }
 function rotCardLoadoutHtml(r, draggable) {
-  // ── OGGETTI: 2 slot a posizione fissa, vuoti o pieni ──
-  const itemSlots = [0, 1].map(i => {
-    const key = r.items[i];
-    const slotEvents = `ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${r.uid}',${i})"`;
-    if (key && ITEM_DEFS[key]) {
-      return `<span class="loadout-token loadout-token-item" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} ${slotEvents} style="color:${ITEM_DEFS[key].color}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`;
-    }
-    return `<span class="loadout-token loadout-token-item loadout-token-empty" ${slotEvents}>—</span>`;
-  }).join('');
+  let itemContent;
+  if (r.level >= 50) {
+    const slotCount = rotItemSlotCount(r.level);
+    const filled = r.items.slice(0, slotCount).filter(Boolean).length;
+    itemContent = `<button class="rm-items-expand-btn"
+      onclick="toggleRmItemsPopup(event,'${r.uid}')"
+      ondragover="onRmItemsPlusDragOver(event,'${r.uid}')"
+      ondragleave="onRmItemsPlusDragLeave(event)"
+      ondrop="onRmItemsPlusDrop(event,'${r.uid}')">${filled}/${slotCount}</button>`;
+  } else {
+    itemContent = [0, 1].map(i => {
+      const key = r.items[i];
+      const lv = itemLvAt(r.items, r.itemLevels, i);
+      const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
+      const slotEvents = `ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${r.uid}',${i})"`;
+      if (key && ITEM_DEFS[key]) {
+        return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} ${slotEvents} title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+      }
+      return `<span class="loadout-token loadout-token-item loadout-token-empty" ${slotEvents}>—</span>`;
+    }).join('');
+  }
   const talentiBtn = r.level >= 50 && r.def.talent
     ? `<span class="talenti-token" onclick="openTalentOverlay(event,'${r.uid}')">TALENTI</span>`
     : '';
   return `
     <div class="rm-loadout">
-      <div class="rm-loadout-row"><span class="rm-loadout-label">OGGETTI</span><div class="loadout-tokens">${itemSlots}</div>${talentiBtn}</div>
+      <div class="rm-loadout-row"><span class="rm-loadout-label">OGGETTI</span><div class="loadout-tokens">${itemContent}</div>${talentiBtn}</div>
       <div class="rm-loadout-row"><span class="rm-loadout-label">DRUGS</span><div class="rm-drug-grid">${rotDrugStatTokensHtml(r)}</div></div>
     </div>`;
 }
-// ── finestra assegnazione DRUG acquistata: token drug grandi, niente mosse/oggetti ──
+// ── finestra assegnazione DRUG acquistata: token stat grandi (come gestione ROT) ──
 function rotCardDrugSlotsHtml(r) {
-  const drugCounts = {};
-  (r.drugs || []).forEach(d => { drugCounts[d] = (drugCounts[d] || 0) + 1; });
-  const ownedHtml = Object.entries(drugCounts).map(([drugKey, count]) => {
-    const drug = DRUG_DEFS[drugKey];
-    if (!drug) return '';
-    return `<span class="loadout-token loadout-token-drug" onclick="showDrugInfoCentered(event,'${drugKey}')"><span class="drug-icon" style="background:${drug.color}"></span><span class="loadout-token-mult">x${count}</span></span>`;
-  }).join('');
-  const emptyHtml = '<span class="loadout-token loadout-token-drug loadout-token-empty"><span class="drug-icon-empty"></span></span>';
-  return `<div class="rm-drug-slots">${emptyHtml}${ownedHtml}</div>`;
+  return `<div class="rm-drug-slots"><div class="rm-drug-grid">${rotDrugStatTokensHtml(r)}</div></div>`;
 }
-// ── finestra assegnazione OGGETTO acquistato: 2 slot oggetti grandi, niente mosse/drugs ──
+// Scala la dimensione del testo degli item-token in base alla lunghezza del nome
+function itemSlotFontSize(name) {
+  const len = name.length;
+  if (len <= 5)  return 20;
+  if (len <= 9)  return 16;
+  if (len <= 13) return 13;
+  if (len <= 17) return 11;
+  return 9;
+}
+
+// ── finestra assegnazione OGGETTO acquistato: slot oggetti (quanti ne ha il ROT), niente mosse/drugs ──
 function rotCardItemSlotsHtml(r) {
-  const slots = [0, 1].map(i => {
+  const assignMode = !!(shopState?.pendingPurchase?.type === 'item');
+  const slotCount = rotItemSlotCount(r.level);
+  const slots = Array.from({ length: slotCount }, (_, i) => {
     const key = r.items[i];
     if (key && ITEM_DEFS[key]) {
-      return `<span class="loadout-token loadout-token-item" style="color:${ITEM_DEFS[key].color}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`;
+      const lv = itemLvAt(r.items, r.itemLevels, i);
+      const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
+      const swapable = assignMode ? 'rm-item-swappable' : '';
+      const onclick = assignMode
+        ? `onclick="event.stopPropagation(); assignItemChooseSlot('${r.uid}',${i})"`
+        : `onclick="showItemInfoCentered(event,'${key}')"`;
+      const dragAttrs = assignMode
+        ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"`
+        : '';
+      return `<span class="loadout-token loadout-token-item ${swapable}" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" ${dragAttrs} ${onclick}>${ITEM_DEFS[key].icon ?? '?'}<span class="item-slot-label">${ITEM_DEFS[key].name}${lvBadge}</span></span>`;
     }
     return '<span class="loadout-token loadout-token-item loadout-token-empty">—</span>';
   }).join('');
@@ -6934,6 +7552,112 @@ function rotCardDefaultHtml(r) {
   `;
 }
 
+// ── popup flottante slot oggetti (livello ≥ 50) ──
+let rmItemsPopupUid = null;
+let _rmPopupOutsideHandler = null;
+
+function toggleRmItemsPopup(event, uid) {
+  event.stopPropagation();
+  const popup = document.getElementById('rm-items-popup');
+  if (rmItemsPopupUid === uid && popup.classList.contains('on')) {
+    closeRmItemsPopup(); return;
+  }
+  rmItemsPopupUid = uid;
+  renderRmItemsPopup(uid);
+  positionRmItemsPopup(event.currentTarget);
+  popup.classList.add('on');
+  if (_rmPopupOutsideHandler) document.removeEventListener('click', _rmPopupOutsideHandler);
+  _rmPopupOutsideHandler = function(e) {
+    if (!document.getElementById('rm-items-popup')?.contains(e.target)) closeRmItemsPopup();
+  };
+  document.addEventListener('click', _rmPopupOutsideHandler);
+}
+
+function closeRmItemsPopup() {
+  document.getElementById('rm-items-popup')?.classList.remove('on');
+  rmItemsPopupUid = null;
+  if (_rmPopupOutsideHandler) {
+    document.removeEventListener('click', _rmPopupOutsideHandler);
+    _rmPopupOutsideHandler = null;
+  }
+}
+
+function renderRmItemsPopup(uid) {
+  const rot = runState.roster.find(r => r.uid === uid);
+  if (!rot) { closeRmItemsPopup(); return; }
+  const slotCount = rotItemSlotCount(rot.level);
+  const el = document.getElementById('rm-items-popup-slots');
+  if (!el) return;
+  el.innerHTML = Array.from({ length: slotCount }, (_, i) => {
+    const key = rot.items[i];
+    if (key && ITEM_DEFS[key]) {
+      const lv = itemLvAt(rot.items, rot.itemLevels, i);
+      const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
+      return `<div class="rm-popup-slot-row"><span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}"
+        draggable="true"
+        ondragstart="onItemDragStart(event,'rot','${uid}',${i},'${key}')" ondragend="onDragEnd(event)"
+        ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${uid}',${i})"
+        title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key,lv)}"
+        onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span><span class="rm-popup-slot-name">${ITEM_DEFS[key].name}</span></div>`;
+    }
+    return `<div class="rm-popup-slot-row"><span class="loadout-token loadout-token-item loadout-token-empty"
+      ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${uid}',${i})">—</span></div>`;
+  }).join('');
+}
+
+function positionRmItemsPopup(btn) {
+  const popup = document.getElementById('rm-items-popup');
+  const marsCol = document.getElementById('rot-manager-marsupio-col');
+  const boxEl = document.getElementById('rot-manager-box');
+  popup.style.visibility = 'hidden';
+  popup.classList.add('on');
+  const btnRect = btn.getBoundingClientRect();
+  const marsRect = marsCol ? marsCol.getBoundingClientRect() : { left: window.innerWidth };
+  const boxRect = boxEl ? boxEl.getBoundingClientRect() : { left: 0, top: 0, right: window.innerWidth, bottom: window.innerHeight };
+  const pw = popup.offsetWidth;
+  const ph = popup.offsetHeight;
+  // prefer opening below the button, left-aligned; keep left of marsupio column
+  let left = btnRect.left;
+  let top = btnRect.bottom + 6;
+  const maxRight = marsRect.left - 10;
+  if (left + pw > maxRight) left = maxRight - pw;
+  if (left < boxRect.left + 4) left = boxRect.left + 4;
+  const maxBottom = boxRect.bottom - 8;
+  if (top + ph > maxBottom) top = btnRect.top - ph - 6;
+  if (top < boxRect.top + 4) top = boxRect.top + 4;
+  popup.style.left = left + 'px';
+  popup.style.top = top + 'px';
+  popup.style.visibility = '';
+}
+
+function onRmItemsPlusDragOver(event, uid) {
+  if (!rotManagerDrag || rotManagerDrag.kind !== 'item') return;
+  const rot = runState.roster.find(r => r.uid === uid);
+  if (!rot) return;
+  const slotCount = rotItemSlotCount(rot.level);
+  if (!rot.items.slice(0, slotCount).some(it => it === null)) return;
+  event.preventDefault(); event.stopPropagation();
+  event.currentTarget.classList.add('rm-items-plus-over');
+}
+function onRmItemsPlusDragLeave(event) {
+  event.currentTarget.classList.remove('rm-items-plus-over');
+}
+function onRmItemsPlusDrop(event, uid) {
+  if (!rotManagerDrag || rotManagerDrag.kind !== 'item') return;
+  event.preventDefault(); event.stopPropagation();
+  event.currentTarget.classList.remove('rm-items-plus-over');
+  const rot = runState.roster.find(r => r.uid === uid);
+  if (!rot) { rotManagerDrag = null; return; }
+  const slotCount = rotItemSlotCount(rot.level);
+  const targetSlot = rot.items.slice(0, slotCount).findIndex(it => it === null);
+  if (targetSlot === -1) { rotManagerDrag = null; return; }
+  removeItemFromSource(rotManagerDrag);
+  rot.items[targetSlot] = rotManagerDrag.key;
+  if (rot.itemLevels) rot.itemLevels[targetSlot] = rotManagerDrag.level || 1;
+  rotManagerDrag = null;
+  renderRotManager();
+}
+
 // ── dispatcher: sceglie la modalità (oggetti / drugs / mosse) in base all'acquisto in attesa ──
 function renderRotManager() {
   const box = document.getElementById('rot-manager-box');
@@ -6952,6 +7676,8 @@ function renderRotManager() {
     box.classList.add('mode-items');
     renderRotManagerItems(p);
   }
+  updateFusibleUI();
+  if (rmItemsPopupUid) renderRmItemsPopup(rmItemsPopupUid);
 }
 
 // Riempe sempre 3 slot — quelli vuoti appaiono come placeholder tratteggiati
@@ -6973,8 +7699,7 @@ function renderRotManagerItems(p) {
     const cards = runState.roster.map(r => {
       const tc = TYPE_COLORS[r.def.type] || { bg:'#333', text:'#aaa' };
       return `
-        <div class="rot-manager-card rot-assignable" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}" draggable="true"
-             ondragstart="onRotDragStart(event,'${r.uid}')" ondragend="onDragEnd(event)"
+        <div class="rot-manager-card rot-assignable" style="background:linear-gradient(${tc.bg}33,${tc.bg}33),#12121c;border-color:${tc.bg}"
              ondragover="onRotCardDragOver(event)" ondragleave="onRotCardDragLeave(event)" ondrop="onRotDrop(event,'${r.uid}')"
              onclick="assignPurchaseToRot('${r.uid}')">
           ${rotCardHeaderHtml(r, tc)}
@@ -6995,10 +7720,16 @@ function renderRotManagerItems(p) {
 
   const grid = document.getElementById('marsupio-grid');
   grid.innerHTML = runState.marsupio.map((key, i) => {
-    const content = (key && ITEM_DEFS[key])
-      ? `<span class="loadout-token loadout-token-item" draggable="true" style="color:${ITEM_DEFS[key].color}" ondragstart="onItemDragStart(event,'marsupio',null,${i},'${key}')" ondragend="onDragEnd(event)" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].name}</span>`
-      : '';
-    return `<div class="marsupio-slot">${content}</div>`;
+    if (key && ITEM_DEFS[key]) {
+      const lv = runState.marsupioLevels?.[i] || 1;
+      const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
+      const token = `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" draggable="true" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" ondragstart="onItemDragStart(event,'marsupio',null,${i},'${key}')" ondragend="onDragEnd(event)" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+      return `<div class="marsupio-slot">${token}</div>`;
+    }
+    // slot vuoto: in assign mode diventa cliccabile
+    const assignClass = assignMode ? ' marsupio-assign' : '';
+    const assignClick = assignMode ? `onclick="assignItemToMarsupio(${i})"` : '';
+    return `<div class="marsupio-slot${assignClass}" ${assignClick}></div>`;
   }).join('');
 }
 
@@ -7073,6 +7804,7 @@ function assignPurchaseToRot(uid) {
   }
   runState.gold -= offer.price;
   rot.items[emptySlot] = offer.key;
+  rot.itemLevels[emptySlot] = 1;
   shopState.bought.items[p.idx] = true;
   shopState.pendingPurchase = null;
   updateHud();
@@ -7098,16 +7830,45 @@ function assignDrugToRot(uid) {
   saveRun();
 }
 
-// ── finestrella: il ROT ha già un oggetto, conferma lo scambio con il MARSUPIO ──
-function renderItemSwapConfirm() {
-  const { uid, offer } = pendingItemSwap;
+// ── clic su slot oggetto esistente del ROT in assign mode → swap mirato ──
+function assignItemChooseSlot(uid, slotIdx) {
+  const p = shopState.pendingPurchase;
+  if (!p || p.type !== 'item') return;
   const rot = runState.roster.find(r => r.uid === uid);
-  const oldItem = ITEM_DEFS[rot.items[0]];
+  if (!rot || !rot.items[slotIdx]) return;
+  pendingItemSwap = { uid, idx: p.idx, offer: shopState.items[p.idx], slotToReplace: slotIdx };
+  renderItemSwapConfirm();
+}
+
+// ── clic su slot vuoto del marsupio in assign mode → metti l'oggetto lì direttamente ──
+function assignItemToMarsupio(marsupioIdx) {
+  const p = shopState.pendingPurchase;
+  if (!p || p.type !== 'item') return;
+  if (runState.marsupio[marsupioIdx] !== null) return; // solo slot vuoti
+  const offer = shopState.items[p.idx];
+  runState.gold -= offer.price;
+  runState.marsupio[marsupioIdx] = offer.key;
+  if (!runState.marsupioLevels) runState.marsupioLevels = new Array(9).fill(null);
+  runState.marsupioLevels[marsupioIdx] = 1;
+  shopState.bought.items[p.idx] = true;
+  shopState.pendingPurchase = null;
+  updateHud();
+  closeRotManager();
+  renderShop();
+  saveRun();
+}
+
+// ── finestrella: il ROT ha già 2 oggetti, conferma lo scambio ──
+function renderItemSwapConfirm() {
+  const { uid, offer, slotToReplace } = pendingItemSwap;
+  const rot = runState.roster.find(r => r.uid === uid);
+  const slotIdx = slotToReplace ?? 0;
+  const oldItem = ITEM_DEFS[rot.items[slotIdx]];
   const newItem = ITEM_DEFS[offer.key];
   document.getElementById('rot-confirm-content').innerHTML = `
-    <div class="rot-confirm-text">${rot.def.name} ha già 2 oggetti. Vuoi spostare <b style="color:${oldItem.color}">${oldItem.name}</b> nel MARSUPIO e sostituirlo con <b style="color:${newItem.color}">${newItem.name}</b>?</div>
+    <div class="rot-confirm-text">Vuoi equipaggiare <b style="color:${newItem.color}">${newItem.name}</b> e spostare <b style="color:${oldItem.color}">${oldItem.name}</b> nel marsupio?</div>
     <div class="rot-confirm-buttons">
-      <button class="shop-picker-btn" onclick="confirmItemSwap(0)">CERTO CARO</button>
+      <button class="shop-picker-btn" onclick="confirmItemSwap(${slotIdx})">CERTO CARO</button>
       <button class="shop-picker-btn" onclick="confirmItemSwapToMarsupio()">NOPE NEL MARSUPIO</button>
       <button class="shop-picker-btn shop-picker-cancel" onclick="cancelItemSwap()">NO COL CAZZO</button>
     </div>
@@ -7118,10 +7879,15 @@ function confirmItemSwap(slotIdx) {
   const { uid, idx, offer } = pendingItemSwap;
   const rot = runState.roster.find(r => r.uid === uid);
   const oldKey = rot.items[slotIdx];
+  const oldLevel = rot.itemLevels?.[slotIdx] || 1;
   const emptySlot = runState.marsupio.findIndex(s => s === null);
-  if (emptySlot !== -1) runState.marsupio[emptySlot] = oldKey;
+  if (emptySlot !== -1) {
+    runState.marsupio[emptySlot] = oldKey;
+    runState.marsupioLevels[emptySlot] = oldLevel;
+  }
   runState.gold -= offer.price;
   rot.items[slotIdx] = offer.key;
+  rot.itemLevels[slotIdx] = 1;
   shopState.bought.items[idx] = true;
   shopState.pendingPurchase = null;
   pendingItemSwap = null;
@@ -7135,7 +7901,10 @@ function confirmItemSwap(slotIdx) {
 function confirmItemSwapToMarsupio() {
   const { idx, offer } = pendingItemSwap;
   const emptySlot = runState.marsupio.findIndex(s => s === null);
-  if (emptySlot !== -1) runState.marsupio[emptySlot] = offer.key;
+  if (emptySlot !== -1) {
+    runState.marsupio[emptySlot] = offer.key;
+    runState.marsupioLevels[emptySlot] = 1;
+  }
   runState.gold -= offer.price;
   shopState.bought.items[idx] = true;
   shopState.pendingPurchase = null;
@@ -7284,7 +8053,8 @@ document.addEventListener('mousedown', e => {
       if (!secondary.contains(e.target)) closeShopMoveInfoSecondary();
       return;
     }
-    if (!document.getElementById('rot-manager-box').contains(e.target)) cancelPurchase();
+    const rmPopup = document.getElementById('rm-items-popup');
+    if (!document.getElementById('rot-manager-box').contains(e.target) && !(rmPopup && rmPopup.contains(e.target))) cancelPurchase();
     return;
   }
 });
@@ -7299,7 +8069,14 @@ function onRotDragStart(event, uid) {
 }
 function onItemDragStart(event, source, uid, slotIdx, key) {
   event.stopPropagation();
-  rotManagerDrag = { kind: 'item', source, uid, slotIdx, key };
+  let level = 1;
+  if (source === 'rot') {
+    const r = runState.roster.find(x => x.uid === uid);
+    if (r) level = itemLvAt(r.items, r.itemLevels, slotIdx);
+  } else if (source === 'marsupio') {
+    level = runState.marsupioLevels?.[slotIdx] || 1;
+  }
+  rotManagerDrag = { kind: 'item', source, uid, slotIdx, key, level };
   document.getElementById('rot-manager-overlay').classList.add('dragging');
   const rarity = ITEM_DEFS[key] ? ITEM_DEFS[key].rarity : 'comune';
   document.getElementById('rot-manager-sell-price').textContent = `+${ITEM_PRICE[rarity] || 1}g`;
@@ -7344,17 +8121,20 @@ function onSellDrop(event) {
 function removeItemFromSource(d) {
   if (d.source === 'rot') {
     const r = runState.roster.find(x => x.uid === d.uid);
-    if (r) r.items[d.slotIdx] = null;
+    if (r) { r.items[d.slotIdx] = null; if (r.itemLevels) r.itemLevels[d.slotIdx] = null; }
   } else if (d.source === 'marsupio') {
     runState.marsupio[d.slotIdx] = null;
+    if (runState.marsupioLevels) runState.marsupioLevels[d.slotIdx] = null;
   }
 }
-function placeItemAtSource(d, key) {
+function placeItemAtSource(d, key, level) {
+  const lv = level ?? d.level ?? 1;
   if (d.source === 'rot') {
     const r = runState.roster.find(x => x.uid === d.uid);
-    if (r) r.items[d.slotIdx] = key;
+    if (r) { r.items[d.slotIdx] = key; if (r.itemLevels) r.itemLevels[d.slotIdx] = lv; }
   } else if (d.source === 'marsupio') {
     runState.marsupio[d.slotIdx] = key;
+    if (runState.marsupioLevels) runState.marsupioLevels[d.slotIdx] = lv;
   }
 }
 
@@ -7378,10 +8158,12 @@ function onItemSlotDrop(event, uid, slotIdx) {
   if (!rot) { rotManagerDrag = null; return; }
   if (rotManagerDrag.source === 'rot' && rotManagerDrag.uid === uid && rotManagerDrag.slotIdx === slotIdx) { rotManagerDrag = null; return; }
   const oldItem = rot.items[slotIdx];
+  const oldItemLevel = rot.itemLevels?.[slotIdx] || 1;
   const key = rotManagerDrag.key;
   removeItemFromSource(rotManagerDrag);
   rot.items[slotIdx] = key;
-  if (oldItem) placeItemAtSource(rotManagerDrag, oldItem);
+  if (rot.itemLevels) rot.itemLevels[slotIdx] = rotManagerDrag.level || 1;
+  if (oldItem) placeItemAtSource(rotManagerDrag, oldItem, oldItemLevel);
   rotManagerDrag = null;
   renderRotManager();
 }
@@ -7405,10 +8187,12 @@ function onRotDrop(event, uid) {
   let targetSlot = rot.items.findIndex(it => it === null);
   if (targetSlot === -1) targetSlot = 0;
   const oldItem = rot.items[targetSlot];
+  const oldItemLevel = rot.itemLevels?.[targetSlot] || 1;
   const key = rotManagerDrag.key;
   removeItemFromSource(rotManagerDrag);
   rot.items[targetSlot] = key;
-  if (oldItem) placeItemAtSource(rotManagerDrag, oldItem);
+  if (rot.itemLevels) rot.itemLevels[targetSlot] = rotManagerDrag.level || 1;
+  if (oldItem) placeItemAtSource(rotManagerDrag, oldItem, oldItemLevel);
   rotManagerDrag = null;
   renderRotManager();
 }
@@ -7428,6 +8212,7 @@ function onMarsupioDrop(event) {
   if (rotManagerDrag.source === 'marsupio' && rotManagerDrag.slotIdx === emptySlot) { rotManagerDrag = null; return; }
   removeItemFromSource(rotManagerDrag);
   runState.marsupio[emptySlot] = rotManagerDrag.key;
+  if (runState.marsupioLevels) runState.marsupioLevels[emptySlot] = rotManagerDrag.level || 1;
   rotManagerDrag = null;
   renderRotManager();
 }
@@ -7435,7 +8220,8 @@ function onMarsupioDrop(event) {
 // Badge di rarità: stesso codice colore e stessa forma per oggetti, mosse e drugs.
 function rarityBadge(rarity) {
   const st = RARITY_STYLE[rarity] || RARITY_STYLE.comune;
-  return `<span class="shop-rarity-badge" style="background:${st.bg};color:${st.text}">${rarity}</span>`;
+  const label = ITEM_RARITY_LABEL[rarity] || rarity.toUpperCase();
+  return `<span class="shop-rarity-badge" style="background:${st.bg};color:${st.text}">${label}</span>`;
 }
 
 // Stile del token/card in base alla rarità: sfondo coerente in tutte le sezioni.
@@ -7492,7 +8278,7 @@ function renderShop() {
       return `
         <div class="shop-card shop-item-card" style="${rarityCardStyle(item.rarity)}">
           <div class="shop-card-top">
-            <span class="shop-card-name" style="color:${item.color}">${item.name}</span>
+            <span class="shop-card-name" style="color:${item.color};font-size:${shopNameFontSize(item.name)}px">${item.name}</span>
             ${rarityBadge(item.rarity)}
           </div>
           <div class="shop-card-desc">${item.desc}</div>
@@ -7526,7 +8312,7 @@ function renderShop() {
       </div>
       <div class="shop-card shop-drug-card" style="${rarityCardStyle(drug.rarity)}">
         <div class="shop-card-top">
-          <span class="shop-card-name" style="color:${drug.color}">${drug.name}</span>
+          <span class="shop-card-name" style="color:${drug.color};font-size:${shopNameFontSize(drug.name)}px">${drug.name}</span>
           ${rarityBadge(drug.rarity)}
         </div>
         <div class="shop-card-desc">${drug.desc}</div>
@@ -7551,7 +8337,7 @@ function renderShop() {
       return `
         <div class="shop-card shop-move-card" style="${rarityCardStyle(rarity)}">
           <div class="shop-card-top">
-            <span class="shop-card-name shop-move-name-clickable" style="color:${tc.text}" onclick="showShopMoveOfferInfo(event, ${idx})">${def.name}${def.power ? `<span class="shop-move-power"> · POT ${def.power}</span>` : ''}</span>
+            <span class="shop-card-name shop-move-name-clickable" style="color:${tc.text};font-size:${shopNameFontSize(def.name)}px" onclick="showShopMoveOfferInfo(event, ${idx})">${def.name}${def.power ? `<span class="shop-move-power"> · POT ${def.power}</span>` : ''}</span>
             <div style="display:flex; align-items:center; gap:8px;">
               <span class="shop-cat-icon" title="${catInfo ? catInfo.label : def.cat}" onclick="showCategoryInfoCentered(event,'${def.cat}')">${catInfo ? catInfo.icon : ''}</span>
               ${rarityBadge(rarity)}
@@ -7581,6 +8367,21 @@ function renderShop() {
 
 }
 
+async function showBossWarning() {
+  const ov = document.getElementById('boss-warning-overlay');
+  const countEl = document.getElementById('boss-countdown');
+  ov.classList.add('on');
+  for (let i = 3; i >= 1; i--) {
+    countEl.textContent = i;
+    countEl.style.animation = 'none';
+    void countEl.offsetWidth;
+    countEl.style.animation = '';
+    await wait(1000);
+  }
+  ov.classList.remove('on');
+  await wait(350);
+}
+
 function startNextBattle() {
   playBattleMusic();
   applyBattleBackground();
@@ -7600,8 +8401,16 @@ function startNextBattle() {
     r.counterNext = null;
     r.critChanceOverride = null;
     r.landlordareTurns = 0;
+    r.lampioneTurns = 0;
+    r.centroSocialeTurns = 0;
+    r.salsaBaseTurns = 0;
+    r.comboCount = 0;
     r.lastMove = null;
     r.evasion = 0;
+    r.feniceUsedThisBattle = false;
+    r.scarpeActedThisBattle = false;
+    r.cer8UsedThisBattle = false;
+    r.savedByAssicurazione = false;
     r.moves.forEach(m => { if (m.curPp !== Infinity) m.curPp = m.pp; });
     // CRYPTOBISMOL — MANI DI DIAMANTE: buff casuali agli stadi all'inizio della battaglia
     if (r.def === ROT_DEFS.CRYPTOBISMOL) {
@@ -7623,20 +8432,39 @@ function startNextBattle() {
       r.evasion = talentTier(r) * 5;
     }
   });
-  const enemyDefs = pickRandomDefs(runState.enemyCount);
-  B = {
-    player: runState.roster,
-    enemy:  enemyDefs.map(def => mkRot(def, lvl, false)),
-    phase: 'ROT_SELECT', current: null, selMove: null,
-    assigned: {}, actedUids: new Set(),
-    goldLog: [],           // gold guadagnato durante la battaglia, per fonte
-  };
-  B.tokenWidth = calibrateTokenWidth();
+
   document.getElementById('overlay').classList.remove('on');
   document.getElementById('progress-overlay').classList.remove('on');
   clearLog();
-  log(`Battaglia ${runState.battlesWon + 1} — Livello ${lvl} — ${B.enemy.length} nemici`, 'info');
-  render();
+
+  const isBoss = lvl > 0 && lvl % 50 === 0;
+
+  if (isBoss) {
+    B = {
+      player: runState.roster,
+      enemy:  [mkBossRot(lvl)],
+      phase: 'ROT_SELECT', current: null, selMove: null,
+      assigned: {}, actedUids: new Set(),
+      goldLog: [],
+    };
+    B.tokenWidth = calibrateTokenWidth();
+    log(`⚠ BOSS — Livello ${lvl} — BEPPE SALA SI AVVICINA`, 'info');
+    saveRun();
+    showBossWarning().then(() => render());
+  } else {
+    const enemyDefs = pickRandomDefs(runState.enemyCount);
+    B = {
+      player: runState.roster,
+      enemy:  enemyDefs.map(def => mkRot(def, lvl, false)),
+      phase: 'ROT_SELECT', current: null, selMove: null,
+      assigned: {}, actedUids: new Set(),
+      goldLog: [],
+    };
+    B.tokenWidth = calibrateTokenWidth();
+    log(`Battaglia ${runState.battlesWon + 1} — Livello ${lvl} — ${B.enemy.length} nemici`, 'info');
+    saveRun();
+    render();
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -7659,6 +8487,7 @@ function render() {
       });
     renderSpeedBar(ordered);
   }
+  updateFusibleUI();
 }
 
 // ── Icone freccia per buff/debuff attivi (stadi statistiche + POTERI FORTI), mostrate sopra la barra HP ──
@@ -7778,6 +8607,16 @@ function nameTokenFontSize(name, scale = 1) {
   return Math.round(base * scale * 10) / 10;
 }
 
+// Font-size per i nomi nelle card negozio: il box ha larghezza fissa (colonna items la più stretta)
+function shopNameFontSize(name) {
+  const len = name.length;
+  if (len <= 11) return 17;
+  if (len <= 14) return 14;
+  if (len <= 18) return 11;
+  if (len <= 22) return 9;
+  return 7;
+}
+
 function renderGroup(id, rots, isPlayer) {
   const container = document.getElementById(id);
   container.innerHTML = '';
@@ -7788,6 +8627,10 @@ function mkCard(rot, isPlayer) {
   const tc = TYPE_COLORS[rot.def.type] || { bg:'#1a1a2a', text:'#aaa' };
   const pct = rot.curHp / rot.maxHp;
   const hpCls = pct > 0.5 ? 'high' : pct > 0.25 ? 'mid' : 'low';
+  const isBoss = !!rot.def.isBoss;
+  const hpFillHtml = isBoss
+    ? `<div class="hp-fill" style="width:${Math.max(0,pct*100).toFixed(1)}%;background-color:hsl(${Math.round(pct*120)},85%,38%);box-shadow:0 0 12px hsl(${Math.round(pct*120)},85%,55%);transition:width 0.55s ease,background-color 0.8s;"></div>`
+    : `<div class="hp-fill ${hpCls}" style="width:${Math.max(0, pct*100).toFixed(1)}%"></div>`;
 
   const inPlanning  = B.phase !== 'EXEC' && B.phase !== 'END';
   const isSelected  = inPlanning && isPlayer && B.current?.uid === rot.uid;
@@ -7826,6 +8669,7 @@ function mkCard(rot, isPlayer) {
   div.className = [
     'rot-card',
     isPlayer ? 'player-card' : 'enemy-card',
+    isBoss               ? 'boss-card'      : '',
     !rot.isAlive         ? 'dead'           : '',
     targetable           ? 'targetable'     : '',
     isSelected           ? 'rot-selected'   : '',
@@ -7856,7 +8700,7 @@ function mkCard(rot, isPlayer) {
       <div class="bars-divider"></div>
       <div class="bars-row">
         <div class="hp-bar-track">
-          <div class="hp-fill ${hpCls}" style="width:${Math.max(0, pct*100).toFixed(1)}%"></div>
+          ${hpFillHtml}
         </div>
       </div>
     </div>
@@ -8403,6 +9247,393 @@ function confirmStarter() {
 }
 
 // ═══════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// SISTEMA DI FUSIONE OGGETTI
+// ═══════════════════════════════════════════════════
+
+let _fusibleSet = new Set();
+
+function refreshFusibleSet() {
+  _fusibleSet = new Set();
+  if (!runState) return;
+  const counts = new Map();
+  const add = (key, lv) => {
+    if (!key || !ITEM_DEFS[key]) return;
+    const k = `${key}:${lv}`;
+    counts.set(k, (counts.get(k) || 0) + 1);
+  };
+  for (const rot of runState.roster) {
+    for (let i = 0; i < rot.items.length; i++) {
+      if (rot.items[i]) add(rot.items[i], itemLvAt(rot.items, rot.itemLevels, i));
+    }
+  }
+  for (let i = 0; i < runState.marsupio.length; i++) {
+    if (runState.marsupio[i]) add(runState.marsupio[i], runState.marsupioLevels?.[i] || 1);
+  }
+  for (const [k, n] of counts) {
+    const sepIdx = k.lastIndexOf(':');
+    const lv = parseInt(k.slice(sepIdx + 1), 10);
+    const key2 = k.slice(0, sepIdx);
+    const maxFusion = ITEM_DEFS[key2]?.maxFusion ?? 1;
+    if (n >= 3 && lv < maxFusion) _fusibleSet.add(k);
+  }
+}
+
+function isFusible(key, level) {
+  return _fusibleSet.has(`${key}:${level}`);
+}
+
+function updateFusibleUI() {
+  refreshFusibleSet();
+  document.querySelectorAll('[data-item-key]').forEach(el => {
+    const key = el.dataset.itemKey;
+    const lv = parseInt(el.dataset.itemLevel || '1', 10);
+    const fusible = isFusible(key, lv);
+    el.classList.toggle('fusible-item', fusible);
+    el.oncontextmenu = fusible ? (e) => { e.preventDefault(); openFusionConfirm(key, lv); } : null;
+  });
+}
+
+let _fusionPending = null;
+
+let _fusionOriginRM = false;
+
+function openFusionConfirm(key, level) {
+  if (!isFusible(key, level)) return;
+  _fusionOriginRM = !!document.getElementById('rot-manager-overlay')?.classList.contains('on');
+  _fusionPending = { key, level };
+  const def = ITEM_DEFS[key];
+  const nextLv = level + 1;
+  document.getElementById('fusion-confirm-text').innerHTML =
+    `Vuoi fondere <b>3 copie</b> di <span style="color:${fusionTokenColor(key, level)}">${def.name} Lv${level}</span> per creare <span style="color:${fusionTokenColor(key, nextLv)}">${def.name} Lv${nextLv}</span>?`;
+  document.getElementById('fusion-confirm-overlay').classList.add('on');
+}
+
+function closeFusionConfirm() {
+  _fusionPending = null;
+  document.getElementById('fusion-confirm-overlay').classList.remove('on');
+}
+
+async function executeFusion() {
+  if (!_fusionPending) return;
+  const { key, level } = _fusionPending;
+  closeFusionConfirm();
+  refreshFusibleSet();
+  if (!isFusible(key, level)) return;
+
+  let consumed = 0;
+  for (const rot of runState.roster) {
+    for (let i = 0; i < rot.items.length; i++) {
+      if (consumed >= 3) break;
+      if (rot.items[i] === key && itemLvAt(rot.items, rot.itemLevels, i) === level) {
+        rot.items[i] = null;
+        if (rot.itemLevels) rot.itemLevels[i] = null;
+        consumed++;
+      }
+    }
+    if (consumed >= 3) break;
+  }
+  for (let i = 0; i < runState.marsupio.length && consumed < 3; i++) {
+    if (runState.marsupio[i] === key && (runState.marsupioLevels?.[i] || 1) === level) {
+      runState.marsupio[i] = null;
+      if (runState.marsupioLevels) runState.marsupioLevels[i] = null;
+      consumed++;
+    }
+  }
+
+  const newLevel = level + 1;
+  let placed = false;
+  for (const rot of runState.roster) {
+    const emptySlot = rot.items.indexOf(null);
+    if (emptySlot !== -1) {
+      rot.items[emptySlot] = key;
+      if (!rot.itemLevels) rot.itemLevels = [null, null];
+      rot.itemLevels[emptySlot] = newLevel;
+      placed = true;
+      break;
+    }
+  }
+  if (!placed) {
+    const emptySlot = runState.marsupio.findIndex(s => s === null);
+    if (emptySlot !== -1) {
+      runState.marsupio[emptySlot] = key;
+      if (!runState.marsupioLevels) runState.marsupioLevels = new Array(9).fill(null);
+      runState.marsupioLevels[emptySlot] = newLevel;
+      placed = true;
+    }
+  }
+  if (!placed) { alert('Nessun slot disponibile per il risultato della fusione!'); return; }
+
+  saveRun();
+  await showFusionAnimation();
+  showFusionResult(key, newLevel);
+}
+
+async function showFusionAnimation() {
+  const ov = document.getElementById('fusion-anim-overlay');
+  ov.classList.add('on');
+  await wait(1400);
+  ov.classList.remove('on');
+  await wait(200);
+}
+
+function showFusionResult(key, newLevel) {
+  const def = ITEM_DEFS[key];
+  const desc = newLevel <= 1 ? def.desc : (def.fusionDescs?.[newLevel - 2] || def.desc);
+  document.getElementById('fusion-result-name').innerHTML =
+    `<span style="color:${fusionTokenColor(key, newLevel)}">${def.name}</span> <span class="fusion-result-lv">Lv${newLevel}</span>`;
+  document.getElementById('fusion-result-desc').textContent = desc;
+  document.getElementById('fusion-result-overlay').classList.add('on');
+}
+
+function closeFusionResult() {
+  document.getElementById('fusion-result-overlay').classList.remove('on');
+  if (_fusionOriginRM) {
+    _fusionOriginRM = false;
+    document.getElementById('rot-manager-overlay').classList.add('on');
+    renderRotManager();
+  } else {
+    updateFusibleUI();
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// ENCICLOPEDIA
+// ═══════════════════════════════════════════════════
+
+let _encActiveEntry = null;
+const ENC_ITEM_RARITY_LABEL = { comune:'BASE', combo:'COMBO', atomico:'ATOMICO', apocalittico:'APOCALITTICO' };
+
+function openEnciclopedia() {
+  _encPopulateRotList();
+  _encPopulateItemsSubs();
+  _encPopulateDrugsSubs();
+  _encPopulateMovesSubs();
+  _encActiveEntry = null;
+  document.getElementById('enc-detail').innerHTML = '<div id="enc-placeholder">← SELEZIONA UNA VOCE</div>';
+  document.getElementById('enc-overlay').classList.add('on');
+}
+
+function closeEnciclopedia() {
+  document.getElementById('enc-overlay').classList.remove('on');
+}
+
+function encOverlayClickOutside(e) {
+  if (e.target === document.getElementById('enc-overlay')) closeEnciclopedia();
+}
+
+function toggleEncSection(id) {
+  const body  = document.getElementById(id);
+  const arrow = document.getElementById('arr-' + id);
+  const open  = body.classList.toggle('open');
+  if (arrow) arrow.textContent = open ? '▼' : '▶';
+}
+
+function toggleEncSubSection(id) {
+  const body  = document.getElementById(id);
+  const arrow = document.getElementById('arr-' + id);
+  const open  = body.classList.toggle('open');
+  if (arrow) arrow.textContent = open ? '▼' : '▶';
+}
+
+function _encPopulateRotList() {
+  const el = document.getElementById('enc-rot');
+  el.innerHTML = Object.keys(ROT_DEFS).map(k =>
+    `<div class="enc-entry" id="enc-e-rot-${k}" onclick="_encSelect('enc-e-rot-${k}', () => encShowRot('${k}'))">${ROT_DEFS[k].name}</div>`
+  ).join('');
+}
+
+function _encPopulateItemsSubs() {
+  const el = document.getElementById('enc-items');
+  const groups = [
+    { id:'enc-items-base', label:'BASE',         rarity:'comune'       },
+    { id:'enc-items-combo', label:'COMBO',        rarity:'combo'        },
+    { id:'enc-items-atom', label:'ATOMICO',       rarity:'atomico'      },
+    { id:'enc-items-apoc', label:'APOCALITTICO',  rarity:'apocalittico' },
+  ];
+  el.innerHTML = groups.map(g => {
+    const keys = Object.keys(ITEM_DEFS).filter(k => ITEM_DEFS[k].rarity === g.rarity);
+    const entries = keys.map(k =>
+      `<div class="enc-subentry" id="enc-e-item-${k}" onclick="_encSelect('enc-e-item-${k}', () => encShowItem('${k}'))">${ITEM_DEFS[k].name}</div>`
+    ).join('');
+    return `<div class="enc-subsection-head" onclick="toggleEncSubSection('${g.id}')">
+      <span>${g.label}</span><span class="enc-section-arrow" id="arr-${g.id}">▶</span>
+    </div>
+    <div class="enc-subsection-body" id="${g.id}">${entries}</div>`;
+  }).join('');
+}
+
+function _encPopulateDrugsSubs() {
+  const el = document.getElementById('enc-drugs');
+  const groups = [
+    { id:'enc-drugs-comune', label:'COMUNE',  rarity:'comune'  },
+    { id:'enc-drugs-rara',   label:'RARA',    rarity:'rara'    },
+    { id:'enc-drugs-atom',   label:'ATOMICA', rarity:'atomica' },
+  ];
+  el.innerHTML = groups.map(g => {
+    const keys = Object.keys(DRUG_DEFS).filter(k => DRUG_DEFS[k].rarity === g.rarity);
+    const entries = keys.map(k =>
+      `<div class="enc-subentry" id="enc-e-drug-${k}" onclick="_encSelect('enc-e-drug-${k}', () => encShowDrug('${k}'))">${DRUG_DEFS[k].name}</div>`
+    ).join('');
+    return `<div class="enc-subsection-head" onclick="toggleEncSubSection('${g.id}')">
+      <span>${g.label}</span><span class="enc-section-arrow" id="arr-${g.id}">▶</span>
+    </div>
+    <div class="enc-subsection-body" id="${g.id}">${entries}</div>`;
+  }).join('');
+}
+
+function _encPopulateMovesSubs() {
+  const el = document.getElementById('enc-moves');
+  const dannoHtml = [], utilityHtml = [];
+  for (const [k, m] of Object.entries(GENERIC_MOVE_DEFS)) {
+    const id = 'enc-e-gm-' + k;
+    const e = `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(GENERIC_MOVE_DEFS['${k}']))">${m.name}</div>`;
+    (m.cat === 'UTILITY' ? utilityHtml : dannoHtml).push(e);
+  }
+  for (const [k, m] of Object.entries(TYPE_MOVE_DEFS)) {
+    const id = 'enc-e-tm-' + k;
+    const e = `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(TYPE_MOVE_DEFS['${k}']))">${m.name}</div>`;
+    (m.cat === 'UTILITY' ? utilityHtml : dannoHtml).push(e);
+  }
+  el.innerHTML = `
+    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-danno')">
+      <span>DANNO</span><span class="enc-section-arrow" id="arr-enc-moves-danno">▶</span>
+    </div>
+    <div class="enc-subsection-body" id="enc-moves-danno">${dannoHtml.join('')}</div>
+    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-utility')">
+      <span>UTILITY</span><span class="enc-section-arrow" id="arr-enc-moves-utility">▶</span>
+    </div>
+    <div class="enc-subsection-body" id="enc-moves-utility">${utilityHtml.join('')}</div>
+  `;
+}
+
+function _encSelect(entryId, showFn) {
+  if (_encActiveEntry) {
+    const prev = document.getElementById(_encActiveEntry);
+    if (prev) prev.classList.remove('active');
+  }
+  _encActiveEntry = entryId;
+  const el = document.getElementById(entryId);
+  if (el) el.classList.add('active');
+  showFn();
+}
+
+function _encSetDetail(html) {
+  document.getElementById('enc-detail').innerHTML = html;
+}
+
+function encShowRot(key) {
+  const def = ROT_DEFS[key];
+  if (!def) return;
+  const tc = TYPE_COLORS[def.type] || { bg:'#333', text:'#aaa' };
+  const b  = def.base;
+  const um = def.uniqueMove;
+  const umTc = um.type ? (TYPE_COLORS[um.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const catInfo = CATEGORY_INFO[um.cat] || {};
+  const spriteHtml = def.sprite
+    ? `<div class="enc-rot-sprite sprite-mode"><canvas class="enc-rot-sprite-canvas${def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310"></canvas></div>`
+    : `<div class="enc-rot-sprite" style="background:${tc.bg}"></div>`;
+  _encSetDetail(`
+    ${spriteHtml}
+    <div class="info-title" style="color:${tc.text}">${def.name}</div>
+    <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${def.type}</span>
+    <div class="info-section">STAT BASE</div>
+    <div class="info-stat-grid">
+      <div class="info-stat"><span class="info-stat-lbl">HP</span><span class="info-stat-val">${b.hp}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">ATK</span><span class="info-stat-val">${b.atk}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SP.ATK</span><span class="info-stat-val">${b.spAtk}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">DEF</span><span class="info-stat-val">${b.def}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SP.DEF</span><span class="info-stat-val">${b.spDef}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">SPD</span><span class="info-stat-val">${b.spd}</span></div>
+    </div>
+    <div class="info-section">TALENTO</div>
+    <div class="info-text">${def.talent?.name || '—'}</div>
+    <div class="info-section">MOSSA UNICA — ${um.name}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+      <span class="info-badge" style="background:${umTc.bg};color:${umTc.text}">${um.type || 'NEUTRO'}</span>
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${catInfo.label || um.cat}</span>
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">POT ${um.power}</span>
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">PP ${um.pp}</span>
+    </div>
+    <div class="info-text">${moveEffectDesc(um)}</div>
+  `);
+  if (def.sprite) {
+    const canvas = document.querySelector('#enc-detail .enc-rot-sprite-canvas');
+    if (canvas) initRotSpriteCanvas(canvas, def.sprite);
+  }
+}
+
+function encShowItem(key) {
+  const item = ITEM_DEFS[key];
+  if (!item) return;
+  const rarityLabel = ENC_ITEM_RARITY_LABEL[item.rarity] || item.rarity.toUpperCase();
+  const baseColor   = RARITY_COLOR[item.rarity] || '#9ca3af';
+  const st          = RARITY_STYLE[item.rarity] || RARITY_STYLE.comune;
+  const fusible     = item.maxFusion > 1 && item.fusionDescs?.length;
+  let fusionHtml = '';
+  if (fusible) {
+    const lvColors = ['', '#f97316', '#9f1239', '#1d4ed8'];
+    const rows = item.fusionDescs.map((desc, i) => {
+      const lv  = i + 2;
+      const col = lvColors[i] || '#6ee7b7';
+      return `
+        <div class="enc-fusion-req">3× ${item.name} Lv${lv - 1} → fusione</div>
+        <div class="enc-fusion-row">
+          <span class="enc-fusion-lv" style="color:${col}">Lv${lv}</span>
+          <span class="enc-fusion-arrow">▸</span>
+          <span class="enc-fusion-desc">${desc}</span>
+        </div>`;
+    }).join('');
+    fusionHtml = `<div class="info-section">ALBERO DI FUSIONE</div>
+      <div class="enc-fusion-tree">
+        <div class="enc-fusion-row">
+          <span class="enc-fusion-lv" style="color:${baseColor}">Lv1</span>
+          <span class="enc-fusion-arrow">▸</span>
+          <span class="enc-fusion-desc">${item.desc}</span>
+        </div>
+        ${rows}
+      </div>`;
+  }
+  _encSetDetail(`
+    <div class="info-title" style="color:${baseColor}">${item.name}</div>
+    <span class="info-badge" style="background:${st.bg};color:${st.text}">OGGETTO ${rarityLabel}</span>
+    ${fusible ? '' : `<div class="info-section">EFFETTO</div><div class="info-text">${item.desc}</div>`}
+    ${fusionHtml}
+  `);
+}
+
+function encShowDrug(key) {
+  const drug = DRUG_DEFS[key];
+  if (!drug) return;
+  const rarityLabel = drug.rarity.toUpperCase();
+  _encSetDetail(`
+    <div class="info-title" style="color:${drug.color}">${drug.name}</div>
+    <span class="info-badge" style="background:rgba(80,55,15,0.9);color:${drug.color}">DRUG ${rarityLabel}</span>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${drug.desc}</div>
+  `);
+}
+
+function encShowMove(move) {
+  if (!move) return;
+  const tc      = move.type ? (TYPE_COLORS[move.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const catInfo = CATEGORY_INFO[move.cat] || {};
+  const ppTxt   = move.pp === Infinity ? '∞' : move.pp;
+  _encSetDetail(`
+    <div class="info-title" style="color:${tc.text}">${move.name}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
+      <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${move.type || 'NEUTRO'}</span>
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${catInfo.label || move.cat}</span>
+    </div>
+    <div class="info-stat-grid">
+      <div class="info-stat"><span class="info-stat-lbl">POT</span><span class="info-stat-val">${move.power}</span></div>
+      <div class="info-stat"><span class="info-stat-lbl">PP</span><span class="info-stat-val">${ppTxt}</span></div>
+    </div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${moveEffectDesc(move)}</div>
+  `);
+}
+
 // SALVATAGGIO AUTOMATICO
 // ═══════════════════════════════════════════════════
 const SAVE_KEY = 'ROGUELIFE_v1';
@@ -8416,6 +9647,7 @@ function saveRun() {
       enemyCount: runState.enemyCount,
       battlesWon: runState.battlesWon,
       marsupio: runState.marsupio.map(k => k || null),
+      marsupioLevels: (runState.marsupioLevels || []).map(l => l || null),
       roster: runState.roster.map(r => {
         const defKey = Object.keys(ROT_DEFS).find(k => ROT_DEFS[k] === r.def);
         return {
@@ -8429,6 +9661,7 @@ function saveRun() {
           critBonus: r.critBonus || 0,
           drugs: [...r.drugs],
           items: [...r.items],
+          itemLevels: [...(r.itemLevels || [null, null])],
           moves: r.moves.map(m => ({ ...m })),
         };
       }),
@@ -8484,8 +9717,13 @@ function deserializeRot(data) {
     evasion: data.evasion || 0,
     critBonus: data.critBonus || 0,
     drugs: [...(data.drugs || [])],
-    items: [...(data.items || [null, null])],
-    moves: (data.moves || []).map(m => ({ ...m })),
+    items: (() => { const a = [...(data.items || [null, null])]; const n = rotItemSlotCount(data.level); while (a.length < n) a.push(null); return a; })(),
+    itemLevels: (() => { const a = [...(data.itemLevels || [null, null])]; const n = rotItemSlotCount(data.level); while (a.length < n) a.push(null); return a; })(),
+    moves: (data.moves || []).map(m => ({
+      ...m,
+      pp: m.pp == null ? Infinity : m.pp,
+      curPp: m.curPp == null ? Infinity : m.curPp,
+    })),
     isAlive: true,
     action: null,
     lastMove: null,
@@ -8507,6 +9745,7 @@ function resumeRun() {
       battlesWon: data.battlesWon,
       roster,
       marsupio: (data.marsupio || []).map(k => k || null),
+      marsupioLevels: (data.marsupioLevels || new Array(9).fill(null)).map(l => l || null),
     };
     console.log('[SAVE] runState ripristinato:', runState);
     const ov = document.getElementById('intro-overlay');
@@ -8530,6 +9769,7 @@ function startRun(starterDef) {
       mkRot(starterDef, lvl, true),
     ],
     marsupio: new Array(9).fill(null),
+    marsupioLevels: new Array(9).fill(null),
   };
   updateHud();
   startNextBattle();
@@ -8620,6 +9860,9 @@ Object.entries(SFX_FILES).forEach(([name, src]) => {
     .then(decoded => { SFX_BUFFERS[name] = decoded; })
     .catch(() => {});
 });
+const SFX_GAIN_OVERRIDES = {
+  buff: 0.35,
+};
 function playSfx(name) {
   const buffer = SFX_BUFFERS[name];
   if (!buffer || SFX_VOLUME <= 0) return;
@@ -8628,7 +9871,14 @@ function playSfx(name) {
   requestAnimationFrame(() => {
     const source = SFX_CTX.createBufferSource();
     source.buffer = buffer;
-    source.connect(SFX_GAIN);
+    if (SFX_GAIN_OVERRIDES[name] != null) {
+      const perGain = SFX_CTX.createGain();
+      perGain.gain.value = SFX_GAIN_OVERRIDES[name];
+      source.connect(perGain);
+      perGain.connect(SFX_GAIN);
+    } else {
+      source.connect(SFX_GAIN);
+    }
     source.start(0);
   });
 }
@@ -9222,6 +10472,67 @@ if (document.readyState === 'loading') {
   };
 })();
 </script>
+
+<!-- FUSIONE: conferma -->
+<div id="fusion-confirm-overlay">
+  <div id="fusion-confirm-box">
+    <div id="fusion-confirm-text"></div>
+    <div class="fusion-confirm-btns">
+      <button class="fusion-btn-si" onclick="executeFusion()">SI</button>
+      <button class="fusion-btn-no" onclick="closeFusionConfirm()">NO</button>
+    </div>
+  </div>
+</div>
+
+<!-- FUSIONE: animazione -->
+<div id="fusion-anim-overlay">
+  <div id="fusion-anim-box">
+    <span id="fusion-anim-icon">⚗️</span>
+    <div id="fusion-anim-text">FUSIONE IN CORSO...</div>
+  </div>
+</div>
+
+<!-- FUSIONE: risultato -->
+<div id="fusion-result-overlay">
+  <div id="fusion-result-box">
+    <div id="fusion-result-name"></div>
+    <div id="fusion-result-desc"></div>
+    <button class="fusion-result-close" onclick="closeFusionResult()">OK</button>
+  </div>
+</div>
+
+<div id="enc-overlay" onclick="encOverlayClickOutside(event)">
+  <div id="enc-box">
+    <div id="enc-header">
+      <div id="enc-title">📜 ENCICLOPEDIA</div>
+      <button id="enc-close-btn" onclick="closeEnciclopedia()">✕ CHIUDI</button>
+    </div>
+    <div id="enc-body">
+      <div id="enc-list">
+        <div class="enc-section-head" onclick="toggleEncSection('enc-rot')">
+          <span>👾 ROT</span><span class="enc-section-arrow" id="arr-enc-rot">▶</span>
+        </div>
+        <div class="enc-section-body" id="enc-rot"></div>
+        <div class="enc-section-head" onclick="toggleEncSection('enc-items')">
+          <span>🎒 OGGETTI</span><span class="enc-section-arrow" id="arr-enc-items">▶</span>
+        </div>
+        <div class="enc-section-body" id="enc-items"></div>
+        <div class="enc-section-head" onclick="toggleEncSection('enc-drugs')">
+          <span>💊 DRUGS</span><span class="enc-section-arrow" id="arr-enc-drugs">▶</span>
+        </div>
+        <div class="enc-section-body" id="enc-drugs"></div>
+        <div class="enc-section-head" onclick="toggleEncSection('enc-moves')">
+          <span>⚡ MOSSE</span><span class="enc-section-arrow" id="arr-enc-moves">▶</span>
+        </div>
+        <div class="enc-section-body" id="enc-moves"></div>
+      </div>
+      <div id="enc-detail">
+        <div id="enc-placeholder">← SELEZIONA UNA VOCE</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // Live reload: controlla Last-Modified ogni secondo e ricarica se il file è cambiato.
 // Richiede un server HTTP (es. python3 -m http.server 8080) — non funziona con file://

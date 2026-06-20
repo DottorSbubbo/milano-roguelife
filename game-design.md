@@ -75,97 +75,97 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** MOG
 **Stat base:** HP 50 / ATK 80 / SP.ATK 30 / DEF 60 / SP.DEF 30 / SPD 50 (TOT 300)
 **Mossa unica:** SIRINGONE — Fisico, 50 danni, 30% di applicare AVVELENATO
-**Passiva (liv 50):** PALLE SECCHE — AVVELENATO applicabile +1 volta sui nemici. Scaling: +1 applicazione ogni 50 livelli
+**Talento (liv 50):** STOCK ILLIMITATO — Il cap massimo di stack AVVELENATO applicabili ai nemici aumenta di +2 ogni 50 livelli (liv 50: 3 stack, liv 100: 5 stack, liv 150: 7 stack, liv 200: 9 stack...) infinito oltre il liv 200
 
 ### ROT #02 — CRYPTOBISMOL
 **Tipo:** CRYPTO
 **Stat base:** HP 40 / ATK 30 / SP.ATK 80 / DEF 30 / SP.DEF 60 / SPD 60 (TOT 300)
 **Mossa unica:** REDDIT — Speciale, 50 danni, 30% di applicare TASCHE BUCATE
-**Passiva (liv 50):** HODL — Ogni turno senza essere attaccato guadagna 2 gold. Scaling: +2 gold ogni 50 livelli
+**Talento (liv 50):** AIRDROP — CRYPTOBISMOL inizia ogni battaglia con 2 buff casuali già attivi. Scaling: +2 buff casuali ogni 50 livelli (liv 50: 2 buff, liv 100: 4 buff, liv 150: 6 buff, liv 200: 8 buff...) infinito oltre il liv 200
 
 ### ROT #03 — BIG MAC
 **Tipo:** NORMIE
 **Stat base:** HP 90 / ATK 40 / SP.ATK 60 / DEF 60 / SP.DEF 40 / SPD 10 (TOT 300)
 **Mossa unica:** MENU LARGE — Speciale, 50 danni, 30% di applicare COLLASSO
-**Passiva (liv 50):** SUPERSIZED — Ogni volta che subisce un colpo recupera 3% HP. Scaling: +3% ogni 50 livelli
+**Talento (liv 50):** EXTRA LARGE — Ogni volta che subisce un colpo restituisce il 10% del danno ricevuto come danno all'attaccante. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
 
 ### ROT #04 — CHEESECAKE
 **Tipo:** VAPE
 **Stat base:** HP 50 / ATK 40 / SP.ATK 60 / DEF 40 / SP.DEF 50 / SPD 60 (TOT 300)
 **Mossa unica:** SVAPO DIESEL — Speciale, 50 danni, 30% di applicare STRAFATTO
-**Passiva (liv 50):** CLOUD NINE — STRAFATTO dura 1 turno in più sui nemici. Scaling: +1 turno ogni 50 livelli
+**Talento (liv 50):** OVERDOSE — Per ogni ROT in campo (alleato o nemico) con status STRAFATTO, CHEESECAKE ottiene +50% a tutte le stats eccetto HP per ogni 50 livelli (liv 50: +50% per ROT STRAFATTO, liv 100: +100%, liv 150: +150%, liv 200: +200%...) infinito oltre il liv 200
 
 ### ROT #05 — LINO STAGNO
 **Tipo:** SCHIZO
 **Stat base:** HP 60 / ATK 30 / SP.ATK 50 / DEF 70 / SP.DEF 70 / SPD 20 (TOT 300)
 **Mossa unica:** NO VAX — Utility, 0 danni, rimuove tutti gli status negativi dalla squadra + scudo 20% HP max a tutti
-**Passiva (liv 50):** SCIE CHIMICHE — NO VAX applica scudo aggiuntivo del 5%. Scaling: +5% ogni 50 livelli
+**Talento (liv 50):** SCUDO MAGGIORATO — Tutti gli scudi applicati da LINO STAGNO sono aumentati del 10%. Scaling: +10% ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
 
 ### ROT #06 — TROLLO
 **Tipo:** TROLL
 **Stat base:** HP 50 / ATK 60 / SP.ATK 50 / DEF 40 / SP.DEF 40 / SPD 60 (TOT 300)
 **Mossa unica:** RAGE BAIT — Fisico, 50 danni, 30% di applicare BURNOUT
-**Passiva (liv 50):** RATIO — Ogni volta che un nemico manca l'attacco, TROLLO guadagna +1 stadio attacco. Scaling: +1 stadio ogni 50 livelli
+**Talento (liv 50):** PUMP IT — Sblocca un nuovo stadio di potenziamento ogni 50 livelli, elevando il cap massimo degli stadi applicabili (normalmente ±8) di +1 ogni 50 livelli (liv 50: ±9, liv 100: ±10, liv 150: ±11, liv 200: ±12...) infinito oltre il liv 200
 
 ### ROT #07 — ELONIO MUSCHIO
 **Tipo:** PSYCHO
 **Stat base:** HP 50 / ATK 70 / SP.ATK 50 / DEF 40 / SP.DEF 40 / SPD 50 (TOT 300)
 **Mossa unica:** FIRED! — Fisico, 50 danni, 30% di applicare BRUCIATO
-**Passiva (liv 50):** LAID OFF — BRUCIATO applica 1 stack aggiuntivo automaticamente. Scaling: +1 stack ogni 50 livelli
+**Talento (liv 50):** FUMO TOSSICO — Il cap massimo di stack BRUCIATO applicabili ai nemici aumenta di +2 ogni 50 livelli (liv 50: 3 stack, liv 100: 5 stack, liv 150: 7 stack, liv 200: 9 stack...) infinito oltre il liv 200
 
 ### ROT #08 — BRASATO
 **Tipo:** BASED
 **Stat base:** HP 60 / ATK 80 / SP.ATK 30 / DEF 50 / SP.DEF 30 / SPD 50 (TOT 300)
 **Mossa unica:** MANNAIA MANNAGGIA — Fisico, 40 danni, applica 1 stack FERITE al bersaglio
-**Passiva (liv 50):** FROLLATURA — FERITE applicano +2% danno aggiuntivo per stack (base 10% + 2% per stack ogni 50 livelli). Scaling: +2% ogni 50 livelli
+**Talento (liv 50):** SOTTOVUOTO — FERITE viene applicato sempre con qualsiasi fonte di danno e con qualsiasi mossa usata da BRASATO. Scaling: ogni stack FERITE infligge +10% danno aggiuntivo extra ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
 
 ### ROT #09 — MOG MOB
 **Tipo:** MOG
 **Stat base:** HP 50 / ATK 80 / SP.ATK 30 / DEF 70 / SP.DEF 30 / SPD 40 (TOT 300)
 **Mossa unica:** CRIMSON MENTONE — Utility, tutta la squadra: -2 stadi Difesa e Difesa Speciale, +2 stadi Attacco e Attacco Speciale
-**Passiva (liv 50):** CHIN CHECK — CRIMSON MENTONE aumenta di +1 stadio aggiuntivo attacco per ogni utilizzo. Scaling: +1 stadio ogni 50 livelli
+**Talento (liv 50):** CHIN CHECK — CRIMSON MENTONE aumenta di +1 stadio aggiuntivo attacco per ogni utilizzo. Scaling: +1 stadio ogni 50 livelli
 
 ### ROT #10 — LOGAN FRAUD
 **Tipo:** CRYPTO
 **Stat base:** HP 40 / ATK 30 / SP.ATK 70 / DEF 30 / SP.DEF 50 / SPD 80 (TOT 300)
 **Mossa unica:** RUGPULL — Speciale, 15 danni base +1 danno per ogni Gold in banca
-**Passiva (liv 50):** EXIT SCAM — RUGPULL ruba anche il 5% del gold del nemico ad ogni colpo. Scaling: +5% ogni 50 livelli
+**Talento (liv 50):** EXIT SCAM — Qualsiasi attacco usato da LOGAN FRAUD infligge danno extra passivo pari al 20% del gold posseduto, valore fisso senza ulteriore scaling con il livello
 
 ### ROT #11 — POKE MON
 **Tipo:** NORMIE
 **Stat base:** HP 70 / ATK 30 / SP.ATK 50 / DEF 50 / SP.DEF 60 / SPD 40 (TOT 300)
 **Mossa unica:** TREDICESIMA — Utility, cura tutta la squadra del 25% degli HP massimi di POKE MON
-**Passiva (liv 50):** WELFARE — TREDICESIMA cura il 5% in più degli HP massimi. Scaling: +5% ogni 50 livelli
+**Talento (liv 50):** WELFARE — Tutte le cure applicate da POKE MON sono aumentate del 10%. Scaling: +10% ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
 
 ### ROT #12 — SVAPO KINK
 **Tipo:** VAPE
 **Stat base:** HP 50 / ATK 30 / SP.ATK 70 / DEF 40 / SP.DEF 60 / SPD 50 (TOT 300)
 **Mossa unica:** SOFFOCOTTO — Speciale, 30 danni a tutti i nemici contemporaneamente
-**Passiva (liv 50):** DIPENDENZA — SOFFOCOTTO colpisce un nemico aggiuntivo casuale. Scaling: +1 bersaglio ogni 50 livelli
+**Talento (liv 50):** TIRATA LUNGA — Lo status STRAFATTO applicato da SVAPO KINK dura 1 turno extra ogni 50 livelli (liv 50: 1 turno extra, liv 100: 2, liv 150: 3, liv 200: 4...) infinito oltre il liv 200
 
 ### ROT #13 — FRANCO
 **Tipo:** SCHIZO
 **Stat base:** HP 60 / ATK 40 / SP.ATK 60 / DEF 40 / SP.DEF 40 / SPD 60 (TOT 300)
 **Mossa unica:** RICICLAGGIO — Speciale, 30 danni, 50% di applicare uno status casuale
-**Passiva (liv 50):** SINISTRO — RICICLAGGIO applica 1 status aggiuntivo casuale. Scaling: +1 status ogni 50 livelli
+**Talento (liv 50):** SENZA FILTRO — Ogni volta che subisce danno, FRANCO ha 5% di probabilità di applicare COLLASSO all'attaccante. Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
 
 ### ROT #14 — USBATTI
 **Tipo:** TROLL
 **Stat base:** HP 40 / ATK 80 / SP.ATK 30 / DEF 30 / SP.DEF 30 / SPD 90 (TOT 300)
 **Mossa unica:** USB-C — Fisico, 80 danni, recoil 20 danni a USBATTI dopo l'attacco
-**Passiva (liv 50):** OVERCLOCK — USB-C non infligge più recoil. Scaling: il recoil diventa +20 danno aggiuntivo al bersaglio ogni 50 livelli
+**Talento (liv 50):** GHOST PROTOCOL — USBATTI ottiene +5% di elusività permanente (probabilità di schivare attacchi nemici). Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
 
 ### ROT #15 — SEAO
 **Tipo:** PSYCHO
 **Stat base:** HP 60 / ATK 50 / SP.ATK 70 / DEF 50 / SP.DEF 50 / SPD 20 (TOT 300)
 **Mossa unica:** EVASIONE FISCALE — Fisico, 40 danni a tutti i nemici, 50% di perdere 10% dei propri Gold
-**Passiva (liv 50):** TAX HAVEN — EVASIONE FISCALE non ha più la penalità gold. Scaling: recupera invece 5% gold ad ogni uso ogni 50 livelli
+**Talento (liv 50):** PARTITA IVA — SEAO guadagna +2 gold extra per ogni ROT nemico colpito da EVASIONE FISCALE. Scaling: +2 gold ogni 50 livelli (liv 50: +2g, liv 100: +4g, liv 150: +6g, liv 200: +8g...) infinito oltre il liv 200
 
 ### ROT #16 — GIANNI IL PIZZAIOLO SOTTO CASA
 **Tipo:** BASED
 **Stat base:** HP 70 / ATK 60 / SP.ATK 40 / DEF 60 / SP.DEF 50 / SPD 20 (TOT 300)
 **Mossa unica:** CHIACCHIERE DA BAR — Utility, +1 stadio Difesa e Difesa Speciale a tutta la squadra
-**Passiva (liv 50):** DOC VERACE — CHIACCHIERE DA BAR aumenta di +1 stadio aggiuntivo. Scaling: +1 stadio ogni 50 livelli
+**Talento (liv 50):** DOC VERACE — GIANNI IL PIZZAIOLO ottiene +5% di resistenza a tutti i tipi (riduzione danno subito). Scaling: +5% ogni 50 livelli, infinito senza cap massimo, già corretto
 
 ---
 
@@ -329,44 +329,44 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ## OGGETTI NEGOZIO
 
-### COMUNI (80%)
+Rarità: COMUNE (60%) · COMBO (35%) · ATOMICO (4%) · APOCALITTICO (1%)
+
+### COMUNE (60%) — non fondibili
 | Oggetto | Effetto |
 |---|---|
-| TUTINA | Riduce danno fisico ricevuto del 5% |
-| OCCHIALI DA SOLE | Riduce danno speciale ricevuto del 5% |
-| MANUBRIETTO | +5% danno fisico inflitto |
-| LENTINE | +5% danno speciale inflitto |
-| SCARPE DA GINNASTICA | Il Rot attacca sempre per primo, 1 volta per battaglia |
-| CEROTTO | Se scende sotto 25% HP recupera 20% HP, una volta per battaglia |
-| PORTAFORTUNA | +5% probabilità che gli status applicati vadano a segno |
-| ASSICURAZIONE | Se il Rot muore non viene perso, una volta per run |
-| PIGGYBANK | +5 gold per ogni turno in battaglia |
+| SPECCHIO | 50% di riflettere uno status negativo all'attaccante |
+| SCARPE DA GINNASTICA | Attacca sempre per primo, 1 volta per battaglia |
+| ASSICURAZIONE | Se il ROT muore non viene perso, una volta per run |
 | PELLE DI ROSPO | Immunità a tutti gli status negativi |
-| ZOCCOLI DI LEGNO | Il Rot attacca sempre per ultimo, indipendentemente dalla velocità |
+| ZOCCOLI DI LEGNO | Attacca sempre per ultimo, indipendentemente dalla velocità |
 
-### RARE (15%)
+### COMBO (35%) — fondibili fino a livello 4
+| Oggetto | Liv.1 | Liv.2 | Liv.3 | Liv.4 |
+|---|---|---|---|---|
+| OCCHIALI DA SOLE | Riduce danno speciale ricevuto 20% | 40% | 50% | 80% |
+| GIUBBOTTO ANTIPROIETTILE | Riduce danno fisico ricevuto 20% | 40% | 50% | 80% |
+| BILANCIERE | +50% danno fisico inflitto | +83% | +100% | +200% |
+| TELESCOPIO | +50% danno speciale inflitto | +83% | +100% | +200% |
+| CER8 | Sotto 25% HP cura 20% HP, 1 volta/battaglia | sotto 30% cura 33% | sotto 35% cura 47% | sotto 40% cura 60% + non si può mai morire in un solo colpo (tipo Sturdy, sopravvive con 1 HP) |
+| PORTAFORTUNA | +25% probabilità status applicati | +50% | +75% | +100% + quando un malus viene applicato a un nemico viene replicato su tutti gli altri ROT nemici |
+| PIGGYBANK | +5 gold a fine turno | +10g | +15g | +30g |
+| WELFARE GRATUITO | +25% efficacia cure e scudi | +50% | +100% | +200% |
+| COTTA | Restituisce 20% del danno subito | 40% | 60% | 80% |
+| AVANZI | Recupera 10% HP massimi a turno | 15% | 20% | 25% (a tutta la squadra alleata) |
+| ZECCA COMUNISTA | Drena 50% danno inflitto come HP | 83% | 100% (nessuno scudo) | 150% (eccesso oltre 100% diventa scudo) |
+
+### ATOMICO (4%) — non fondibili
 | Oggetto | Effetto |
 |---|---|
-| GIUBBOTTO ANTIPROIETTILE | Riduce danno fisico ricevuto del 15% |
-| LENTI A CONTATTO | Riduce danno speciale ricevuto del 15% |
-| BILANCIERE | +15% danno fisico inflitto |
-| TELESCOPIO | +15% danno speciale inflitto |
-| SPECCHIO | 20% di riflettere uno status negativo all'attaccante |
-| SPINACIO | Restituisce 15% del danno subito ad ogni attacco |
+| FENICE | Se il ROT va KO si riprende una volta per battaglia con 25% HP |
+| CARTA DI CREDITO | Raddoppia il gold totale guadagnato in ogni battaglia (ricompensa + interessi + altro). Il raddoppio è incluso nel calcolo della riga ALTRO già esistente, senza riga dedicata visibile |
+| DIFRATTORE | Trasforma mosse a bersaglio singolo in mosse ad area |
+| COLBACCO | Replica cure scudi e buff ricevuti su tutta la squadra |
 
-### ATOMICHE (4%)
-| Oggetto | Effetto |
-|---|---|
-| TUTA BULLETPROOF | Riduce tutto il danno ricevuto del 20% |
-| FENICE | Se il Rot va KO si riprende una volta con 50% HP |
-| CARTA DI CREDITO | Raddoppia il gold guadagnato per tutta la run |
-| AMULETO OSCURO | Ogni attacco ha 15% di applicare uno status casuale al nemico |
-| AVANZI | Ogni turno il Rot recupera 5% dei propri HP massimi |
-
-### APOCALITTICA (1%)
-| Oggetto | Effetto |
-|---|---|
-| SBUBBO | Il Rot attacca due volte consecutivamente per ogni attacco |
+### APOCALITTICO (1%) — fondibile fino a livello 4
+| Oggetto | Liv.1 | Liv.2 | Liv.3 | Liv.4 |
+|---|---|---|---|---|
+| SBUBBO | Attacca 2 volte consecutive | 3 volte | 4 volte | 5 volte |
 
 ---
 
@@ -480,6 +480,23 @@ Si apre dopo ogni vittoria. 4 sezioni indipendenti con tasto reroll indipendente
 
 ---
 
+## BOSS FIGHT — BEPPE SALA
+
+Ogni 50 livelli (50, 100, 150, 200...) appare una battaglia boss invece della normale battaglia con 3 ROT nemici — BEPPE SALA li sostituisce completamente.
+
+### BEPPE SALA
+- Sostituisce completamente i 3 ROT nemici — occupa tutto lo spazio della squadra nemica
+- Gigante — barra HP molto più grande del solito, cambia colore dal verde al rosso
+- Stats base = 5 ROT normali sommati, tutte le stats uguali tra loro
+- **Formula crescita esponenziale:** stats = stats_base × (livello_boss / 50)^1.5
+  - Livello 50: x1 | Livello 100: x2.8 | Livello 150: x5.2 | Livello 200: x8
+- Attacca una volta per turno con mossa casuale tra:
+  - SALONE DEL MOBILE — fisico, 25 danni a tutti i ROT alleati
+  - AREA C — speciale, 25 danni a tutti i ROT alleati
+  - RELAX — recupera il 35% degli HP massimi
+  - GENTRIFICARE — +1 stadio ATK SP.ATK DEF SP.DEF SPD
+- Prima della battaglia appare schermata avviso con countdown 3 secondi
+
 ## SISTEMA DI BATTAGLIA
 
 ### Struttura turno
@@ -531,7 +548,17 @@ Si apre dopo ogni vittoria. 4 sezioni indipendenti con tasto reroll indipendente
 - Ogni ROT ha il proprio talento unico (le passive già definite)
 
 ### Fusione oggetti
-- Dal livello 50 in poi si possono fondere oggetti — meccanica da definire
+- Si attiva automaticamente quando si possiedono 3 oggetti con lo stesso nome e stesso livello (in qualsiasi combinazione tra marsupio e slot equipaggiati sui ROT)
+- I 3 token lampeggiano con bordo rosso evidente quando la fusione è disponibile
+- Tasto destro su un token attivo apre conferma "Vuoi fondere 3 [nome oggetto] per creare un oggetto più potente?" con SI/NO
+- Animazione di fusione stile Pokémon, poi appare il nuovo oggetto fuso con nome, numero di fusione e descrizione aggiornata
+- Livelli di fusione: da livello 1 (base) fino a livello 5 — ogni fusione raddoppia l'effetto base dell'oggetto rispetto al livello precedente
+- Esempio: LENTINE (riduce danno speciale 20%) → LENTINE 2 (40%) → LENTINE 3 (80%) → LENTINE 4 → LENTINE 5
+- Gli oggetti fusi non possono essere scomposti
+- Vendendo un oggetto fuso si ottiene il gold equivalente alla somma di tutti i sotto-oggetti usati nella fusione (es. LENTINE 3 fatto da 9 LENTINE base da 2g ciascuna = 18g alla vendita)
+- Ogni oggetto ha un'icona dedicata mostrata nella sezione acquisto oggetti e nei token in tutte le finestre invece del nome testuale
+- Colore del token per livello fusione: livello 1 giallo, livello 2 arancione, livello 3 rosso bordeaux, livello 4 blu elettrico, livello 5 viola shocking
+- Hover sul token fa lampeggiare e apre finestra info con nome, livello e descrizione aggiornata in base al livello
 
 ## SCALING LIVELLO ROT
 
