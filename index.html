@@ -3400,6 +3400,47 @@ const ROT_DEFS = {
 // ATTACCO base: type:null → nessun STAB, nessun moltiplicatore tipo
 const BASE_ATCK = { name:'ATTACCO', type:null, cat:'PHYSICAL', power:25, pp:Infinity, status:null, target:'ENEMY' };
 
+// ─── TALENT SYSTEM ───────────────────────────────────
+function talentTier(rot) {
+  if (!rot?.def?.talent || rot.level < 50) return 0;
+  return Math.floor(rot.level / 50);
+}
+
+function playerTalentTier(defObj) {
+  if (!B?.player) return 0;
+  const r = B.player.find(r => r.def === defObj && r.isAlive);
+  return r ? talentTier(r) : 0;
+}
+
+function computeTalentInfo(rot) {
+  const tier = talentTier(rot);
+  const talent = rot.def?.talent;
+  if (!talent) return { name: '—', desc: 'Nessun talento.' };
+  const t = tier;
+  switch (rot.def.id) {
+    case 1:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `AVVELENATO si accumula fino a ${t*2} stack sui nemici. Ogni stack infligge il 10% HP max per turno.` };
+    case 2:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Inizio battaglia: ${t*2} buff casuali agli stadi (+1 a stat casuale tra ATK/SP.ATK/DEF/SP.DEF/SPD).` };
+    case 3:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Restituisce il ${t*10}% del danno subito all'attaccante.` };
+    case 4:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni alleato con STRAFATTO: +${t*50}% alle stat di attacco o difesa (lato CHEESECAKE).` };
+    case 5:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti gli scudi del team alleato aumentati del ${t*10}%.` };
+    case 6:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stadi ±${8+t} (base ±8, +${t} per talento).` };
+    case 7:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `BRUCIATO si accumula fino a ${3+t*2} stack sui nemici.` };
+    case 8:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le mosse applicano FERITE ai nemici. Ogni stack FERITE: +${t*10}% danno ricevuto.` };
+    case 9:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `CRIMSON MENTONE: +${t} stadi ATK e SP.ATK aggiuntivi a tutta la squadra per ogni uso.` };
+    case 10: {
+      const gold = (typeof runState !== 'undefined' ? runState?.gold : 0) || 0;
+      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco: +${Math.floor(gold*0.20)} danni extra (20% del gold attuale: ${gold}).` };
+    }
+    case 11: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le cure del team alleato aumentate del ${t*10}%.` };
+    case 12: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `STRAFATTO applicato da SVAPO KINK dura ${3+t} turni invece di 3.` };
+    case 13: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `${t*5}% di probabilità di applicare COLLASSO all'attaccante quando FRANCO subisce danno.` };
+    case 14: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `+${t*5}% elusività — i nemici mancano ${t*5}% degli attacchi diretti a USBATTI.` };
+    case 15: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `EVASIONE FISCALE: ${1+t*2} gold per nemico colpito (invece di 1).` };
+    case 16: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti i danni subiti da GIANNI ridotti del ${t*5}%.` };
+    default: return { name: talent.name, desc: 'DESCRIZIONE DA DEFINIRE.' };
+  }
+}
+
 // ═══════════════════════════════════════════════════
 // ITEMS & DRUGS
 // ═══════════════════════════════════════════════════
@@ -3837,9 +3878,16 @@ const STAGE_MULT = {
 const STAGE_STAT_LABELS = { atk:'ATK', spAtk:'SP.ATK', def:'DEF', spDef:'SP.DEF', spd:'SPD' };
 const STAT_STAGE_COLORS = { atk:'#ef4444', spAtk:'#a855f7', def:'#3b82f6', spDef:'#22c55e', spd:'#06b6d4' };
 
+// Estende STAGE_MULT oltre ±8 (per TROLLO — PROVOCATORE)
+function getStageMulti(stage) {
+  if (stage >= -8 && stage <= 8) return STAGE_MULT[stage];
+  return stage > 8 ? 5 + (stage - 8) * 0.5 : Math.max(0.05, 0.2 - (-stage - 8) * 0.02);
+}
+
 function effStat(rot, s) {
-  const stage = Math.max(-8, Math.min(8, rot.stages[s] || 0));
-  return Math.max(1, Math.floor(rot.stats[s] * STAGE_MULT[stage]));
+  const cap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.TROLLO)) : 8;
+  const stage = Math.max(-cap, Math.min(cap, rot.stages[s] || 0));
+  return Math.max(1, Math.floor(rot.stats[s] * getStageMulti(stage)));
 }
 
 // SCARPE DA GINNASTICA: il ROT va sempre per primo (velocità effettiva = +∞ per il sort)
@@ -3853,8 +3901,23 @@ function spdForSort(rot) {
 function calcDmg(atk, def, move) {
   const lvl = atk.level;
   const pow = move.power;
-  const a = move.cat === 'PHYSICAL' ? effStat(atk,'atk') : effStat(atk,'spAtk');
-  const d = move.cat === 'PHYSICAL' ? effStat(def,'def') : effStat(def,'spDef');
+  // CHEESECAKE — CLOUD CHASING: boost alle stat in attacco/difesa per ogni alleato con STRAFATTO
+  const cheesecakeAtkBoost = (() => {
+    if (atk.def !== ROT_DEFS.CHEESECAKE) return 1;
+    const t = talentTier(atk); if (!t) return 1;
+    const team = atk.isPlayer ? (B?.player || []) : (B?.enemy || []);
+    return 1 + 0.5 * t * team.filter(r => r.isAlive && r.statuses.some(s => s.type === 'STRAFATTO')).length;
+  })();
+  const cheesecakeDefBoost = (() => {
+    if (def.def !== ROT_DEFS.CHEESECAKE) return 1;
+    const t = talentTier(def); if (!t) return 1;
+    const team = def.isPlayer ? (B?.player || []) : (B?.enemy || []);
+    return 1 + 0.5 * t * team.filter(r => r.isAlive && r.statuses.some(s => s.type === 'STRAFATTO')).length;
+  })();
+  let a = move.cat === 'PHYSICAL' ? effStat(atk,'atk') : effStat(atk,'spAtk');
+  let d = move.cat === 'PHYSICAL' ? effStat(def,'def') : effStat(def,'spDef');
+  a = Math.floor(a * cheesecakeAtkBoost);
+  d = Math.floor(d * cheesecakeDefBoost);
   let dmg = (((2 * lvl / 5 + 2) * pow * a / d) / 50 + 2) * 3;
   // STAB: solo mosse tipizzate
   const stab = move.type !== null && move.type === atk.def.type;
@@ -3866,9 +3929,17 @@ function calcDmg(atk, def, move) {
   const critChance = atk.critChanceOverride != null ? atk.critChanceOverride : (0.10 + (atk.critBonus || 0) * 0.01);
   const crit = Math.random() < critChance;
   if (crit) dmg *= 1.5;
-  // FERITE: ogni stack del bersaglio aumenta il danno subito del 10%
+  // FERITE: ogni stack del bersaglio aumenta il danno subito — scala con BRASATO talent
   const ferite = def.statuses.find(s => s.type === 'FERITE');
-  if (ferite) dmg *= (1 + ferite.stacks * 0.10);
+  if (ferite) {
+    const brasatoMod = Math.max(1, playerTalentTier(ROT_DEFS.BRASATO) || 1);
+    dmg *= (1 + ferite.stacks * 0.10 * brasatoMod);
+  }
+  // GIANNI — SAGGEZZA POPOLARE: riduce il danno subito da GIANNI del 5% per tier
+  if (def.def === ROT_DEFS.GIANNI) {
+    const gianniTier = talentTier(def);
+    if (gianniTier > 0) dmg *= (1 - 0.05 * gianniTier);
+  }
   // Buff iniziale: +50% al turno 1, -1% per turno, 0% dal turno 50 in poi (solo giocatore)
   if (atk.isPlayer) dmg *= earlyTurnDamageBuff();
   // Buff difensivo iniziale: -25% danno subito al turno 1, -0.5% per turno, 0% dal turno 50 in poi (solo giocatore)
@@ -3935,10 +4006,14 @@ function welfareMult(rot, source) {
   return mult;
 }
 
-// ── Applica una cura (con bonus WELFARE GRATUITO), replicandola su tutta la squadra se il ricevente ha COLBACCO ──
+// ── Applica una cura (con bonus WELFARE GRATUITO + POKE MON talent), replicandola su tutta la squadra se il ricevente ha COLBACCO ──
 function applyHealAmount(rot, amount, source, skipReplicate) {
   if (!rot.isAlive) return 0;
-  const finalAmt = Math.floor(amount * welfareMult(rot, source));
+  // POKE MON — DIRITTO ACQUISITO: +10% per tier alle cure del team giocatore
+  const pokeTier = (rot.isPlayer && B?.player)
+    ? (() => { const r = B.player.find(r => r.def === ROT_DEFS.POKE_MON && r.isAlive); return r ? talentTier(r) : 0; })()
+    : 0;
+  const finalAmt = Math.floor(amount * welfareMult(rot, source) * (1 + 0.10 * pokeTier));
   const before = rot.curHp;
   rot.curHp = Math.min(rot.maxHp, rot.curHp + finalAmt);
   const healed = rot.curHp - before;
@@ -3955,10 +4030,14 @@ function applyHealPct(rot, pct, source, skipReplicate) {
   return applyHealAmount(rot, rot.maxHp * pct, source, skipReplicate);
 }
 
-// ── Applica uno scudo (con bonus WELFARE GRATUITO), replicandolo su tutta la squadra se il ricevente ha COLBACCO ──
+// ── Applica uno scudo (con bonus WELFARE GRATUITO + LINO STAGNO talent), replicandolo su tutta la squadra se il ricevente ha COLBACCO ──
 function applyShieldAmount(rot, amount, source, skipReplicate) {
   if (!rot.isAlive) return 0;
-  const finalAmt = Math.floor(amount * welfareMult(rot, source));
+  // LINO STAGNO — IMMUNITÀ NATURALE: +10% per tier agli scudi del team giocatore
+  const linoTier = (rot.isPlayer && B?.player)
+    ? (() => { const r = B.player.find(r => r.def === ROT_DEFS.LINO_STAGNO && r.isAlive); return r ? talentTier(r) : 0; })()
+    : 0;
+  const finalAmt = Math.floor(amount * welfareMult(rot, source) * (1 + 0.10 * linoTier));
   rot.shield += finalAmt;
   if (finalAmt > 0) playSfx('buff');
   if (!skipReplicate && finalAmt > 0 && rot.items.includes('COLBACCO')) {
@@ -3976,11 +4055,19 @@ function applyShieldPct(rot, pct, source, skipReplicate) {
 function addStatus(rot, type) {
   const ex = rot.statuses.find(s => s.type === type);
   if (type === 'BRUCIATO') {
-    if (ex) { if (ex.stacks < 3) { ex.stacks++; return true; } return false; }
+    // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici
+    const bruCap = (!rot.isPlayer && B?.player)
+      ? (() => { const e = B.player.find(r => r.def === ROT_DEFS.ELONIO && r.isAlive); return e ? 3 + talentTier(e) * 2 : 3; })()
+      : 3;
+    if (ex) { if (ex.stacks < bruCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'AVVELENATO') {
-    if (ex) return false;
+    // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (cap = tier * 2)
+    const avvCap = (!rot.isPlayer && B?.player)
+      ? (() => { const m = B.player.find(r => r.def === ROT_DEFS.MIKEY && r.isAlive); return m ? Math.max(1, talentTier(m) * 2) : 1; })()
+      : 1;
+    if (ex) { if (ex.stacks < avvCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'FERITE') {
@@ -4012,14 +4099,21 @@ function endTurnStatuses(rot) {
   const toRemove = [];
   for (const st of rot.statuses) {
     if (st.type === 'AVVELENATO') {
-      const d = Math.max(1, Math.floor(rot.maxHp * 0.10));
+      const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1)));
       takeDmg(rot, d);
-      logs.push({ parts:[
-        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
-        { text: ' è ' },
-        { text: 'AVVELENATO', onclick: () => showStatusInfo('AVVELENATO') },
-        { text: `! -${d} HP` }
-      ], cls:'status' });
+      if (st.stacks > 1) {
+        logs.push({ parts:[
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ` è AVVELENATO (x${st.stacks})! -${d} HP` }
+        ], cls:'status' });
+      } else {
+        logs.push({ parts:[
+          { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+          { text: ' è ' },
+          { text: 'AVVELENATO', onclick: () => showStatusInfo('AVVELENATO') },
+          { text: `! -${d} HP` }
+        ], cls:'status' });
+      }
     }
     if (st.type === 'BRUCIATO') {
       const d = 5 * st.stacks;
@@ -4881,10 +4975,9 @@ function openTalentOverlay(event, uid) {
   if (event) event.stopPropagation();
   const rot = (runState?.roster || []).find(r => r.uid === uid);
   if (!rot) return;
-  const talent = rot.def.talent;
-  if (!talent) return;
-  document.getElementById('talent-box-name').textContent = talent.name;
-  document.getElementById('talent-box-desc').textContent = 'DESCRIZIONE DA DEFINIRE';
+  const info = computeTalentInfo(rot);
+  document.getElementById('talent-box-name').textContent = info.name;
+  document.getElementById('talent-box-desc').textContent = info.desc;
   document.getElementById('talent-overlay').classList.add('on');
 }
 function closeTalentOverlay(event) {
@@ -5362,7 +5455,8 @@ async function executePhase() {
       const buffedRots = new Set();
       const applyStage = (r, stat, delta) => {
         const old = r.stages[stat] || 0;
-        const next = Math.max(-8, Math.min(8, old + delta));
+        const cap = r.isPlayer ? (8 + playerTalentTier(ROT_DEFS.TROLLO)) : 8;
+        const next = Math.max(-cap, Math.min(cap, old + delta));
         if (next === old) return false;
         r.stages[stat] = next;
         const arrow = delta > 0 ? '▲' : '▼';
@@ -5388,6 +5482,17 @@ async function executePhase() {
               applyStage(other, stg.stat, stg.delta);
             }
           }
+        }
+      }
+      // ── MOG MOB — ALFA ASSOLUTO: CRIMSON MENTONE dà stadi ATK/SP.ATK extra a tutta la squadra ──
+      if (rot.def === ROT_DEFS.MOG_MOB && move.name === 'CRIMSON MENTONE') {
+        const mogTier = talentTier(rot);
+        if (mogTier > 0) {
+          for (const r of allyTeam.filter(r => r.isAlive)) {
+            applyStage(r, 'atk', mogTier);
+            applyStage(r, 'spAtk', mogTier);
+          }
+          logRich([{ text: `ALFA ASSOLUTO: +${mogTier} ATK/SP.ATK a tutta la squadra!` }], 'info');
         }
       }
       if (buffedRots.size) {
@@ -5686,12 +5791,27 @@ async function executePhase() {
         for (let hitIdx = 0; hitIdx < hitCount; hitIdx++) {
         if (!tgt.isAlive) break;
 
+        // ── USBATTI — OVERDRIVE: elusività, il bersaglio schiva gli attacchi ──
+        if ((tgt.evasion || 0) > 0 && Math.random() * 100 < (tgt.evasion || 0)) {
+          logRich([
+            { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+            { text: ' schiva l\'attacco! (OVERDRIVE)' }
+          ], 'info');
+          render(); await wait(350);
+          continue;
+        }
+
         const res = calcDmg(rot, tgt, dmgMove);
         if (res.tm === 2)   log('Super efficace!', 'super');
         if (res.tm === 0.5) log('Non molto efficace...', 'resist');
         if (res.crit)       log('CRITICO!', 'crit');
 
         let dmg = res.dmg;
+
+        // ── LOGAN FRAUD — INSIDER: +20% del gold attuale come danno bonus ──
+        if (rot.def === ROT_DEFS.LOGAN_FRAUD && rot.isPlayer && talentTier(rot) > 0 && runState) {
+          dmg += Math.floor(runState.gold * 0.20);
+        }
 
         // ── BESTEMMIA: protezione completa, nessun danno ──
         if (tgt.immuneTurn) {
@@ -5815,6 +5935,40 @@ async function executePhase() {
         }
         tgt.counterNext = null;
 
+        // ── BIG MAC — SUPERSIZED: restituisce X% del danno subito all'attaccante ──
+        if (dmg > 0 && tgt.def === ROT_DEFS.BIG_MAC && tgt.isPlayer && tgt.isAlive && rot.isAlive) {
+          const bigmacTier = talentTier(tgt);
+          if (bigmacTier > 0) {
+            const supersizedDmg = Math.max(1, Math.floor(dmg * 0.10 * bigmacTier));
+            takeDmg(rot, supersizedDmg);
+            logRich([
+              { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+              { text: ' subisce ' },
+              { text: `${supersizedDmg} danni` },
+              { text: ' per SUPERSIZED!' }
+            ], 'dmg');
+            render(); await wait(400);
+            if (!rot.isAlive) { if (checkEnd()) return; }
+          }
+        }
+
+        // ── FRANCO — DOPPIO GIOCO: X% di probabilità di applicare COLLASSO all'attaccante ──
+        if (dmg > 0 && tgt.def === ROT_DEFS.FRANCO && tgt.isPlayer && tgt.isAlive && rot.isAlive) {
+          const francoTier = talentTier(tgt);
+          if (francoTier > 0 && Math.random() < francoTier * 0.05) {
+            const ok = addStatus(rot, 'COLLASSO');
+            if (ok) {
+              logRich([
+                { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+                { text: ' è in ' },
+                { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+                { text: ' (DOPPIO GIOCO)!' }
+              ], 'status');
+              render(); await wait(400);
+            }
+          }
+        }
+
         const statusChance = move.status ? move.status.chance + (rot.items.includes('PORTAFORTUNA') ? 0.25 : 0) : 0;
         if (move.status && Math.random() < statusChance) {
           const stType = move.status.type === 'RANDOM'
@@ -5831,6 +5985,14 @@ async function executePhase() {
             ], 'status');
             render();
             await wait(350);
+            // ── SVAPO KINK — FUMATA DENSA: STRAFATTO dura più turni ──
+            if (stType === 'STRAFATTO' && rot.def === ROT_DEFS.SVAPO_KINK) {
+              const svTier = talentTier(rot);
+              if (svTier > 0) {
+                const svSt = tgt.statuses.find(s => s.type === 'STRAFATTO');
+                if (svSt) svSt.turns += svTier;
+              }
+            }
             // ── CORONAVIRUS: lo status negativo si propaga a tutti gli altri nemici ──
             if (tgt.coronavirusActive) {
               const tgtTeam = tgt.isPlayer ? B.player : B.enemy;
@@ -5872,18 +6034,39 @@ async function executePhase() {
           }
         }
 
+        // ── BRASATO — ACCIAIO TEMPERATO: ogni mossa che infligge danno applica FERITE ──
+        if (rot.def === ROT_DEFS.BRASATO && rot.isPlayer && talentTier(rot) > 0 && dmg > 0 && tgt.isAlive) {
+          if (!move.status || move.status.type !== 'FERITE') {
+            const ok = addStatus(tgt, 'FERITE');
+            if (ok) {
+              const fst = tgt.statuses.find(s => s.type === 'FERITE');
+              logRich([
+                { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+                { text: ' ha ' },
+                { text: 'FERITE', onclick: () => showStatusInfo('FERITE') },
+                { text: `${fst&&fst.stacks>1?' (x'+fst.stacks+')':''} (ACCIAIO TEMPERATO)!` }
+              ], 'status');
+              render(); await wait(350);
+            }
+          }
+        }
+
         // ── EVASIONE FISCALE: gold per ogni bersaglio colpito — prima del controllo KO ──
         if (move.goldPerHit && runState) {
+          // SEAO — PARADISO FISCALE: gold guadagnato per colpo aumenta con il tier
+          const goldAmt = (rot.def === ROT_DEFS.SEAO && rot.isPlayer)
+            ? 1 + talentTier(rot) * 2
+            : move.goldPerHit;
           if (rot.isPlayer) {
-            runState.gold += move.goldPerHit;
-            recordGoldGain(move.name, move.goldPerHit);
+            runState.gold += goldAmt;
+            recordGoldGain(move.name, goldAmt);
             updateHud();
-            showGoldFloat(move.goldPerHit);
+            showGoldFloat(goldAmt);
             logRich([
               { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
               { text: ' usa ' },
               { text: move.name, onclick: () => showMoveInfo(move) },
-              { text: `! Il giocatore guadagna ${move.goldPerHit} gold` }
+              { text: `! Il giocatore guadagna ${goldAmt} gold` }
             ], 'status');
             render(); await wait(350);
           } else if (runState.gold > 0) {
@@ -7418,7 +7601,27 @@ function startNextBattle() {
     r.critChanceOverride = null;
     r.landlordareTurns = 0;
     r.lastMove = null;
+    r.evasion = 0;
     r.moves.forEach(m => { if (m.curPp !== Infinity) m.curPp = m.pp; });
+    // CRYPTOBISMOL — MANI DI DIAMANTE: buff casuali agli stadi all'inizio della battaglia
+    if (r.def === ROT_DEFS.CRYPTOBISMOL) {
+      const t = talentTier(r);
+      if (t > 0) {
+        const stats = ['atk', 'spAtk', 'def', 'spDef', 'spd'];
+        // Usa TROLLO dalla roster (B non ancora inizializzato)
+        const trolloRot = runState.roster.find(rr => rr.def === ROT_DEFS.TROLLO);
+        const trolloCap = trolloRot ? talentTier(trolloRot) : 0;
+        const cap = 8 + trolloCap;
+        for (let i = 0; i < t * 2; i++) {
+          const stat = stats[Math.floor(Math.random() * stats.length)];
+          r.stages[stat] = Math.min(cap, (r.stages[stat] || 0) + 1);
+        }
+      }
+    }
+    // USBATTI — OVERDRIVE: elusività per tier
+    if (r.def === ROT_DEFS.USBATTI) {
+      r.evasion = talentTier(r) * 5;
+    }
   });
   const enemyDefs = pickRandomDefs(runState.enemyCount);
   B = {
