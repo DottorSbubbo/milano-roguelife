@@ -2281,6 +2281,7 @@ body {
 #shop-section-items > .shop-card-row > .shop-card {
   flex: 1; height: 220px; max-height: 220px; min-height: 220px; overflow: hidden;
 }
+#shop-section-moves { overflow: hidden; }
 #shop-section-moves > .shop-card-row > .shop-card { flex: 1; }
 
 /* ── box ROT, tendenzialmente quadrato ── */
@@ -2359,7 +2360,7 @@ body {
   display: flex; align-items: center; width: 100%;
 }
 .shop-rot-stats-side {
-  flex: 1; display: flex; justify-content: center; align-items: center;
+  flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 8px;
 }
 .shop-rot-stats-btn {
   font-family: 'Press Start 2P', 'Courier New', monospace;
@@ -2825,9 +2826,19 @@ body {
 .marsupio-slot {
   display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; overflow: hidden;
   background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1);
-  border-radius: 4px; padding: 6px; text-align: center;
+  border-radius: 4px; padding: 4px; text-align: center;
 }
 .marsupio-slot .loadout-token { cursor: grab; }
+.marsupio-slot .loadout-token-item {
+  width: 100%; height: 100%; min-width: unset;
+  font-size: 28px; flex-direction: column; gap: 2px;
+  padding: 4px 6px; box-sizing: border-box;
+  transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+}
+.marsupio-slot .loadout-token-item.dragging {
+  transform: scale(0.3);
+  opacity: 0.2;
+}
 #marsupio-overlay {
   position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
   background: rgba(212,168,48,0.18); border: 3px dashed #d4a830; border-radius: 6px;
@@ -4285,7 +4296,8 @@ function mkBossRot(level) {
   const def = {
     name: 'BEPPE SALA', type: 'BOSS', isBoss: true,
     base: { hp: baseStat, atk: atkStat, spAtk: atkStat, def: baseStat, spDef: baseStat, spd: baseStat },
-    sprite: null, talent: null,
+    sprite: { src:'spritesheet/boss/beppe.png', cols:5, rows:13, frames:61, frameW:800, frameH:440, fps:12, mirrorWhen:'none' },
+    talent: null,
     uniqueMove: BEPPE_SALA_MOVES.SALONE_DEL_MOBILE,
   };
   return {
@@ -5200,6 +5212,7 @@ function showShopRotInfo() {
         </div>
         <div class="shop-rot-stats-side">
           <button class="shop-rot-stats-btn" onclick="showShopRotStats(event)">STATS</button>
+          ${def.talent && runState.level >= 50 ? `<button class="talenti-token" style="font-size:10px;padding:5px 10px;letter-spacing:1px;" onclick="openTalentOverlayForDef(event,'${shopState.rot.key}')">✦ TALENTO</button>` : ''}
         </div>
       </div>
       <div class="shop-rot-info-badges">
@@ -5473,6 +5486,16 @@ function showDrugInfoCentered(event, drugKey) {
   if (event) event.stopPropagation();
   const html = drugInfoHtmlCentered(drugKey);
   if (html) openShopMoveInfo(html);
+}
+function openTalentOverlayForDef(event, defKey) {
+  if (event) event.stopPropagation();
+  const def = ROT_DEFS[defKey];
+  if (!def?.talent) return;
+  const mockRot = { def, level: runState?.level ?? 50 };
+  const info = computeTalentInfo(mockRot);
+  document.getElementById('talent-box-name').textContent = info.name;
+  document.getElementById('talent-box-desc').textContent = info.desc;
+  document.getElementById('talent-overlay').classList.add('on');
 }
 function openTalentOverlay(event, uid) {
   if (event) event.stopPropagation();
@@ -8711,7 +8734,7 @@ function mkCard(rot, isPlayer) {
       <div class="rot-name-token" style="font-size:${nameTokenFontSize(rot.def.name)}px; --token-bg:${NAME_TOKEN_COLORS[rot.def.type] || '#2a2a40'}">${tokenDisplayHtml(rot.def.name)}</div>
     </div>
     <div class="rot-sprite ${rot.def.sprite ? 'sprite-mode' : ''}" id="spr-${rot.uid}" style="${rot.def.sprite ? '' : `background:${tc.bg}`}">
-      ${rot.def.sprite ? `<canvas class="rot-sprite-canvas${rot.def.sprite.mirrorWhen === (isPlayer ? 'player' : 'enemy') ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
+      ${rot.def.sprite ? `<canvas class="rot-sprite-canvas${rot.def.sprite.mirrorWhen === (isPlayer ? 'player' : 'enemy') ? ' mirrored' : ''}" width="${isBoss ? 560 : 280}" height="${isBoss ? 308 : 310}"></canvas>` : ''}
       ${effHtml}
       <span class="type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${rot.def.type}</span>
       <div class="status-badges">${sbHtml}</div>
@@ -9536,7 +9559,10 @@ function encShowRot(key) {
   _encSetDetail(`
     ${spriteHtml}
     <div class="info-title" style="color:${tc.text}">${def.name}</div>
-    <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${def.type}</span>
+    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+      <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${def.type}</span>
+      ${def.talent ? `<button class="talenti-token" style="font-size:10px;padding:4px 10px;letter-spacing:1px;" onclick="openTalentOverlayForDef(event,'${key}')">✦ TALENTO</button>` : ''}
+    </div>
     <div class="info-section">STAT BASE</div>
     <div class="info-stat-grid">
       <div class="info-stat"><span class="info-stat-lbl">HP</span><span class="info-stat-val">${b.hp}</span></div>
@@ -9546,8 +9572,6 @@ function encShowRot(key) {
       <div class="info-stat"><span class="info-stat-lbl">SP.DEF</span><span class="info-stat-val">${b.spDef}</span></div>
       <div class="info-stat"><span class="info-stat-lbl">SPD</span><span class="info-stat-val">${b.spd}</span></div>
     </div>
-    <div class="info-section">TALENTO</div>
-    <div class="info-text">${def.talent?.name || '—'}</div>
     <div class="info-section">MOSSA UNICA — ${um.name}</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;">
       <span class="info-badge" style="background:${umTc.bg};color:${umTc.text}">${um.type || 'NEUTRO'}</span>
