@@ -25,8 +25,11 @@ Le creature si chiamano **ROT** (non Pokémon).
 | **PSYCHO** | NORMIE | SCHIZO |
 | **TROLL** | VAPE | CRYPTO |
 | **CRYPTO** | TROLL | MOG |
-| **MOG** | CRYPTO | VAPE |
-| **VAPE** | MOG | TROLL |
+| **MOG** | CRYPTO | TIPA |
+| **VAPE** | MACHO | TROLL |
+| **MACHO** | TRANS | VAPE |
+| **TRANS** | TIPA | MACHO |
+| **TIPA** | MOG | TRANS |
 | **BASED** | BASED | BASED |
 
 ### Moltiplicatori danno
@@ -87,13 +90,13 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** NORMIE
 **Stat base:** HP 90 / ATK 40 / SP.ATK 60 / DEF 60 / SP.DEF 40 / SPD 10 (TOT 300)
 **Mossa unica:** MENU LARGE — Speciale, 50 danni, 30% di applicare COLLASSO
-**Talento (liv 50):** EXTRA LARGE — Ogni volta che subisce un colpo restituisce il 10% del danno ricevuto come danno all'attaccante. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
+**Talento (liv 50):** EXTRA LARGE — Ogni volta che subisce un colpo restituisce il 10% del danno ricevuto come danno all'attaccante, e ha 5% di probabilità di applicare COLLASSO all'attaccante. Scaling: entrambi +10% danno restituito e +5% probabilità COLLASSO ogni 50 livelli (liv 50: 10% danno / 5% COLLASSO, liv 100: 20% / 10%, liv 150: 30% / 15%, liv 200: 40% / 20%...) infinito oltre il liv 200
 
 ### ROT #04 — CHEESECAKE
 **Tipo:** VAPE
 **Stat base:** HP 50 / ATK 40 / SP.ATK 60 / DEF 40 / SP.DEF 50 / SPD 60 (TOT 300)
 **Mossa unica:** SVAPO DIESEL — Speciale, 50 danni, 30% di applicare STRAFATTO
-**Talento (liv 50):** OVERDOSE — Per ogni ROT in campo (alleato o nemico) con status STRAFATTO, CHEESECAKE ottiene +50% a tutte le stats eccetto HP per ogni 50 livelli (liv 50: +50% per ROT STRAFATTO, liv 100: +100%, liv 150: +150%, liv 200: +200%...) infinito oltre il liv 200
+**Talento (liv 50):** MIXOLOGIA — Per ogni ROT NEMICO in campo con status STRAFATTO, CHEESECAKE ottiene +50% a tutte le stats eccetto HP. Scaling: +50% ogni 50 livelli aggiuntivi per ogni ROT nemico STRAFATTO (liv 50: +50% per nemico STRAFATTO, liv 100: +100%, liv 150: +150%, liv 200: +200%...) infinito oltre il liv 200
 
 ### ROT #05 — LINO STAGNO
 **Tipo:** SCHIZO
@@ -105,7 +108,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** TROLL
 **Stat base:** HP 50 / ATK 60 / SP.ATK 50 / DEF 40 / SP.DEF 40 / SPD 60 (TOT 300)
 **Mossa unica:** RAGE BAIT — Fisico, 50 danni, 30% di applicare BURNOUT
-**Talento (liv 50):** PUMP IT — Sblocca un nuovo stadio di potenziamento ogni 50 livelli, elevando il cap massimo degli stadi applicabili (normalmente ±8) di +1 ogni 50 livelli (liv 50: ±9, liv 100: ±10, liv 150: ±11, liv 200: ±12...) infinito oltre il liv 200
+**Talento (liv 50):** PUMP IT — Ogni volta che un ROT nemico muore in battaglia, TROLLO guadagna +0,5% permanente a tutte le statistiche. Scaling: il bonus per ogni nemico morto aumenta di +0,5% ogni 50 livelli (liv 50: +0,5% per nemico morto, liv 100: +1%, liv 150: +1,5%, liv 200: +2%...) infinito oltre il liv 200. Il bonus si accumula nella run, una battaglia vinta con 3 nemici morti dà fino a 3 volte il bonus per singolo nemico
 
 ### ROT #07 — ELONIO MUSCHIO
 **Tipo:** PSYCHO
@@ -123,13 +126,13 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** MOG
 **Stat base:** HP 50 / ATK 80 / SP.ATK 30 / DEF 70 / SP.DEF 30 / SPD 40 (TOT 300)
 **Mossa unica:** CRIMSON MENTONE — Utility, tutta la squadra: -2 stadi Difesa e Difesa Speciale, +2 stadi Attacco e Attacco Speciale
-**Talento (liv 50):** CHIN CHECK — CRIMSON MENTONE aumenta di +1 stadio aggiuntivo attacco per ogni utilizzo. Scaling: +1 stadio ogni 50 livelli
+**Talento (liv 50):** CHIN CHECK — Il cap massimo degli stadi applicabili da o su MOG MOB aumenta di +1 ogni 50 livelli (normalmente ±8) (liv 50: ±9, liv 100: ±10, liv 150: ±11, liv 200: ±12...) infinito oltre il liv 200
 
 ### ROT #10 — LOGAN FRAUD
 **Tipo:** CRYPTO
 **Stat base:** HP 40 / ATK 30 / SP.ATK 70 / DEF 30 / SP.DEF 50 / SPD 80 (TOT 300)
 **Mossa unica:** RUGPULL — Speciale, 15 danni base +1 danno per ogni Gold in banca
-**Talento (liv 50):** EXIT SCAM — Qualsiasi attacco usato da LOGAN FRAUD infligge danno extra passivo pari al 20% del gold posseduto, valore fisso senza ulteriore scaling con il livello
+**Talento (liv 50):** EXIT SCAM — Ogni mossa usata da LOGAN FRAUD ottiene potenza aggiuntiva pari al 20% del gold posseduto, sommata alla potenza base prima del calcolo del danno (es. mossa da 50 potenza con 100 gold posseduto diventa 70 potenza). Scaling: +10% gold convertito in potenza ogni 50 livelli (liv 50: +20%, liv 100: +30%, liv 150: +40%, liv 200: +50%...) infinito oltre il liv 200
 
 ### ROT #11 — POKE MON
 **Tipo:** NORMIE
@@ -147,25 +150,61 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** SCHIZO
 **Stat base:** HP 60 / ATK 40 / SP.ATK 60 / DEF 40 / SP.DEF 40 / SPD 60 (TOT 300)
 **Mossa unica:** RICICLAGGIO — Speciale, 30 danni, 50% di applicare uno status casuale
-**Talento (liv 50):** SENZA FILTRO — Ogni volta che subisce danno, FRANCO ha 5% di probabilità di applicare COLLASSO all'attaccante. Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
+**Talento (liv 50):** VITA PAZZA — Finché FRANCO è in campo, tutto il danno inflitto dagli status AVVELENATO e BRUCIATO in battaglia è amplificato del 10%, indipendentemente da chi li ha applicati. Scaling: +10% ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
 
 ### ROT #14 — USBATTI
 **Tipo:** TROLL
 **Stat base:** HP 40 / ATK 80 / SP.ATK 30 / DEF 30 / SP.DEF 30 / SPD 90 (TOT 300)
-**Mossa unica:** USB-C — Fisico, 80 danni, recoil 20 danni a USBATTI dopo l'attacco
-**Talento (liv 50):** GHOST PROTOCOL — USBATTI ottiene +5% di elusività permanente (probabilità di schivare attacchi nemici). Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
+**Mossa unica:** USB-C — Fisico, 80 danni, recoil pari al 20% del danno inflitto al bersaglio, con cap massimo al 20% degli HP massimi di USBATTI per singolo colpo
+**Talento (liv 50):** CARICA VELOCE — USBATTI ottiene +5% di elusività permanente (probabilità di schivare attacchi nemici). Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
 
 ### ROT #15 — SEAO
 **Tipo:** PSYCHO
 **Stat base:** HP 60 / ATK 50 / SP.ATK 70 / DEF 50 / SP.DEF 50 / SPD 20 (TOT 300)
 **Mossa unica:** EVASIONE FISCALE — Fisico, 40 danni a tutti i nemici, 50% di perdere 10% dei propri Gold
-**Talento (liv 50):** PARTITA IVA — SEAO guadagna +2 gold extra per ogni ROT nemico colpito da EVASIONE FISCALE. Scaling: +2 gold ogni 50 livelli (liv 50: +2g, liv 100: +4g, liv 150: +6g, liv 200: +8g...) infinito oltre il liv 200
+**Talento (liv 50):** HOLDING — SEAO guadagna +2 gold extra per ogni ROT nemico colpito da EVASIONE FISCALE. Scaling: +2 gold ogni 50 livelli (liv 50: +2g, liv 100: +4g, liv 150: +6g, liv 200: +8g...) infinito oltre il liv 200
 
 ### ROT #16 — GIANNI IL PIZZAIOLO SOTTO CASA
 **Tipo:** BASED
 **Stat base:** HP 70 / ATK 60 / SP.ATK 40 / DEF 60 / SP.DEF 50 / SPD 20 (TOT 300)
 **Mossa unica:** CHIACCHIERE DA BAR — Utility, +1 stadio Difesa e Difesa Speciale a tutta la squadra
-**Talento (liv 50):** DOC VERACE — GIANNI IL PIZZAIOLO ottiene +5% di resistenza a tutti i tipi (riduzione danno subito). Scaling: +5% ogni 50 livelli, infinito senza cap massimo, già corretto
+**Talento (liv 50):** DOC VERACE — GIANNI IL PIZZAIOLO ottiene +5% di resistenza a tutti i tipi (riduzione danno subito). Scaling: +5% ogni 50 livelli (liv 50: 5%, liv 100: 10%, liv 150: 15%, liv 200: 20%...) infinito oltre il liv 200
+
+### ROT #17 — KAMOOM
+**Tipo:** TIPA
+**Stat base:** HP 60 / ATK 60 / SP.ATK 60 / DEF 50 / SP.DEF 50 / SPD 20 (TOT 300)
+**Mossa unica:** BOMBOCLAT — Fisico, 40 danni a un bersaglio, infligge anche il 20% del danno ai ROT nemici adiacenti al bersaglio (solo se posizionati accanto)
+**Talento (liv 50):** PROLE — Aumenta del 5% il danno di tutti gli attacchi di KAMOOM, incluso il danno ad area, ogni 50 livelli (liv 50: +5%, liv 100: +10%, liv 150: +15%, liv 200: +20%...) infinito oltre il liv 200
+
+### ROT #18 — FUMACAZZI
+**Tipo:** TIPA
+**Stat base:** HP 50 / ATK 50 / SP.ATK 70 / DEF 40 / SP.DEF 40 / SPD 50 (TOT 300)
+**Mossa unica:** FOTUZZA — Fisico, 40 danni, attacca sempre per primo ignorando la velocità di tutti i ROT in campo, 30% di stunnare il bersaglio per il turno
+**Talento (liv 50):** PAPARAZZA — Quando FUMACAZZI infligge danno con qualsiasi mossa ha 10% di probabilità passiva di stunnare il bersaglio per il turno. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
+
+### ROT #19 — DIO PORSCHE
+**Tipo:** TRANS
+**Stat base:** HP 50 / ATK 80 / SP.ATK 50 / DEF 40 / SP.DEF 30 / SPD 50 (TOT 300)
+**Mossa unica:** TRAFFICO MATTUTINO — Fisico, 25 danni, colpisce il bersaglio 2 volte, ogni colpo applica 1 stack di TRAFFICO (cumulabile fino a 4 stack — ogni stack riduce danno inflitto e velocità del ROT afflitto del 5%)
+**Talento (liv 50):** INGOMBRANTE — Il cap massimo di stack TRAFFICO applicabili aumenta di +1 ogni 50 livelli, e la riduzione percentuale per stack aumenta del 5% ogni 50 livelli (liv 50: cap 5 stack / -10% per stack, liv 100: cap 6 / -15%, liv 150: cap 7 / -20%, liv 200: cap 8 / -25%...) infinito oltre il liv 200
+
+### ROT #20 — EURO 0
+**Tipo:** TRANS
+**Stat base:** HP 90 / ATK 50 / SP.ATK 40 / DEF 80 / SP.DEF 30 / SPD 10 (TOT 300)
+**Mossa unica:** MICRO PARTICELLE — Speciale, nube di smog che colpisce tutti i ROT nemici contemporaneamente, applica AVVELENATO, BRUCIATO e 1 stack di TRAFFICO a tutti
+**Talento (liv 50):** PERMESSO AREA C — Aumenta il cap massimo di stack di AVVELENATO, BRUCIATO e TRAFFICO di +1 ogni 50 livelli, infinito oltre il liv 200
+
+### ROT #21 — ARTMIR
+**Tipo:** MACHO
+**Stat base:** HP 70 / ATK 70 / SP.ATK 30 / DEF 60 / SP.DEF 40 / SPD 30 (TOT 300)
+**Mossa unica:** ALCOLISMO — Utility, ARTMIR ottiene uno scudo pari al 15% dei propri HP totali. Per 3 turni, se un attacco colpirebbe un ROT alleato, viene reindirizzato su ARTMIR invece
+**Talento (liv 50):** TESTOTERRONE — Aumenta la durata di ALCOLISMO di +1 turno ogni 50 livelli e lo scudo applicato di +10% ogni 50 livelli, infinito oltre il liv 200 (liv 50: 4 turni / +10% scudo, liv 100: 5 turni / +20%, liv 150: 6 turni / +30%, liv 200: 7 turni / +40%...)
+
+### ROT #22 — SILVIO B.
+**Tipo:** MACHO
+**Stat base:** HP 60 / ATK 40 / SP.ATK 60 / DEF 50 / SP.DEF 50 / SPD 40 (TOT 300)
+**Mossa unica:** BUNGA BUNGA — Utility, +1 stadio a tutte le statistiche di SILVIO B. (ATK SP.ATK DEF SP.DEF SPD)
+**Talento (liv 50):** MEDIASET — Aumenta passivamente la probabilità di raddoppiare i buff di cura scudo e stadi statistici ottenuti da SILVIO B. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
 
 ---
 

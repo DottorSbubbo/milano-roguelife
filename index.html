@@ -1010,6 +1010,7 @@ body {
 .sbadge.BURNOUT       { background: #1d4ed8; color: #bfdbfe; }
 .sbadge.COLLASSO      { background: #374151; color: #e5e7eb; }
 .sbadge.TASCHE-BUCATE { background: #854d0e; color: #fef3c7; }
+.sbadge.TRAFFICO      { background: #7c2d12; color: #fed7aa; }
 
 .spd-token.item-zoccoli { border-style: dashed; opacity: 0.65; }
 
@@ -2188,7 +2189,7 @@ body {
 }
 .shop-card-desc {
   font-family: 'VT323', 'Courier New', monospace;
-  font-size: 16px; color: #b0b0d0; letter-spacing: 0.5px; line-height: 1.35;
+  font-size: 22px; color: #b0b0d0; letter-spacing: 0.5px; line-height: 1.35;
   flex: 1; min-height: 0; overflow: hidden;
 }
 
@@ -2211,9 +2212,13 @@ body {
 .shop-move-name-clickable:hover {
   animation: loadout-token-blink 0.6s ease-in-out infinite;
 }
-.shop-item-card .shop-card-desc { font-size: 15px; line-height: 1.25; overflow: hidden; }
+.shop-item-card .shop-card-desc { font-size: 21px; line-height: 1.3; overflow: hidden; }
 .shop-drug-card .shop-card-desc,
-.shop-move-card .shop-card-desc { font-size: 17px; line-height: 1.3; overflow: hidden; }
+.shop-move-card .shop-card-desc { font-size: 24px; line-height: 1.3; overflow: hidden; }
+.shop-item-card .shop-card-name { white-space: normal; word-break: normal; overflow-wrap: normal; overflow: visible; }
+.shop-item-card .shop-card-top { min-height: 44px; align-items: flex-start; }
+.shop-drug-card .shop-card-top,
+.shop-move-card .shop-card-top { min-height: 36px; align-items: flex-start; }
 
 /* ── token tipo mossa: spazio fisso, sempre nella stessa posizione ── */
 .shop-move-type-row { display: flex; flex-shrink: 0; }
@@ -2279,7 +2284,7 @@ body {
   display: flex; gap: 10px; flex: 1; min-height: 0;
 }
 #shop-section-items > .shop-card-row > .shop-card {
-  flex: 1; height: 260px; max-height: 260px; min-height: 260px; overflow: hidden;
+  flex: 1; min-height: 0; overflow: hidden;
 }
 #shop-section-moves { overflow: hidden; }
 #shop-section-moves > .shop-card-row > .shop-card { flex: 1; }
@@ -2778,6 +2783,36 @@ body {
   background: rgba(0,0,0,0.55);
 }
 #talent-overlay.on { display: flex; }
+#overdose-death-overlay {
+  display: none; position: fixed; inset: 0; z-index: 60000;
+  align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.82);
+}
+#overdose-death-overlay.on { display: flex; }
+#overdose-death-box {
+  background: rgba(10,5,0,0.98);
+  border: 1px solid rgba(250,204,21,0.3);
+  border-radius: 14px; padding: 40px 48px 36px;
+  min-width: 280px; max-width: 420px;
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.9), 0 0 30px rgba(250,180,0,0.06);
+}
+#overdose-death-skull {
+  font-size: 72px; line-height: 1; filter: grayscale(0.2);
+}
+#overdose-death-msg {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px; color: #facc15;
+  text-align: center; line-height: 1.9; letter-spacing: 1px;
+}
+#overdose-death-ok {
+  font-family: 'Press Start 2P', monospace; font-size: 10px;
+  letter-spacing: 2px; padding: 10px 28px;
+  background: rgba(80,50,0,0.7); border: 1px solid rgba(250,204,21,0.4);
+  color: #facc15; border-radius: 4px; cursor: pointer;
+  transition: background 0.15s;
+}
+#overdose-death-ok:hover { background: rgba(120,80,0,0.8); }
 #talent-box {
   background: rgba(10,14,20,0.98);
   border: 1px solid rgba(160,255,120,0.25);
@@ -2826,18 +2861,27 @@ body {
 .marsupio-slot {
   display: flex; align-items: center; justify-content: center; min-width: 0; min-height: 0; overflow: hidden;
   background: rgba(255,255,255,0.03); border: 2px dashed rgba(255,255,255,0.1);
-  border-radius: 4px; padding: 4px; text-align: center;
+  border-radius: 4px; padding: 0; text-align: center;
+  container-type: size;
 }
 .marsupio-slot .loadout-token { cursor: grab; }
 .marsupio-slot .loadout-token-item {
-  width: 100%; height: 100%; min-width: unset;
-  font-size: 28px; flex-direction: column; gap: 2px;
-  padding: 4px 6px; box-sizing: border-box;
+  width: 100% !important; height: 100% !important; min-width: unset !important;
+  font-size: 88cqmin !important; line-height: 1; flex-direction: column; gap: 0;
+  justify-content: center; align-items: center;
+  padding: 0; box-sizing: border-box; position: relative;
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
 }
 .marsupio-slot .loadout-token-item.dragging {
   transform: scale(0.3);
   opacity: 0.2;
+}
+.marsupio-slot .item-lv-badge {
+  font-size: 13cqmin !important; line-height: 1.2 !important;
+  position: absolute; bottom: 3%; right: 4%;
+  vertical-align: initial; color: #fde68a;
+  background: rgba(0,0,0,0.72); border-radius: 2px;
+  padding: 0 2px; margin: 0;
 }
 #marsupio-overlay {
   position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
@@ -3040,22 +3084,24 @@ body {
 }
 .boss-card .hp-bar-track { height: 18px; }
 .boss-card .rot-name-token { font-size: 15px !important; padding: 4px 10px; }
-.boss-card .bars-frame { width: 100%; box-sizing: border-box; }
+.boss-card .bars-frame { width: 45%; max-width: 380px; box-sizing: border-box; }
 
 /* ── FUSIONE OGGETTI ── */
 @keyframes fusible-blink {
   0%, 100% {
-    box-shadow: 0 0 0 2px #ff0000, 0 0 8px 2px #ff0000, 0 0 22px 4px rgba(255,0,0,0.7);
+    box-shadow: 0 0 0 2px #ff0000, 0 0 12px 4px #ff0000, 0 0 30px 8px rgba(255,0,0,0.85);
+    background-color: rgba(180,0,0,0.35);
     color: inherit;
   }
   50% {
-    box-shadow: 0 0 0 3px #ff6060, 0 0 20px 6px #ff2020, 0 0 50px 10px rgba(255,30,30,0.9);
+    box-shadow: 0 0 0 4px #ff2020, 0 0 28px 10px #ff0000, 0 0 70px 22px rgba(255,0,0,1), inset 0 0 10px rgba(255,80,80,0.5);
+    background-color: rgba(240,0,0,0.55);
     color: #fff;
-    text-shadow: 0 0 8px #ff4444;
+    text-shadow: 0 0 12px #ff0000, 0 0 4px #fff;
   }
 }
 .fusible-item {
-  animation: fusible-blink 0.55s ease-in-out infinite;
+  animation: fusible-blink 0.28s ease-in-out infinite;
   outline: none;
   position: relative;
   cursor: context-menu;
@@ -3433,6 +3479,14 @@ body {
   </div>
 </div>
 
+<div id="overdose-death-overlay">
+  <div id="overdose-death-box">
+    <div id="overdose-death-skull">💀</div>
+    <div id="overdose-death-msg"></div>
+    <button id="overdose-death-ok" onclick="closeOverdoseDeathOverlay()">OK</button>
+  </div>
+</div>
+
 <div id="rot-manager-overlay">
   <div id="rot-manager-box">
     <div id="rot-manager-header">
@@ -3536,6 +3590,9 @@ const TYPE_COLORS = {
   MOG:    { bg:'#1e3a8a', text:'#bfdbfe' },
   VAPE:   { bg:'#164e63', text:'#a5f3fc' },
   BASED:  { bg:'#7c2d12', text:'#fed7aa' },
+  MACHO:  { bg:'#14532d', text:'#bbf7d0' },
+  TRANS:  { bg:'#92400e', text:'#fde68a' },
+  TIPA:   { bg:'#6b21a8', text:'#f3e8ff' },
   BOSS:   { bg:'#3b0764', text:'#d8b4fe' },
 };
 
@@ -3572,6 +3629,9 @@ const NAME_TOKEN_COLORS = {
   TROLL:  '#b45309',
   PSYCHO: '#dc2626',
   BASED:  '#5c3a21',
+  MACHO:  '#166534',
+  TRANS:  '#92400e',
+  TIPA:   '#581c87',
   BOSS:   '#4a044e',
 };
 
@@ -3579,10 +3639,13 @@ const TYPE_CHART = {
   NORMIE: { beats:['SCHIZO'], loses:['PSYCHO'] },
   SCHIZO: { beats:['PSYCHO'], loses:['NORMIE'] },
   PSYCHO: { beats:['NORMIE'], loses:['SCHIZO'] },
-  MOG:    { beats:['CRYPTO'], loses:['VAPE']   },
+  MOG:    { beats:['CRYPTO'], loses:['TIPA']   },
   CRYPTO: { beats:['TROLL'],  loses:['MOG']    },
   TROLL:  { beats:['VAPE'],   loses:['CRYPTO'] },
-  VAPE:   { beats:['MOG'],    loses:['TROLL']  },
+  VAPE:   { beats:['MACHO'],  loses:['TROLL']  },
+  MACHO:  { beats:['TRANS'],  loses:['VAPE']   },
+  TRANS:  { beats:['TIPA'],   loses:['MACHO']  },
+  TIPA:   { beats:['MOG'],    loses:['TRANS']  },
   BASED:  { beats:[],         loses:[]         },
 };
 
@@ -3620,7 +3683,7 @@ const ROT_DEFS = {
     base:{ hp:40, atk:30, spAtk:80, def:30, spDef:60, spd:60 },
     uniqueMove:{ name:'REDDIT', type:'CRYPTO', cat:'SPECIAL', power:50, pp:10,
       status:{ type:'TASCHE BUCATE', chance:0.30 }, target:'ENEMY' },
-    talent:{ name:'MANI DI DIAMANTE' },
+    talent:{ name:'AIRDROP' },
     sprite: { src:'spritesheet/rot/idle/cripto.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   BIG_MAC: {
@@ -3628,7 +3691,7 @@ const ROT_DEFS = {
     base:{ hp:90, atk:40, spAtk:60, def:60, spDef:40, spd:10 },
     uniqueMove:{ name:'MENU LARGE', type:'NORMIE', cat:'SPECIAL', power:50, pp:10,
       status:{ type:'COLLASSO', chance:0.30 }, target:'ENEMY' },
-    talent:{ name:'SUPERSIZED' },
+    talent:{ name:'EXTRA LARGE' },
     sprite: { src:'spritesheet/rot/idle/big.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   CHEESECAKE: {
@@ -3636,7 +3699,7 @@ const ROT_DEFS = {
     base:{ hp:50, atk:40, spAtk:60, def:40, spDef:50, spd:60 },
     uniqueMove:{ name:'SVAPO DIESEL', type:'VAPE', cat:'SPECIAL', power:50, pp:10,
       status:{ type:'STRAFATTO', chance:0.30 }, target:'ENEMY' },
-    talent:{ name:'CLOUD CHASING' },
+    talent:{ name:'MIXOLOGIA' },
     sprite: { src:'spritesheet/rot/idle/cheese.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
   LINO_STAGNO: {
@@ -3653,7 +3716,7 @@ const ROT_DEFS = {
     base:{ hp:50, atk:60, spAtk:50, def:40, spDef:40, spd:60 },
     uniqueMove:{ name:'RAGE BAIT', type:'TROLL', cat:'PHYSICAL', power:50, pp:10,
       status:{ type:'BURNOUT', chance:0.30 }, target:'ENEMY' },
-    talent:{ name:'PROVOCATORE' },
+    talent:{ name:'PUMP IT' },
     sprite: { src:'spritesheet/rot/idle/troll.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   ELONIO: {
@@ -3681,7 +3744,7 @@ const ROT_DEFS = {
         { stat:'atk', delta:3,  team:'ALLY' }, { stat:'spAtk', delta:3,  team:'ALLY' }
       ], target:'SELF',
       desc:'Abassa di 1 stadio DEF e SP.DEF di tutta la squadra alleata e aumenta di 3 stadi ATK e SP.ATK di tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
-    talent:{ name:'ALFA ASSOLUTO' },
+    talent:{ name:'CHIN CHECK' },
     sprite: { src:'spritesheet/rot/idle/mob.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   LOGAN_FRAUD: {
@@ -3690,7 +3753,7 @@ const ROT_DEFS = {
     uniqueMove:{ name:'RUGPULL', type:'CRYPTO', cat:'SPECIAL', power:15, pp:10,
       status:null, target:'ENEMY', goldScalePower:{ base:15, perGold:1 },
       desc:'15 danni base, +1 danno per ogni gold posseduto dal giocatore.' },
-    talent:{ name:'INSIDER' },
+    talent:{ name:'EXIT SCAM' },
     sprite: { src:'spritesheet/rot/idle/logan.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'none', chromaKey:false }
   },
   POKE_MON: {
@@ -3716,7 +3779,7 @@ const ROT_DEFS = {
     base:{ hp:60, atk:40, spAtk:60, def:40, spDef:40, spd:60 },
     uniqueMove:{ name:'RICICLAGGIO', type:'SCHIZO', cat:'SPECIAL', power:30, pp:10,
       status:{ type:'RANDOM', chance:0.50 }, target:'ENEMY' },
-    talent:{ name:'DOPPIO GIOCO' },
+    talent:{ name:'VITA PAZZA' },
     sprite: { src:'spritesheet/rot/idle/franco.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'none', chromaKey:false }
   },
   USBATTI: {
@@ -3724,7 +3787,7 @@ const ROT_DEFS = {
     base:{ hp:40, atk:80, spAtk:30, def:30, spDef:30, spd:90 },
     uniqueMove:{ name:'USB-C', type:'TROLL', cat:'PHYSICAL', power:80, pp:10,
       recoil:20, status:null, target:'ENEMY' },
-    talent:{ name:'OVERDRIVE' },
+    talent:{ name:'CARICA VELOCE' },
     sprite: { src:'spritesheet/rot/idle/usb.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
   SEAO: {
@@ -3733,7 +3796,7 @@ const ROT_DEFS = {
     uniqueMove:{ name:'EVASIONE FISCALE', type:'PSYCHO', cat:'PHYSICAL', power:30, pp:10,
       status:null, target:'ENEMY_ALL', goldPerHit:1,
       desc:'Colpisce tutti i nemici con 30 danni. Se usata dal giocatore guadagna 1 gold per nemico colpito, se usata dal nemico il giocatore perde 1 gold per alleato colpito.' },
-    talent:{ name:'PARADISO FISCALE' },
+    talent:{ name:'HOLDING' },
     sprite: { src:'spritesheet/rot/idle/seao.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
   GIANNI: {
@@ -3746,6 +3809,60 @@ const ROT_DEFS = {
       desc:'Saggezza da bar — aumenta di 2 stadi DEF e SP.DEF di tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
     talent:{ name:'SAGGEZZA POPOLARE' },
     sprite: { src:'spritesheet/rot/idle/gianni.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
+  },
+  KAMOOM: {
+    id:17, name:'KAMOOM', type:'TIPA',
+    base:{ hp:60, atk:75, spAtk:30, def:50, spDef:40, spd:55 },
+    uniqueMove:{ name:'BOMBOCLAT', type:'TIPA', cat:'PHYSICAL', power:40, pp:10, target:'ENEMY',
+      effect:'splash', splashPct:0.20,
+      desc:'40 danni fisici al bersaglio. Infligge il 20% del danno ai ROT nemici adiacenti al bersaglio (se presenti).' },
+    talent:{ name:'PROLE' },
+    sprite: { src:'spritesheet/rot/idle/kamoon.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+  },
+  FUMACAZZI: {
+    id:18, name:'FUMACAZZI', type:'TIPA',
+    base:{ hp:50, atk:65, spAtk:35, def:40, spDef:40, spd:70 },
+    uniqueMove:{ name:'FOTUZZA', type:'TIPA', cat:'PHYSICAL', power:40, pp:10, target:'ENEMY',
+      effect:'always_first', status:{ type:'COLLASSO', chance:0.30 },
+      desc:'40 danni fisici. Va sempre per primo ignorando la velocità di tutti i ROT. 30% di probabilità di stunnare (COLLASSO) il bersaglio.' },
+    talent:{ name:'PAPARAZZA' },
+    sprite: { src:'spritesheet/rot/idle/fumacazzi.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+  },
+  DIO_PORSCHE: {
+    id:19, name:'DIO PORSCHE', type:'TRANS',
+    base:{ hp:55, atk:60, spAtk:30, def:55, spDef:50, spd:50 },
+    uniqueMove:{ name:'TRAFFICO MATTUTINO', type:'TRANS', cat:'PHYSICAL', power:25, pp:10, target:'ENEMY',
+      hits:2, effect:'apply_traffico',
+      desc:'25 danni fisici al bersaglio 2 volte. Ogni colpo applica 1 stack di TRAFFICO (fino a 4). TRAFFICO riduce danno inflitto e velocità del 5% per stack.' },
+    talent:{ name:'INGOMBRANTE' },
+    sprite: { src:'spritesheet/rot/idle/dio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+  },
+  EURO_0: {
+    id:20, name:'EURO 0', type:'TRANS',
+    base:{ hp:50, atk:30, spAtk:70, def:40, spDef:55, spd:55 },
+    uniqueMove:{ name:'MICRO PARTICELLE', type:'TRANS', cat:'SPECIAL', power:0, pp:10, target:'ENEMY_ALL',
+      effect:'micro_particelle',
+      desc:'Colpisce tutti i ROT nemici: applica AVVELENATO, BRUCIATO e 1 stack di TRAFFICO a ognuno.' },
+    talent:{ name:'PERMESSO AREA C' },
+    sprite: { src:'spritesheet/rot/idle/euro.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+  },
+  ARTMIR: {
+    id:21, name:'ARTMIR', type:'MACHO',
+    base:{ hp:75, atk:50, spAtk:20, def:70, spDef:65, spd:20 },
+    uniqueMove:{ name:'ALCOLISMO', type:'MACHO', cat:'UTILITY', power:0, pp:10, target:'SELF',
+      effect:'alcolismo', shieldPct:0.15, redirectTurns:3,
+      desc:'Applica uno scudo al 15% degli HP massimi di ARTMIR e per 3 turni reindirizza su ARTMIR ogni attacco che colpirebbe un alleato.' },
+    talent:{ name:'TESTOTERRONE' },
+    sprite: { src:'spritesheet/rot/idle/artmir.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
+  },
+  SILVIO_B: {
+    id:22, name:'SILVIO B.', type:'MACHO',
+    base:{ hp:60, atk:50, spAtk:50, def:50, spDef:50, spd:40 },
+    uniqueMove:{ name:'BUNGA BUNGA', type:'MACHO', cat:'UTILITY', power:0, pp:10, target:'SELF',
+      effect:'bunga_bunga',
+      desc:'+1 stadio a tutte le statistiche (ATK, SP.ATK, DEF, SP.DEF, SPD) di SILVIO B.' },
+    talent:{ name:'MEDIASET' },
+    sprite: { src:'spritesheet/rot/idle/slivio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
 };
 
@@ -3772,23 +3889,37 @@ function computeTalentInfo(rot) {
   switch (rot.def.id) {
     case 1:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `AVVELENATO si accumula fino a ${t*2} stack sui nemici. Ogni stack infligge il 10% HP max per turno.` };
     case 2:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Inizio battaglia: ${t*2} buff casuali agli stadi (+1 a stat casuale tra ATK/SP.ATK/DEF/SP.DEF/SPD).` };
-    case 3:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Restituisce il ${t*10}% del danno subito all'attaccante.` };
-    case 4:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni alleato con STRAFATTO: +${t*50}% alle stat di attacco o difesa (lato CHEESECAKE).` };
+    case 3:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Restituisce il ${t*10}% del danno subito all'attaccante. ${t*5}% di probabilità di applicare COLLASSO all'attaccante.` };
+    case 4:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni ROT NEMICO in campo con STRAFATTO: +${t*50}% a tutte le stat eccetto HP di CHEESECAKE.` };
     case 5:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti gli scudi del team alleato aumentati del ${t*10}%.` };
-    case 6:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stadi ±${8+t} (base ±8, +${t} per talento).` };
+    case 6:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni ROT nemico morto in questa run: TROLLO guadagna +${t*0.5}% permanente a tutte le stat eccetto HP. Uccisioni accumulate: ${rot.trolloKills || 0}.` };
     case 7:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `BRUCIATO si accumula fino a ${3+t*2} stack sui nemici.` };
     case 8:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le mosse applicano FERITE ai nemici. Ogni stack FERITE: +${t*10}% danno ricevuto.` };
-    case 9:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `CRIMSON MENTONE: +${t} stadi ATK e SP.ATK aggiuntivi a tutta la squadra per ogni uso.` };
+    case 9:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stadi di MOG MOB e dei suoi alleati: ±${8+t} (base ±8, +${t} per talento).` };
     case 10: {
       const gold = (typeof runState !== 'undefined' ? runState?.gold : 0) || 0;
-      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco: +${Math.floor(gold*0.20)} danni extra (20% del gold attuale: ${gold}).` };
+      const pct = (t + 1) * 10;
+      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco: +${Math.floor(gold * pct / 100)} danni extra (${pct}% del gold attuale: ${gold}).` };
     }
     case 11: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le cure del team alleato aumentate del ${t*10}%.` };
     case 12: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `STRAFATTO applicato da SVAPO KINK dura ${3+t} turni invece di 3.` };
-    case 13: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `${t*5}% di probabilità di applicare COLLASSO all'attaccante quando FRANCO subisce danno.` };
+    case 13: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Finché FRANCO è in campo, tutto il danno di AVVELENATO e BRUCIATO in battaglia è amplificato del ${t*10}%, indipendentemente da chi li ha applicati.` };
     case 14: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `+${t*5}% elusività — i nemici mancano ${t*5}% degli attacchi diretti a USBATTI.` };
-    case 15: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `EVASIONE FISCALE: ${1+t*2} gold per nemico colpito (invece di 1).` };
+    case 15: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `EVASIONE FISCALE: +${t*2} gold extra per nemico colpito (${1+t*2} gold totali invece di 1).` };
     case 16: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti i danni subiti da GIANNI ridotti del ${t*5}%.` };
+    case 17: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `+${t*5}% al danno di tutti gli attacchi di KAMOOM, incluso il danno splash di BOMBOCLAT.` };
+    case 18: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco di FUMACAZZI ha il ${t*10}% di probabilità passiva di applicare COLLASSO al bersaglio colpito.` };
+    case 19: {
+      const traffCap = 4 + t;
+      const traffReduction = t * 5;
+      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stack TRAFFICO: ${traffCap} (base 4 +${t}). Riduzione per stack: ${5 + traffReduction}% (base 5% +${traffReduction}%).` };
+    }
+    case 20: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap AVVELENATO, BRUCIATO e TRAFFICO aumentato di +${t} stack.` };
+    case 21: {
+      const shieldBonus = t * 10;
+      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Scudo ALCOLISMO: ${15 + shieldBonus}% HP (base 15% +${shieldBonus}%). Durata reindirizzamento: ${3 + t} turni (base 3 +${t}).` };
+    }
+    case 22: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni buff, cura, scudo o stadio ottenuto da SILVIO B. ha il ${t*10}% di probabilità di essere raddoppiato.` };
     default: return { name: talent.name, desc: 'DESCRIZIONE DA DEFINIRE.' };
   }
 }
@@ -3958,6 +4089,18 @@ function fusionTokenColor(key, lv) {
   if (lv === 2) return '#f97316';
   return RARITY_COLOR[ITEM_DEFS[key]?.rarity] || '#9ca3af';
 }
+function fusionTokenBg(key, lv) {
+  const r = ITEM_DEFS[key]?.rarity;
+  if (r === 'atomico' || r === 'atomica')           return 'rgba(170,60,0,0.93)';
+  if (r === 'apocalittico' || r === 'apocalittica') return 'rgba(90,10,130,0.93)';
+  if (r === 'combo' || r === 'rara') {
+    if (lv >= 4) return 'rgba(0,55,185,0.93)';
+    if (lv === 3) return 'rgba(160,20,75,0.93)';
+    if (lv === 2) return 'rgba(15,100,30,0.93)';
+    return 'rgba(110,82,0,0.93)';
+  }
+  return 'rgba(38,38,50,0.93)'; // BASE/comune
+}
 
 function itemLvAt(items, lvls, idx) {
   return (items?.[idx] && lvls?.[idx]) ? (lvls[idx] || 1) : 1;
@@ -4053,11 +4196,11 @@ const DRUG_DEFS = {
   },
   OVERDOSE: {
     name: 'OVERDOSE', short: 'OD', rarity: 'rara',
-    desc: 'Raddoppia tutte le stat. 30% di probabilità di uccidere istantaneamente il ROT.', color: '#facc15',
+    desc: 'Raddoppia tutte le stat. 50% di probabilità di uccidere istantaneamente il ROT.', color: '#facc15',
     apply: (rot) => {
       rot.stats.atk *= 2; rot.stats.spAtk *= 2; rot.stats.def *= 2; rot.stats.spDef *= 2; rot.stats.spd *= 2;
       adjustMaxHp(rot, rot.stats.hp);
-      if (Math.random() < 0.30) { rot.curHp = 0; rot.isAlive = false; }
+      if (Math.random() < 0.50) { rot.curHp = 0; rot.isAlive = false; }
     },
   },
 
@@ -4086,7 +4229,63 @@ function giveDrug(rot, drugKey) {
   const drug = DRUG_DEFS[drugKey];
   if (!drug) return;
   drug.apply(rot);
+  if (drugKey === 'OVERDOSE') {
+    // OVERDOSE è tracciata via rot.overdoseStacks (non in rot.drugs)
+    // così recomputeRotStats non la raddoppia di nuovo ad ogni chiamata
+    rot.overdoseStacks = (rot.overdoseStacks || 0) + 1;
+    return;
+  }
   rot.drugs.push(drugKey);
+}
+
+// Ricalcola rot.stats da zero: base+livello + tutti i bonus drug in ordine.
+// Chiamata al caricamento del salvataggio (ripara dati corrotti da vecchie versioni)
+// e al level-up (per preservare correttamente bonus moltiplicativi come OVERDOSE).
+function recomputeRotStats(rot) {
+  const hpRatio = rot.maxHp > 0 ? rot.curHp / rot.maxHp : 1;
+  // Resetta a base + livello
+  rot.stats.hp    = rot.def.base.hp    + rot.level;
+  rot.stats.atk   = rot.def.base.atk   + rot.level;
+  rot.stats.spAtk = rot.def.base.spAtk + rot.level;
+  rot.stats.def   = rot.def.base.def   + rot.level;
+  rot.stats.spDef = rot.def.base.spDef + rot.level;
+  rot.stats.spd   = rot.def.base.spd   + rot.level;
+  rot.maxHp       = rot.stats.hp;
+  rot.curHp       = rot.stats.hp; // curHp = maxHp durante il ricalcolo (per adjustMaxHp)
+  rot.evasion     = 0;
+  rot.critBonus   = 0;
+  // Riapplica ogni drug in ordine d'assunzione (sopprime kill chance e cambio isAlive)
+  for (const dk of (rot.drugs || [])) {
+    const drug = DRUG_DEFS[dk];
+    if (!drug) continue;
+    const wasAlive = rot.isAlive;
+    drug.apply(rot);
+    rot.isAlive = wasAlive;
+  }
+  // OVERDOSE: moltiplicatore one-time (×2 per stack) — non in rot.drugs
+  if ((rot.overdoseStacks || 0) > 0) {
+    const od = Math.pow(2, rot.overdoseStacks);
+    rot.stats.atk   = Math.floor(rot.stats.atk   * od);
+    rot.stats.spAtk = Math.floor(rot.stats.spAtk * od);
+    rot.stats.def   = Math.floor(rot.stats.def   * od);
+    rot.stats.spDef = Math.floor(rot.stats.spDef * od);
+    rot.stats.spd   = Math.floor(rot.stats.spd   * od);
+    rot.stats.hp    = Math.round(rot.stats.hp    * od);
+  }
+  // TROLLO — PUMP IT: bonus permanente accumulato per nemici uccisi in run
+  if (rot.def === ROT_DEFS.TROLLO && (rot.trolloKills || 0) > 0) {
+    const tTrollo = Math.floor(rot.level / 50);
+    if (tTrollo > 0) {
+      const bonus = rot.trolloKills * tTrollo * 0.005;
+      rot.stats.atk   = Math.floor(rot.stats.atk   * (1 + bonus));
+      rot.stats.spAtk = Math.floor(rot.stats.spAtk * (1 + bonus));
+      rot.stats.def   = Math.floor(rot.stats.def   * (1 + bonus));
+      rot.stats.spDef = Math.floor(rot.stats.spDef * (1 + bonus));
+      rot.stats.spd   = Math.floor(rot.stats.spd   * (1 + bonus));
+    }
+  }
+  rot.maxHp = rot.stats.hp;
+  rot.curHp = Math.max(1, Math.round(rot.maxHp * hpRatio));
 }
 
 // ═══════════════════════════════════════════════════
@@ -4216,6 +4415,27 @@ const TYPE_MOVE_DEFS = {
   SALSA_BASE:         { name:'SALSA BASE',         type:'BASED',  cat:'UTILITY',  power:0,  pp:10, target:'SELF',
     effect:'salsa_base', turns:3, chance:0.10, nonConsecutive:true,
     desc:'Per 3 turni ogni colpo ha il 10% di probabilità di stunnare il bersaglio. Non usabile consecutivamente.' },
+
+  // ── TIPA ──
+  GOSSIP:             { name:'GOSSIP',             type:'TIPA',   cat:'PHYSICAL', power:40, pp:10, target:'ENEMY' },
+  DRAMA_QUEEN:        { name:'DRAMA QUEEN',        type:'TIPA',   cat:'SPECIAL',  power:40, pp:10, target:'ENEMY' },
+  POSA_STUDIATA:      { name:'POSA STUDIATA',      type:'TIPA',   cat:'UTILITY',  power:0,  pp:10, target:'SELF',
+    effect:'guard_turn', reduction:0.5, counterStatus:'COLLASSO', nonConsecutive:true,
+    desc:'Nel turno di utilizzo il danno ricevuto è ridotto del 50% e applica COLLASSO a chi attacca. Non usabile consecutivamente.' },
+
+  // ── MACHO ──
+  GOMITATA:           { name:'GOMITATA',           type:'MACHO',  cat:'PHYSICAL', power:40, pp:10, target:'ENEMY' },
+  SPACCATA:           { name:'SPACCATA',           type:'MACHO',  cat:'SPECIAL',  power:40, pp:10, target:'ENEMY' },
+  ALZATA_DI_SPALLE:   { name:'ALZATA DI SPALLE',   type:'MACHO',  cat:'UTILITY',  power:0,  pp:10, target:'SELF',
+    effect:'guard_turn', reduction:0.5, counterStatus:'BRUCIATO', nonConsecutive:true,
+    desc:'Nel turno di utilizzo il danno ricevuto è ridotto del 50% e applica BRUCIATO a chi attacca. Non usabile consecutivamente.' },
+
+  // ── TRANS ──
+  SVOLTA:             { name:'SVOLTA',             type:'TRANS',  cat:'PHYSICAL', power:40, pp:10, target:'ENEMY' },
+  RIVELAZIONE:        { name:'RIVELAZIONE',        type:'TRANS',  cat:'SPECIAL',  power:40, pp:10, target:'ENEMY' },
+  CAMBIO_CORSIA:      { name:'CAMBIO CORSIA',      type:'TRANS',  cat:'UTILITY',  power:0,  pp:10, target:'SELF',
+    effect:'guard_turn', reduction:0.5, counterStatus:'AVVELENATO', nonConsecutive:true,
+    desc:'Nel turno di utilizzo il danno ricevuto è ridotto del 50% e applica AVVELENATO a chi attacca. Non usabile consecutivamente.' },
 };
 
 // ═══════════════════════════════════════════════════
@@ -4274,7 +4494,10 @@ function mkRot(def, level, isPlayer) {
     centroSocialeTurns: 0,
     coronavirusActive: false,
     salsaBaseTurns: 0,
+    artmirRedirectTurns: 0,
     comboCount: 0,
+    trolloKills: 0,
+    overdoseStacks: 0,
     drugs: [],
     items: new Array(rotItemSlotCount(level)).fill(null),
     itemLevels: new Array(rotItemSlotCount(level)).fill(null),
@@ -4309,7 +4532,7 @@ function mkBossRot(level) {
     statuses: [], shield: 0,
     guardNext: null, guardTurn: null, immuneTurn: null, counterNext: null, critChanceOverride: null,
     landlordareTurns: 0, lampioneTurns: 0, centroSocialeTurns: 0,
-    coronavirusActive: false, salsaBaseTurns: 0, comboCount: 0,
+    coronavirusActive: false, salsaBaseTurns: 0, artmirRedirectTurns: 0, comboCount: 0,
     evasion: 0, critBonus: 0,
     drugs: [], items: [],
     moves: [
@@ -4331,41 +4554,49 @@ const STAGE_MULT = {
 const STAGE_STAT_LABELS = { atk:'ATK', spAtk:'SP.ATK', def:'DEF', spDef:'SP.DEF', spd:'SPD' };
 const STAT_STAGE_COLORS = { atk:'#ef4444', spAtk:'#a855f7', def:'#3b82f6', spDef:'#22c55e', spd:'#06b6d4' };
 
-// Estende STAGE_MULT oltre ±8 (per TROLLO — PROVOCATORE)
+// Estende STAGE_MULT oltre ±8 (per MOG MOB — CHIN CHECK)
 function getStageMulti(stage) {
   if (stage >= -8 && stage <= 8) return STAGE_MULT[stage];
   return stage > 8 ? 5 + (stage - 8) * 0.5 : Math.max(0.05, 0.2 - (-stage - 8) * 0.02);
 }
 
 function effStat(rot, s) {
-  const cap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.TROLLO)) : 8;
+  const cap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.MOG_MOB)) : 8;
   const stage = Math.max(-cap, Math.min(cap, rot.stages[s] || 0));
   return Math.max(1, Math.floor(rot.stats[s] * getStageMulti(stage)));
 }
 
 // SCARPE DA GINNASTICA: il ROT va sempre per primo (velocità effettiva = +∞ per il sort)
 // ZOCCOLI DI LEGNO: il ROT va sempre per ultimo (velocità effettiva = -∞ per il sort)
+// FOTUZZA: chi usa FOTUZZA va sempre per primo (priorità massima, superiore alle scarpe)
 function spdForSort(rot) {
+  if (rot.action?.move?.effect === 'always_first') return Infinity + 1; // FOTUZZA va prima di tutto
   if (rot.items.includes('SCARPE_DA_GINNASTICA') && !rot.scarpeActedThisBattle) return Infinity;
   if (rot.items.includes('ZOCCOLI_DI_LEGNO')) return -Infinity;
-  return effStat(rot, 'spd');
+  let spd = effStat(rot, 'spd');
+  // TRAFFICO: ogni stack riduce la velocità del 5%
+  const _trafficoSpd = rot.statuses.find(s => s.type === 'TRAFFICO');
+  if (_trafficoSpd && _trafficoSpd.stacks > 0) {
+    spd = Math.max(1, Math.floor(spd * (1 - _trafficoSpd.stacks * 0.05)));
+  }
+  return spd;
 }
 
 function calcDmg(atk, def, move) {
   const lvl = atk.level;
   const pow = move.power;
-  // CHEESECAKE — CLOUD CHASING: boost alle stat in attacco/difesa per ogni alleato con STRAFATTO
+  // CHEESECAKE — MIXOLOGIA: boost per ogni ROT NEMICO in campo con STRAFATTO
+  const _enemyTeamOfCheesecake = atk.isPlayer ? (B?.enemy || []) : (B?.player || []);
+  const _strafattoCount = _enemyTeamOfCheesecake.filter(r => r.isAlive && r.statuses.some(s => s.type === 'STRAFATTO')).length;
   const cheesecakeAtkBoost = (() => {
     if (atk.def !== ROT_DEFS.CHEESECAKE) return 1;
     const t = talentTier(atk); if (!t) return 1;
-    const team = atk.isPlayer ? (B?.player || []) : (B?.enemy || []);
-    return 1 + 0.5 * t * team.filter(r => r.isAlive && r.statuses.some(s => s.type === 'STRAFATTO')).length;
+    return 1 + 0.5 * t * _strafattoCount;
   })();
   const cheesecakeDefBoost = (() => {
     if (def.def !== ROT_DEFS.CHEESECAKE) return 1;
     const t = talentTier(def); if (!t) return 1;
-    const team = def.isPlayer ? (B?.player || []) : (B?.enemy || []);
-    return 1 + 0.5 * t * team.filter(r => r.isAlive && r.statuses.some(s => s.type === 'STRAFATTO')).length;
+    return 1 + 0.5 * t * _strafattoCount;
   })();
   let a = move.cat === 'PHYSICAL' ? effStat(atk,'atk') : effStat(atk,'spAtk');
   let d = move.cat === 'PHYSICAL' ? effStat(def,'def') : effStat(def,'spDef');
@@ -4408,6 +4639,19 @@ function calcDmg(atk, def, move) {
   if (def.def === ROT_DEFS.GIANNI) {
     const gianniTier = talentTier(def);
     if (gianniTier > 0) dmg *= (1 - 0.05 * gianniTier);
+  }
+  // TRAFFICO: ogni stack riduce del 5% il danno inflitto dall'attaccante
+  // DIO PORSCHE — INGOMBRANTE: riduzione per stack aumentata del 5% per tier
+  const _trafficoAtk = atk.statuses.find(s => s.type === 'TRAFFICO');
+  if (_trafficoAtk && _trafficoAtk.stacks > 0) {
+    const _dpTier = atk.isPlayer ? 0 : playerTalentTier(ROT_DEFS.DIO_PORSCHE);
+    const _reductionPerStack = 0.05 + _dpTier * 0.05;
+    dmg *= Math.max(0.01, 1 - _trafficoAtk.stacks * _reductionPerStack);
+  }
+  // KAMOOM — PROLE: +5%×tier a tutti gli attacchi di KAMOOM
+  if (atk.def === ROT_DEFS.KAMOOM) {
+    const kamoomTier = talentTier(atk);
+    if (kamoomTier > 0) dmg *= (1 + kamoomTier * 0.05);
   }
   // Buff iniziale: +50% al turno 1, -1% per turno, 0% dal turno 50 in poi (solo giocatore)
   if (atk.isPlayer) dmg *= earlyTurnDamageBuff();
@@ -4475,6 +4719,19 @@ function takeDmg(rot, amount) {
       rot.isAlive = false;
     } else {
       rot.isAlive = false;
+      // ── TROLLO — PUMP IT: ogni nemico morto dà +0.5%×tier a TROLLO (incrementale in-battle) ──
+      if (!rot.isPlayer && B?.player) {
+        const trollo = B.player.find(r => r.def === ROT_DEFS.TROLLO && r.isAlive);
+        if (trollo && talentTier(trollo) > 0) {
+          trollo.trolloKills = (trollo.trolloKills || 0) + 1;
+          const incBonus = talentTier(trollo) * 0.005;
+          trollo.stats.atk   = Math.floor(trollo.stats.atk   * (1 + incBonus));
+          trollo.stats.spAtk = Math.floor(trollo.stats.spAtk * (1 + incBonus));
+          trollo.stats.def   = Math.floor(trollo.stats.def   * (1 + incBonus));
+          trollo.stats.spDef = Math.floor(trollo.stats.spDef * (1 + incBonus));
+          trollo.stats.spd   = Math.floor(trollo.stats.spd   * (1 + incBonus));
+        }
+      }
       // ── morte definitiva: gli oggetti passano nel primo slot libero del marsupio ──
       if (rot.isPlayer) {
         for (let i = 0; i < rot.items.length; i++) {
@@ -4550,24 +4807,36 @@ function applyShieldPct(rot, pct, source, skipReplicate) {
 function addStatus(rot, type) {
   if (rot.items.includes('PELLE_DI_ROSPO')) return false;
   const ex = rot.statuses.find(s => s.type === type);
+  // EURO 0 — PERMESSO AREA C: aumenta i cap di AVVELENATO, BRUCIATO, TRAFFICO
+  const _euroAreaC = B?.player?.find(r => r.def === ROT_DEFS.EURO_0 && r.isAlive);
+  const _areaCBonus = _euroAreaC ? talentTier(_euroAreaC) : 0;
+
   if (type === 'BRUCIATO') {
     // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici
     const bruCap = (!rot.isPlayer && B?.player)
-      ? (() => { const e = B.player.find(r => r.def === ROT_DEFS.ELONIO && r.isAlive); return e ? 3 + talentTier(e) * 2 : 3; })()
-      : 3;
+      ? (() => { const e = B.player.find(r => r.def === ROT_DEFS.ELONIO && r.isAlive); return e ? 3 + talentTier(e) * 2 + _areaCBonus : 3 + _areaCBonus; })()
+      : 3 + _areaCBonus;
     if (ex) { if (ex.stacks < bruCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'AVVELENATO') {
     // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (cap = tier * 2)
     const avvCap = (!rot.isPlayer && B?.player)
-      ? (() => { const m = B.player.find(r => r.def === ROT_DEFS.MIKEY && r.isAlive); return m ? Math.max(1, talentTier(m) * 2) : 1; })()
-      : 1;
+      ? (() => { const m = B.player.find(r => r.def === ROT_DEFS.MIKEY && r.isAlive); return m ? Math.max(1, talentTier(m) * 2) + _areaCBonus : 1 + _areaCBonus; })()
+      : 1 + _areaCBonus;
     if (ex) { if (ex.stacks < avvCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'FERITE') {
     if (ex) { if (ex.stacks < 5) { ex.stacks++; return true; } return false; }
+    rot.statuses.push({ type, stacks: 1 }); return true;
+  }
+  if (type === 'TRAFFICO') {
+    // DIO PORSCHE — INGOMBRANTE: aumenta il cap di TRAFFICO
+    const _dioPorsche = B?.player?.find(r => r.def === ROT_DEFS.DIO_PORSCHE && r.isAlive);
+    const _ingombranteCap = _dioPorsche ? talentTier(_dioPorsche) : 0;
+    const trafficoCap = 4 + _ingombranteCap + _areaCBonus;
+    if (ex) { if (ex.stacks < trafficoCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'STRAFATTO') {
@@ -4595,7 +4864,9 @@ function endTurnStatuses(rot) {
   const toRemove = [];
   for (const st of rot.statuses) {
     if (st.type === 'AVVELENATO') {
-      const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1)));
+      const _francoVP = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
+      const _vitaPazzaMult = _francoVP ? (1 + talentTier(_francoVP) * 0.10) : 1;
+      const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1) * _vitaPazzaMult));
       takeDmg(rot, d);
       if (st.stacks > 1) {
         logs.push({ parts:[
@@ -4612,7 +4883,9 @@ function endTurnStatuses(rot) {
       }
     }
     if (st.type === 'BRUCIATO') {
-      const d = 5 * st.stacks;
+      const _francoVP2 = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
+      const _vitaPazzaMult2 = _francoVP2 ? (1 + talentTier(_francoVP2) * 0.10) : 1;
+      const d = Math.max(1, Math.floor(5 * (st.stacks || 1) * _vitaPazzaMult2));
       takeDmg(rot, d);
       logs.push({ parts:[
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -4687,11 +4960,20 @@ function endTurnStatuses(rot) {
     }
     rot.landlordareTurns--;
   }
-  // ── LAMPIONE / CENTRO SOCIALE / CORONAVIRUS / SALSA BASE: decremento contatori a turni ──
+  // ── LAMPIONE / CENTRO SOCIALE / CORONAVIRUS / SALSA BASE / ARTMIR: decremento contatori a turni ──
   if (rot.lampioneTurns > 0) rot.lampioneTurns--;
   if (rot.centroSocialeTurns > 0) rot.centroSocialeTurns--;
   // coronavirusActive is permanent (no decrement)
   if (rot.salsaBaseTurns > 0) rot.salsaBaseTurns--;
+  if (rot.artmirRedirectTurns > 0) {
+    rot.artmirRedirectTurns--;
+    if (rot.artmirRedirectTurns === 0) {
+      logs.push({ parts:[
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' non assorbe più gli attacchi sui compagni.' }
+      ], cls:'info' });
+    }
+  }
   // ── AVANZI: il ROT (lv1) o tutta la squadra alleata (lv2+) recupera HP a fine turno ──
   if (rot.items.includes('AVANZI')) {
     const avanziLv = rotItemLvl(rot, 'AVANZI') ?? 1;
@@ -4743,6 +5025,7 @@ const STATUS_COLORS = {
   BURNOUT:       '#bfdbfe',
   COLLASSO:      '#e5e7eb',
   'TASCHE BUCATE': '#fef3c7',
+  TRAFFICO:      '#fed7aa',
 };
 
 const STATUS_INFO = {
@@ -4780,6 +5063,11 @@ const STATUS_INFO = {
     effect:    'A fine turno: se è un alleato il giocatore perde 5 gold (minimo 0), se è un nemico il giocatore guadagna 5 gold.',
     duration:  'Permanente',
     stackable: 'No',
+  },
+  TRAFFICO: {
+    effect:    'Ogni stack riduce del 5% il danno inflitto e la velocità del ROT. Effetto: −5%×stack a danno e SPD.',
+    duration:  'Permanente',
+    stackable: 'Sì — fino a 4 stack (base), aumentabile da INGOMBRANTE e PERMESSO AREA C',
   },
 };
 
@@ -4910,13 +5198,14 @@ function showRotBattleInfo(rot) {
     if (!key || !ITEM_DEFS[key]) return '';
     const lv = itemLvAt(rot.items, rot.itemLevels, i);
     const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
-    return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+    return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)};background:${fusionTokenBg(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
   }).filter(Boolean);
   const itemsHtml = itemsHtmlParts.length ? itemsHtmlParts.join('') : '<span class="loadout-empty">NESSUNO</span>';
 
   // ── DRUGS equipaggiate su questo ROT, con moltiplicatore per copie ──
   const drugCounts = {};
   (rot.drugs || []).forEach(d => { drugCounts[d] = (drugCounts[d] || 0) + 1; });
+  if ((rot.overdoseStacks || 0) > 0) drugCounts['OVERDOSE'] = rot.overdoseStacks;
   const drugsHtml = Object.keys(drugCounts).length
     ? Object.entries(drugCounts).map(([drugKey, count]) => {
         const drug = DRUG_DEFS[drugKey];
@@ -5741,6 +6030,23 @@ async function executePhase() {
     const { move } = rot.action;
     let targets = rot.action.targets;
 
+    // ── ARTMIR — ALCOLISMO: reindirizza attacchi nemici singoli su ARTMIR ──
+    if (!rot.isPlayer && move.target === 'ENEMY' && targets.length === 1 && targets[0]?.isAlive) {
+      const artmir = B.player.find(r => r.def === ROT_DEFS.ARTMIR && r.isAlive && (r.artmirRedirectTurns || 0) > 0);
+      if (artmir && targets[0] !== artmir) {
+        const origName = targets[0].def.name;
+        targets = [artmir];
+        rot.action.targets = targets;
+        logRich([
+          { text: move.name, onclick: () => showMoveInfo(move) },
+          { text: ` viene reindirizzato da ${origName} ad ` },
+          { text: 'ARTMIR', onclick: () => showRotInfo(ROT_DEFS.ARTMIR) },
+          { text: '!' }
+        ], 'status');
+        render(); await wait(400);
+      }
+    }
+
     // ── COLLASSO: 50% di probabilità di saltare il turno ──
     const collasso = rot.statuses.find(s => s.type === 'COLLASSO');
     if (collasso) {
@@ -5998,7 +6304,7 @@ async function executePhase() {
       const buffedRots = new Set();
       const applyStage = (r, stat, delta) => {
         const old = r.stages[stat] || 0;
-        const cap = r.isPlayer ? (8 + playerTalentTier(ROT_DEFS.TROLLO)) : 8;
+        const cap = r.isPlayer ? (8 + playerTalentTier(ROT_DEFS.MOG_MOB)) : 8;
         const next = Math.max(-cap, Math.min(cap, old + delta));
         if (next === old) return false;
         r.stages[stat] = next;
@@ -6027,17 +6333,7 @@ async function executePhase() {
           }
         }
       }
-      // ── MOG MOB — ALFA ASSOLUTO: CRIMSON MENTONE dà stadi ATK/SP.ATK extra a tutta la squadra ──
-      if (rot.def === ROT_DEFS.MOG_MOB && move.name === 'CRIMSON MENTONE') {
-        const mogTier = talentTier(rot);
-        if (mogTier > 0) {
-          for (const r of allyTeam.filter(r => r.isAlive)) {
-            applyStage(r, 'atk', mogTier);
-            applyStage(r, 'spAtk', mogTier);
-          }
-          logRich([{ text: `ALFA ASSOLUTO: +${mogTier} ATK/SP.ATK a tutta la squadra!` }], 'info');
-        }
-      }
+      // ── MOG MOB — CHIN CHECK: stage cap elevato, nessun effetto extra su CRIMSON MENTONE ──
       if (buffedRots.size) {
         playSfx('buff');
         buffHopAnim([...buffedRots]);
@@ -6297,6 +6593,83 @@ async function executePhase() {
       ], 'status');
       render(); await wait(600);
 
+    // ── ALCOLISMO (ARTMIR): scudo + redirect alleati ──
+    } else if (move.effect === 'alcolismo') {
+      const artmirTier = rot.isPlayer ? talentTier(rot) : 0;
+      const shieldPct = 0.15 + artmirTier * 0.10;
+      const redirectTurns = 3 + artmirTier;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      const artmirShieldAmt = applyShieldPct(rot, shieldPct, rot);
+      rot.artmirRedirectTurns = redirectTurns;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ` ottiene uno scudo da ${artmirShieldAmt} e assorbirà gli attacchi per ${redirectTurns} turni!` }
+      ], 'info');
+      buffHopAnim([rot]);
+      await wait(250);
+      render(); await wait(350);
+
+    // ── BUNGA BUNGA (SILVIO B.): +1 stadio a tutte le stat (MEDIASET: possibile ×2) ──
+    } else if (move.effect === 'bunga_bunga') {
+      const bungaTier = rot.isPlayer ? talentTier(rot) : 0;
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      const mediasetDouble = bungaTier > 0 && Math.random() < bungaTier * 0.10;
+      const bungaDelta = mediasetDouble ? 2 : 1;
+      const bungaCap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.MOG_MOB)) : 8;
+      let bungaBuffed = false;
+      for (const stat of ['atk', 'spAtk', 'def', 'spDef', 'spd']) {
+        const old = rot.stages[stat] || 0;
+        const next = Math.min(bungaCap, old + bungaDelta);
+        if (next !== old) {
+          rot.stages[stat] = next;
+          logRich([
+            { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+            { text: `: ${STAGE_STAT_LABELS[stat]} ▲${mediasetDouble ? '▲' : ''} (stadio +${next})` }
+          ], 'status');
+          bungaBuffed = true;
+        }
+      }
+      if (mediasetDouble) {
+        logRich([{ text: 'MEDIASET raddoppia i buff!' }], 'status');
+      }
+      if (bungaBuffed) { playSfx('buff'); buffHopAnim([rot]); await wait(250); }
+      render(); await wait(350);
+
+    // ── MICRO PARTICELLE (EURO 0): AVVELENATO + BRUCIATO + TRAFFICO a tutti i nemici ──
+    } else if (move.effect === 'micro_particelle') {
+      const mpEnemies = (rot.isPlayer ? B.enemy : B.player).filter(r => r.isAlive);
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' usa ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: '!' }
+      ], 'info');
+      for (const tgt of mpEnemies) {
+        for (const stType of ['AVVELENATO', 'BRUCIATO', 'TRAFFICO']) {
+          const ok = addStatus(tgt, stType);
+          if (ok) {
+            const st = tgt.statuses.find(s => s.type === stType);
+            logRich([
+              { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+              { text: stType === 'AVVELENATO' || stType === 'TRAFFICO' ? ' è ' : ' brucia per ' },
+              { text: stType, onclick: () => showStatusInfo(stType) },
+              { text: `${st&&st.stacks>1?' (x'+st.stacks+')':''}!` }
+            ], 'status');
+          }
+        }
+      }
+      render(); await wait(600);
+
     // ── DANNO ──
     } else if (move.power > 0) {
       let totalDmgDealt = 0;
@@ -6335,11 +6708,11 @@ async function executePhase() {
         for (let hitIdx = 0; hitIdx < hitCount; hitIdx++) {
         if (!tgt.isAlive) break;
 
-        // ── USBATTI — OVERDRIVE: elusività, il bersaglio schiva gli attacchi ──
+        // ── USBATTI — CARICA VELOCE: elusività, il bersaglio schiva gli attacchi ──
         if ((tgt.evasion || 0) > 0 && Math.random() * 100 < (tgt.evasion || 0)) {
           logRich([
             { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
-            { text: ' schiva l\'attacco! (OVERDRIVE)' }
+            { text: ' schiva l\'attacco! (CARICA VELOCE)' }
           ], 'info');
           render(); await wait(350);
           continue;
@@ -6352,9 +6725,10 @@ async function executePhase() {
 
         let dmg = res.dmg;
 
-        // ── LOGAN FRAUD — INSIDER: +20% del gold attuale come danno bonus ──
+        // ── LOGAN FRAUD — EXIT SCAM: +(t+1)*10% del gold attuale come danno bonus ──
         if (rot.def === ROT_DEFS.LOGAN_FRAUD && rot.isPlayer && talentTier(rot) > 0 && runState) {
-          dmg += Math.floor(runState.gold * 0.20);
+          const lft = talentTier(rot);
+          dmg += Math.floor(runState.gold * (lft + 1) * 0.10);
         }
 
         // ── BESTEMMIA: protezione completa, nessun danno ──
@@ -6488,7 +6862,7 @@ async function executePhase() {
         }
         tgt.counterNext = null;
 
-        // ── BIG MAC — SUPERSIZED: restituisce X% del danno subito all'attaccante ──
+        // ── BIG MAC — EXTRA LARGE: restituisce X% danno + X% chance COLLASSO ──
         if (dmg > 0 && tgt.def === ROT_DEFS.BIG_MAC && tgt.isPlayer && tgt.isAlive && rot.isAlive) {
           const bigmacTier = talentTier(tgt);
           if (bigmacTier > 0) {
@@ -6498,29 +6872,27 @@ async function executePhase() {
               { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
               { text: ' subisce ' },
               { text: `${supersizedDmg} danni` },
-              { text: ' per SUPERSIZED!' }
+              { text: ' per EXTRA LARGE!' }
             ], 'dmg');
             render(); await wait(400);
             if (!rot.isAlive) { if (checkEnd()) return; }
-          }
-        }
-
-        // ── FRANCO — DOPPIO GIOCO: X% di probabilità di applicare COLLASSO all'attaccante ──
-        if (dmg > 0 && tgt.def === ROT_DEFS.FRANCO && tgt.isPlayer && tgt.isAlive && rot.isAlive) {
-          const francoTier = talentTier(tgt);
-          if (francoTier > 0 && Math.random() < francoTier * 0.05) {
-            const ok = addStatus(rot, 'COLLASSO');
-            if (ok) {
-              logRich([
-                { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
-                { text: ' è in ' },
-                { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
-                { text: ' (DOPPIO GIOCO)!' }
-              ], 'status');
-              render(); await wait(400);
+            if (rot.isAlive && Math.random() < bigmacTier * 0.05) {
+              const ok = addStatus(rot, 'COLLASSO');
+              if (ok) {
+                logRich([
+                  { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+                  { text: ' è in ' },
+                  { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+                  { text: ' (EXTRA LARGE)!' }
+                ], 'status');
+                render(); await wait(400);
+              }
             }
           }
         }
+
+        // ── FRANCO — VITA PAZZA: amplifica AVVELENATO/BRUCIATO via endTurnStatuses ──
+        // (nessun trigger immediato al momento del colpo — effetto passivo in endTurnStatuses)
 
         const statusChance = move.status ? move.status.chance + (rot.items.includes('PORTAFORTUNA') ? (itemPow(rot, 'PORTAFORTUNA') ?? 0.25) : 0) : 0;
         if (move.status && Math.random() < statusChance) {
@@ -6625,9 +6997,40 @@ async function executePhase() {
           }
         }
 
+        // ── DIO PORSCHE — TRAFFICO MATTUTINO: ogni colpo applica TRAFFICO ──
+        if (move.effect === 'apply_traffico' && dmg > 0 && tgt.isAlive) {
+          const ok = addStatus(tgt, 'TRAFFICO');
+          if (ok) {
+            const tst = tgt.statuses.find(s => s.type === 'TRAFFICO');
+            logRich([
+              { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+              { text: ' è in ' },
+              { text: 'TRAFFICO', onclick: () => showStatusInfo('TRAFFICO') },
+              { text: `${tst&&tst.stacks>1?' (x'+tst.stacks+')':''}!` }
+            ], 'status');
+            render(); await wait(350);
+          }
+        }
+
+        // ── FUMACAZZI — PAPARAZZA: probabilità passiva di stunnare il bersaglio ──
+        if (rot.def === ROT_DEFS.FUMACAZZI && rot.isPlayer && talentTier(rot) > 0 && dmg > 0 && tgt.isAlive) {
+          if (Math.random() < talentTier(rot) * 0.10) {
+            const ok = addStatus(tgt, 'COLLASSO');
+            if (ok) {
+              logRich([
+                { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
+                { text: ' è in ' },
+                { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
+                { text: ' (PAPARAZZA)!' }
+              ], 'status');
+              render(); await wait(350);
+            }
+          }
+        }
+
         // ── EVASIONE FISCALE: gold per ogni bersaglio colpito — prima del controllo KO ──
         if (move.goldPerHit && runState) {
-          // SEAO — PARADISO FISCALE: gold guadagnato per colpo aumenta con il tier
+          // SEAO — HOLDING: gold guadagnato per colpo aumenta con il tier
           const goldAmt = (rot.def === ROT_DEFS.SEAO && rot.isPlayer)
             ? 1 + talentTier(rot) * 2
             : move.goldPerHit;
@@ -6667,6 +7070,36 @@ async function executePhase() {
           await wait(500);
           if (checkEnd()) return;
         }
+        }
+      }
+
+      // ── KAMOOM — BOMBOCLAT: 20% danno splash ai ROT nemici adiacenti al bersaglio principale ──
+      if (move.effect === 'splash' && totalDmgDealt > 0 && rot.isAlive) {
+        const splashDmg = Math.max(1, Math.floor(totalDmgDealt * move.splashPct));
+        const mainTgt = hitTargets[0];
+        if (mainTgt) {
+          const splashTeam = mainTgt.isPlayer ? B.player : B.enemy;
+          const mainIdx = splashTeam.indexOf(mainTgt);
+          for (const adjIdx of [mainIdx - 1, mainIdx + 1]) {
+            const adjTgt = splashTeam[adjIdx];
+            if (!adjTgt || !adjTgt.isAlive) continue;
+            takeDmg(adjTgt, splashDmg);
+            logRich([
+              { text: adjTgt.def.name, onclick: () => showRotInfo(adjTgt.def) },
+              { text: ` subisce ${splashDmg} danni (area BOMBOCLAT)!` }
+            ], 'dmg');
+            flashHit(adjTgt.uid);
+            hitRecoilAnim(adjTgt);
+            render(); await wait(300);
+            if (!adjTgt.isAlive) {
+              logRich([
+                { text: adjTgt.def.name, onclick: () => showRotInfo(adjTgt.def) },
+                { text: ' è KO!' }
+              ], 'dmg');
+              render(); await wait(500);
+              if (checkEnd()) return;
+            }
+          }
         }
       }
 
@@ -6829,22 +7262,13 @@ function applyVictoryProgression() {
   const levelUps = [];
   for (const rot of survivors) {
     const oldStats = { ...rot.stats };
+    rot.stages = { atk:0, spAtk:0, def:0, spDef:0, spd:0 }; // azzera stadi battaglia
     rot.level += 1;
     const newSlotCount = rotItemSlotCount(rot.level);
     while (rot.items.length < newSlotCount) { rot.items.push(null); rot.itemLevels.push(null); }
-    const newStats = {
-      hp:    rot.def.base.hp    + rot.level,
-      atk:   rot.def.base.atk   + rot.level,
-      spAtk: rot.def.base.spAtk + rot.level,
-      def:   rot.def.base.def   + rot.level,
-      spDef: rot.def.base.spDef + rot.level,
-      spd:   rot.def.base.spd   + rot.level,
-    };
-    const hpGain = newStats.hp - oldStats.hp;
-    rot.stats = newStats;
-    rot.maxHp = newStats.hp;
-    rot.curHp = Math.min(rot.maxHp, rot.curHp + hpGain);
-    levelUps.push({ rot, oldStats, newStats });
+    // Ricalcola stats da zero (base+livello+drug) per preservare tutti i bonus permanenti
+    recomputeRotStats(rot);
+    levelUps.push({ rot, oldStats, newStats: { ...rot.stats } });
   }
 
   runState.level += 1;
@@ -7402,6 +7826,7 @@ const RM_DRUG_STAT_MAP = {
 function rotDrugStatTokensHtml(r) {
   const drugCounts = {};
   (r.drugs || []).forEach(d => { drugCounts[d] = (drugCounts[d] || 0) + 1; });
+  if ((r.overdoseStacks || 0) > 0) drugCounts['OVERDOSE'] = r.overdoseStacks;
   // per ogni stat: count applicazioni + total numerico + drug sorgenti
   const statInfo = {};
   for (const [dk, cnt] of Object.entries(drugCounts)) {
@@ -7497,7 +7922,7 @@ function rotCardLoadoutHtml(r, draggable) {
       const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
       const slotEvents = `ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${r.uid}',${i})"`;
       if (key && ITEM_DEFS[key]) {
-        return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} ${slotEvents} title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+        return `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" ${draggable ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"` : ''} ${slotEvents} title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)};background:${fusionTokenBg(key, lv)}" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
       }
       return `<span class="loadout-token loadout-token-item loadout-token-empty" ${slotEvents}>—</span>`;
     }).join('');
@@ -7541,7 +7966,7 @@ function rotCardItemSlotsHtml(r) {
       const dragAttrs = assignMode
         ? `draggable="true" ondragstart="onItemDragStart(event,'rot','${r.uid}',${i},'${key}')" ondragend="onDragEnd(event)"`
         : '';
-      return `<span class="loadout-token loadout-token-item ${swapable}" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" ${dragAttrs} ${onclick}>${ITEM_DEFS[key].icon ?? '?'}<span class="item-slot-label">${ITEM_DEFS[key].name}${lvBadge}</span></span>`;
+      return `<span class="loadout-token loadout-token-item ${swapable}" data-item-key="${key}" data-item-level="${lv}" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)};background:${fusionTokenBg(key, lv)}" ${dragAttrs} ${onclick}>${ITEM_DEFS[key].icon ?? '?'}<span class="item-slot-label">${ITEM_DEFS[key].name}${lvBadge}</span></span>`;
     }
     return '<span class="loadout-token loadout-token-item loadout-token-empty">—</span>';
   }).join('');
@@ -7620,7 +8045,7 @@ function renderRmItemsPopup(uid) {
         draggable="true"
         ondragstart="onItemDragStart(event,'rot','${uid}',${i},'${key}')" ondragend="onDragEnd(event)"
         ondragover="onItemSlotDragOver(event)" ondragleave="onItemSlotDragLeave(event)" ondrop="onItemSlotDrop(event,'${uid}',${i})"
-        title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key,lv)}"
+        title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key,lv)};background:${fusionTokenBg(key,lv)}"
         onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span><span class="rm-popup-slot-name">${ITEM_DEFS[key].name}</span></div>`;
     }
     return `<div class="rm-popup-slot-row"><span class="loadout-token loadout-token-item loadout-token-empty"
@@ -7746,7 +8171,7 @@ function renderRotManagerItems(p) {
     if (key && ITEM_DEFS[key]) {
       const lv = runState.marsupioLevels?.[i] || 1;
       const lvBadge = lv > 1 ? `<sup class="item-lv-badge">Lv${lv}</sup>` : '';
-      const token = `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" draggable="true" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)}" ondragstart="onItemDragStart(event,'marsupio',null,${i},'${key}')" ondragend="onDragEnd(event)" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
+      const token = `<span class="loadout-token loadout-token-item" data-item-key="${key}" data-item-level="${lv}" draggable="true" title="${ITEM_DEFS[key].name}" style="color:${fusionTokenColor(key, lv)};background:${fusionTokenBg(key, lv)}" ondragstart="onItemDragStart(event,'marsupio',null,${i},'${key}')" ondragend="onDragEnd(event)" onclick="showItemInfoCentered(event,'${key}')">${ITEM_DEFS[key].icon ?? '?'}${lvBadge}</span>`;
       return `<div class="marsupio-slot">${token}</div>`;
     }
     // slot vuoto: in assign mode diventa cliccabile
@@ -7847,10 +8272,39 @@ function assignDrugToRot(uid) {
   giveDrug(rot, offer.key);
   shopState.bought.drugs[0] = true;
   shopState.pendingPurchase = null;
+  // OVERDOSE: se il ROT è morto, trasferisci oggetti al marsupio e rimuovilo dal roster
+  if (!rot.isAlive) {
+    const rotName = rot.def.name;
+    for (let i = 0; i < (rot.items || []).length; i++) {
+      const key = rot.items[i];
+      if (!key) continue;
+      const lv = rot.itemLevels?.[i] ?? 1;
+      const slot = runState.marsupio.findIndex(s => s === null);
+      if (slot === -1) break; // marsupio pieno, oggetto perso
+      runState.marsupio[slot] = key;
+      if (!runState.marsupioLevels) runState.marsupioLevels = new Array(9).fill(null);
+      runState.marsupioLevels[slot] = lv;
+    }
+    runState.roster = runState.roster.filter(r => r.uid !== uid);
+    updateHud();
+    closeRotManager();
+    renderShop();
+    saveRun();
+    showOverdoseDeathOverlay(rotName);
+    return;
+  }
   updateHud();
   closeRotManager();
   renderShop();
   saveRun();
+}
+
+function showOverdoseDeathOverlay(rotName) {
+  document.getElementById('overdose-death-msg').textContent = rotName + ' è morto di OVERDOSE!';
+  document.getElementById('overdose-death-overlay').classList.add('on');
+}
+function closeOverdoseDeathOverlay() {
+  document.getElementById('overdose-death-overlay').classList.remove('on');
 }
 
 // ── clic su slot oggetto esistente del ROT in assign mode → swap mirato ──
@@ -8051,6 +8505,7 @@ function onRotConfirmOutsideClick() {
 }
 document.addEventListener('mousedown', e => {
   if (e.button !== 0) return; // solo click sinistro
+  if (document.getElementById('talent-overlay').classList.contains('on')) return;
   const moveInfo = document.getElementById('shop-move-info-overlay');
   if (moveInfo.classList.contains('on')) {
     const secondary = document.getElementById('shop-move-info-secondary');
@@ -8301,7 +8756,7 @@ function renderShop() {
       return `
         <div class="shop-card shop-item-card" style="${rarityCardStyle(item.rarity)}">
           <div class="shop-card-top">
-            <span class="shop-card-name" style="color:${item.color};font-size:${shopNameFontSize(item.name)}px">${item.name}</span>
+            <span class="shop-card-name" style="color:${item.color};${item.name.includes(' ') ? 'font-size:13px' : `font-size:${shopNameFontSize(item.name)}px;white-space:nowrap`}">${item.name}</span>
             ${rarityBadge(item.rarity)}
           </div>
           <div class="shop-card-desc">${item.desc}</div>
@@ -8427,32 +8882,33 @@ function startNextBattle() {
     r.lampioneTurns = 0;
     r.centroSocialeTurns = 0;
     r.salsaBaseTurns = 0;
+    r.artmirRedirectTurns = 0;
     r.comboCount = 0;
     r.lastMove = null;
-    r.evasion = 0;
+    // Ripristina evasione da drug permanenti (SAMBUCHINO), poi applica talent USBATTI dopo
+    r.evasion = (r.drugs || []).filter(d => d === 'SAMBUCHINO').length * 1.5;
     r.feniceUsedThisBattle = false;
     r.scarpeActedThisBattle = false;
     r.cer8UsedThisBattle = false;
     r.savedByAssicurazione = false;
     r.moves.forEach(m => { if (m.curPp !== Infinity) m.curPp = m.pp; });
-    // CRYPTOBISMOL — MANI DI DIAMANTE: buff casuali agli stadi all'inizio della battaglia
+    // CRYPTOBISMOL — AIRDROP: buff casuali agli stadi all'inizio della battaglia
     if (r.def === ROT_DEFS.CRYPTOBISMOL) {
       const t = talentTier(r);
       if (t > 0) {
         const stats = ['atk', 'spAtk', 'def', 'spDef', 'spd'];
-        // Usa TROLLO dalla roster (B non ancora inizializzato)
-        const trolloRot = runState.roster.find(rr => rr.def === ROT_DEFS.TROLLO);
-        const trolloCap = trolloRot ? talentTier(trolloRot) : 0;
-        const cap = 8 + trolloCap;
+        const mogRot = runState.roster.find(rr => rr.def === ROT_DEFS.MOG_MOB);
+        const mogCap = mogRot ? talentTier(mogRot) : 0;
+        const cap = 8 + mogCap;
         for (let i = 0; i < t * 2; i++) {
           const stat = stats[Math.floor(Math.random() * stats.length)];
           r.stages[stat] = Math.min(cap, (r.stages[stat] || 0) + 1);
         }
       }
     }
-    // USBATTI — OVERDRIVE: elusività per tier
+    // USBATTI — CARICA VELOCE: elusività per tier (si somma a quella permanente delle drug)
     if (r.def === ROT_DEFS.USBATTI) {
-      r.evasion = talentTier(r) * 5;
+      r.evasion += talentTier(r) * 5;
     }
   });
 
@@ -8588,21 +9044,70 @@ function loadRotSprite(spriteCfg) {
 }
 
 // avvia il loop di animazione del canvas: pesca il frame corrente dalla
-// spritesheet (con chroma key applicato) e lo disegna finché il canvas è nel DOM
+// spritesheet (con chroma key applicato) e lo disegna finché il canvas è nel DOM.
+// Il buffer del canvas viene sincronizzato con la dimensione CSS effettiva (DPR-aware)
+// e il frame viene disegnato con letterboxing per preservare le proporzioni originali.
 function initRotSpriteCanvas(canvas, spriteCfg) {
+  // Placeholder per ROT senza sprite definitivo: rettangolo colorato con sigla
+  if (spriteCfg?.placeholder) {
+    const ctx = canvas.getContext('2d');
+    function drawPlaceholder() {
+      if (!canvas.isConnected) return;
+      const lw = canvas.offsetWidth, lh = canvas.offsetHeight;
+      if (lw > 0 && lh > 0) {
+        const dpr = window.devicePixelRatio || 1;
+        const bw = Math.round(lw * dpr), bh = Math.round(lh * dpr);
+        if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
+        ctx.clearRect(0, 0, bw, bh);
+        ctx.fillStyle = spriteCfg.placeholder;
+        const pad = Math.round(bw * 0.06);
+        ctx.fillRect(pad, pad, bw - pad * 2, bh - pad * 2);
+        ctx.fillStyle = 'rgba(0,0,0,0.35)';
+        ctx.fillRect(pad, bh * 0.55, bw - pad * 2, bh * 0.42 - pad);
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
+        const fs = Math.round(bw * 0.22);
+        ctx.font = `bold ${fs}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(spriteCfg.initials || '?', bw / 2, bh * 0.34);
+        ctx.font = `${Math.round(fs * 0.55)}px monospace`;
+        ctx.fillStyle = 'rgba(255,255,255,0.6)';
+        ctx.fillText('SPRITE WIP', bw / 2, bh * 0.72);
+      }
+      requestAnimationFrame(drawPlaceholder);
+    }
+    requestAnimationFrame(drawPlaceholder);
+    return;
+  }
   const entry = loadRotSprite(spriteCfg);
   const ctx = canvas.getContext('2d');
   function draw() {
     if (!canvas.isConnected) return;
+    // Usa offsetWidth/offsetHeight (dimensioni CSS pre-transform) per evitare il feedback loop
+    // che si crea se si usa getBoundingClientRect() su un canvas con transform: scale()
+    const lw = canvas.offsetWidth;
+    const lh = canvas.offsetHeight;
+    if (lw > 0 && lh > 0) {
+      const dpr = window.devicePixelRatio || 1;
+      const bw = Math.round(lw * dpr);
+      const bh = Math.round(lh * dpr);
+      if (canvas.width !== bw || canvas.height !== bh) { canvas.width = bw; canvas.height = bh; }
+    }
     if (entry.ready) {
       const frameIdx = Math.floor(Date.now() / (1000 / spriteCfg.fps)) % spriteCfg.frames;
       const col = frameIdx % spriteCfg.cols;
       const row = Math.floor(frameIdx / spriteCfg.cols);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Letterbox: mantieni proporzioni frame sorgente, senza mai deformare
+      const srcR = spriteCfg.frameW / spriteCfg.frameH;
+      const dstR = canvas.width / canvas.height;
+      let dx = 0, dy = 0, dw = canvas.width, dh = canvas.height;
+      if (srcR > dstR + 0.01) { dh = canvas.width / srcR; dy = (canvas.height - dh) / 2; }
+      else if (dstR > srcR + 0.01) { dw = canvas.height * srcR; dx = (canvas.width - dw) / 2; }
       ctx.drawImage(
         entry.canvas,
         col * spriteCfg.frameW, row * spriteCfg.frameH, spriteCfg.frameW, spriteCfg.frameH,
-        0, 0, canvas.width, canvas.height
+        dx, dy, dw, dh
       );
     }
     requestAnimationFrame(draw);
@@ -9559,9 +10064,9 @@ function encShowRot(key) {
   _encSetDetail(`
     ${spriteHtml}
     <div class="info-title" style="color:${tc.text}">${def.name}</div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-      <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${def.type}</span>
-      ${def.talent ? `<button class="talenti-token" style="font-size:10px;padding:4px 10px;letter-spacing:1px;" onclick="openTalentOverlayForDef(event,'${key}')">✦ TALENTO</button>` : ''}
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px;">
+      <span class="info-badge" style="background:${tc.bg};color:${tc.text};margin-bottom:0;vertical-align:middle">${def.type}</span>
+      ${def.talent ? `<button class="talenti-token" style="font-size:10px;padding:4px 10px;letter-spacing:1px;vertical-align:middle;" onclick="openTalentOverlayForDef(event,'${key}')">✦ TALENTO</button>` : ''}
     </div>
     <div class="info-section">STAT BASE</div>
     <div class="info-stat-grid">
@@ -9684,6 +10189,8 @@ function saveRun() {
           evasion: r.evasion || 0,
           critBonus: r.critBonus || 0,
           drugs: [...r.drugs],
+          overdoseStacks: r.overdoseStacks || 0,
+          trolloKills: r.trolloKills || 0,
           items: [...r.items],
           itemLevels: [...(r.itemLevels || [null, null])],
           moves: r.moves.map(m => ({ ...m })),
@@ -9716,7 +10223,7 @@ function checkSaveOnLoad() {
 function deserializeRot(data) {
   const def = ROT_DEFS[data.defKey];
   if (!def) { console.warn('[SAVE] defKey non trovato:', data.defKey); return null; }
-  return {
+  const rot = {
     uid: data.uid,
     def,
     level: data.level,
@@ -9737,10 +10244,14 @@ function deserializeRot(data) {
     centroSocialeTurns: 0,
     coronavirusActive: false,
     salsaBaseTurns: 0,
+    artmirRedirectTurns: 0,
     comboCount: 0,
     evasion: data.evasion || 0,
     critBonus: data.critBonus || 0,
-    drugs: [...(data.drugs || [])],
+    trolloKills: data.trolloKills || 0,
+    // Migrazione da vecchi salvataggi: OVERDOSE era in rot.drugs → ora in overdoseStacks
+    overdoseStacks: (data.overdoseStacks || 0) + (data.drugs || []).filter(d => d === 'OVERDOSE').length,
+    drugs: [...(data.drugs || []).filter(d => d !== 'OVERDOSE')],
     items: (() => { const a = [...(data.items || [null, null])]; const n = rotItemSlotCount(data.level); while (a.length < n) a.push(null); return a; })(),
     itemLevels: (() => { const a = [...(data.itemLevels || [null, null])]; const n = rotItemSlotCount(data.level); while (a.length < n) a.push(null); return a; })(),
     moves: (data.moves || []).map(m => ({
@@ -9752,6 +10263,9 @@ function deserializeRot(data) {
     action: null,
     lastMove: null,
   };
+  // Ricalcola stats da zero per riparare eventuali dati salvati con vecchie versioni
+  recomputeRotStats(rot);
+  return rot;
 }
 
 function resumeRun() {
