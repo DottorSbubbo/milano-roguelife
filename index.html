@@ -167,7 +167,17 @@ body {
   0%   { background-position: 250% center; }
   100% { background-position: -50% center; }
 }
-#speed-tokens { display: flex; gap: 6px; flex-wrap: wrap; }
+#speed-tokens { display: flex; gap: 6px; flex-wrap: wrap; flex: 1; }
+#enemy-diff-mult {
+  margin-left: auto; flex-shrink: 0;
+  font-family: 'Silkscreen', 'Courier New', monospace;
+  font-size: 9px; letter-spacing: 1px; text-transform: uppercase;
+  color: #f87171; white-space: nowrap;
+  padding: 4px 10px; border-radius: 999px;
+  border: 1px solid rgba(248,113,113,0.4);
+  background: rgba(120,20,20,0.35);
+  text-shadow: 0 0 6px rgba(248,113,113,0.5);
+}
 .spd-token {
   display: flex; align-items: center; justify-content: center; gap: 4px;
   padding: 4px 10px; border-radius: 999px; border: 1.5px solid;
@@ -858,6 +868,10 @@ body {
 .stage-icon {
   font-size: 20px; font-weight: bold; line-height: 1; cursor: help;
   letter-spacing: 0; user-select: none;
+}
+.alcolismo-stage-icon {
+  cursor: pointer; font-size: 18px;
+  filter: drop-shadow(0 0 4px rgba(96,165,250,0.7));
 }
 
 /* Sprite */
@@ -3337,6 +3351,7 @@ body {
 <div id="speed-bar">
   <div id="speed-bar-label">VELOCITÀ</div>
   <div id="speed-tokens"></div>
+  <div id="enemy-diff-mult" style="display:none"></div>
 </div>
 
 <div id="stage">
@@ -4485,6 +4500,10 @@ function rotItemSlotCount(level) {
   return 2;
 }
 
+function enemyDiffMult(level) {
+  return level > 50 ? 1 + (level - 50) / 100 : 1;
+}
+
 function mkRot(def, level, isPlayer) {
   const s = {
     hp:    def.base.hp    + level,
@@ -4494,6 +4513,10 @@ function mkRot(def, level, isPlayer) {
     spDef: def.base.spDef + level,
     spd:   def.base.spd   + level,
   };
+  if (!isPlayer && level > 50) {
+    const m = enemyDiffMult(level);
+    for (const k of Object.keys(s)) s[k] = Math.max(1, Math.round(s[k] * m));
+  }
   return {
     uid: Math.random().toString(36).slice(2,8),
     def, level, isPlayer,
@@ -6724,6 +6747,11 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
+      // Un solo ALCOLISMO attivo per squadra: azzera il redirect di qualsiasi altro ARTMIR nel team
+      const alcoTeam = rot.isPlayer ? B.player : B.enemy;
+      for (const ally of alcoTeam) {
+        if (ally !== rot && ally.def === ROT_DEFS.ARTMIR) ally.artmirRedirectTurns = 0;
+      }
       const artmirShieldAmt = applyShieldPct(rot, shieldPct, rot);
       rot.artmirRedirectTurns = redirectTurns;
       logRich([
@@ -9114,6 +9142,17 @@ function render() {
     renderSpeedBar(ordered);
   }
   updateFusibleUI();
+  updateDifficultyMultDisplay();
+}
+
+function updateDifficultyMultDisplay() {
+  const el = document.getElementById('enemy-diff-mult');
+  if (!el) return;
+  const lvl = runState ? runState.level : (B ? 5 : 0);
+  if (lvl <= 50) { el.style.display = 'none'; return; }
+  const mult = enemyDiffMult(lvl);
+  el.textContent = `NEMICI ×${mult.toFixed(2)}`;
+  el.style.display = '';
 }
 
 // ── Icone freccia per buff/debuff attivi (stadi statistiche + POTERI FORTI), mostrate sopra la barra HP ──
@@ -9130,6 +9169,9 @@ function stageIconsHtml(rot) {
   }
   if (rot.landlordareTurns > 0) {
     icons.push(`<span class="stage-icon" style="color:#f472b6" data-stage-special="LANDLORDARE">▲</span>`);
+  }
+  if (rot.def === ROT_DEFS.ARTMIR && (rot.artmirRedirectTurns || 0) > 0) {
+    icons.push(`<span class="stage-icon alcolismo-stage-icon" data-stage-special="ALCOLISMO">☝️${rot.artmirRedirectTurns}</span>`);
   }
   if (!icons.length) return '';
   return `<div class="stage-row">${icons.join('')}</div>`;
@@ -9154,6 +9196,20 @@ function showLandlordareInfo(rot) {
   openSecondaryInfoBattle(`
     <div class="info-title" style="color:#f472b6">LANDLORDARE</div>
     <div class="info-text">Per 5 turni il team recupera il 10% degli HP massimi a fine turno. Turni rimanenti: ${rot.landlordareTurns}.</div>
+  `);
+}
+function showAlcolismoInfo(rot) {
+  const artmirTier = rot.isPlayer ? talentTier(rot) : 0;
+  const shieldPct = Math.round((0.15 + artmirTier * 0.10) * 100);
+  const turns = rot.artmirRedirectTurns || 0;
+  openInfo(`
+    <div class="info-title" style="color:#60a5fa">☝️ ALCOLISMO</div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">ARTMIR assorbe su di sé ogni attacco singolo nemico rivolto a un alleato. Scudo attivo: ${shieldPct}% degli HP massimi.</div>
+    <div class="info-section">TURNI RIMANENTI</div>
+    <div class="info-text">${turns}</div>
+    <div class="info-section">NOTE</div>
+    <div class="info-text">Un solo ALCOLISMO può essere attivo per squadra alla volta.</div>
   `);
 }
 
@@ -9422,13 +9478,17 @@ function mkCard(rot, isPlayer) {
   });
 
   div.querySelectorAll('.stage-icon').forEach(icon => {
-    icon.addEventListener('mouseenter', e => {
-      e.stopPropagation();
-      if (icon.dataset.stageSpecial === 'LANDLORDARE') showLandlordareInfo(rot);
-      else if (icon.dataset.stageSpecial) showCritBoostInfo(rot);
-      else showStageInfo(rot, icon.dataset.stageStat);
-    });
-    icon.addEventListener('mouseleave', () => closeSecondaryInfoBattle());
+    if (icon.dataset.stageSpecial === 'ALCOLISMO') {
+      icon.addEventListener('click', e => { e.stopPropagation(); showAlcolismoInfo(rot); });
+    } else {
+      icon.addEventListener('mouseenter', e => {
+        e.stopPropagation();
+        if (icon.dataset.stageSpecial === 'LANDLORDARE') showLandlordareInfo(rot);
+        else if (icon.dataset.stageSpecial) showCritBoostInfo(rot);
+        else showStageInfo(rot, icon.dataset.stageStat);
+      });
+      icon.addEventListener('mouseleave', () => closeSecondaryInfoBattle());
+    }
   });
 
   div.addEventListener('mouseenter', () => showRotBattleInfo(rot));
