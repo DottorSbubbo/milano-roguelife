@@ -102,7 +102,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** SCHIZO
 **Stat base:** HP 60 / ATK 30 / SP.ATK 50 / DEF 70 / SP.DEF 70 / SPD 20 (TOT 300)
 **Mossa unica:** NO VAX — Utility, 0 danni, rimuove tutti gli status negativi dalla squadra + scudo 20% HP max a tutti
-**Talento (liv 50):** SCUDO MAGGIORATO — Tutti gli scudi applicati da LINO STAGNO sono aumentati del 10%. Scaling: +10% ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
+**Talento (liv 50):** SCUDO MAGGIORATO — Tutti gli scudi applicati da LINO STAGNO sono aumentati del 10%, e il cap massimo di scudo applicabile (normalmente 200% HP) aumenta del 10% aggiuntivo. Scaling: entrambi +10% ogni 50 livelli (liv 50: +10% efficacia / cap 210% HP, liv 100: +20% / cap 220%, liv 150: +30% / cap 230%, liv 200: +40% / cap 240%...) infinito oltre il liv 200. Questo aumento del cap si somma con qualsiasi altro oggetto o effetto che modifica il cap massimo di scudo, come G FUEL
 
 ### ROT #06 — TROLLO
 **Tipo:** TROLL
@@ -180,7 +180,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** TIPA
 **Stat base:** HP 50 / ATK 50 / SP.ATK 70 / DEF 40 / SP.DEF 40 / SPD 50 (TOT 300)
 **Mossa unica:** FOTUZZA — Fisico, 40 danni, attacca sempre per primo ignorando la velocità di tutti i ROT in campo, 30% di stunnare il bersaglio per il turno
-**Talento (liv 50):** PAPARAZZA — Quando FUMACAZZI infligge danno con qualsiasi mossa ha 10% di probabilità passiva di stunnare il bersaglio per il turno. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
+**Talento (liv 50):** PAPARAZZA — Aumenta del 5% ogni 50 livelli la probabilità di applicazione di status/effetti di tutta la squadra alleata (incluse le probabilità dei talenti di altri ROT in squadra, es. se MEDIASET di SILVIO B. ha 30% di duplicare buff/scudo al liv 50, con PAPARAZZA in squadra diventa 35% — non funziona sui colpi critici). Inoltre FUMACAZZI guadagna +10% danno per ogni status negativo presente sulla squadra nemica, scaling +10% ogni 50 livelli aggiuntivi (liv 50: +10% probabilità status squadra / +10% danno per status negativo nemico, liv 100: +15% / +20%, liv 150: +20% / +30%, liv 200: +25% / +40%...) infinito oltre il liv 200
 
 ### ROT #19 — DIO PORSCHE
 **Tipo:** TRANS
@@ -203,8 +203,8 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 ### ROT #22 — SILVIO B.
 **Tipo:** MACHO
 **Stat base:** HP 60 / ATK 40 / SP.ATK 60 / DEF 50 / SP.DEF 50 / SPD 40 (TOT 300)
-**Mossa unica:** BUNGA BUNGA — Utility, +1 stadio a tutte le statistiche di SILVIO B. (ATK SP.ATK DEF SP.DEF SPD)
-**Talento (liv 50):** MEDIASET — Aumenta passivamente la probabilità di raddoppiare i buff di cura scudo e stadi statistici ottenuti da SILVIO B. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
+**Mossa unica:** BUNGA BUNGA — Utility, +1 stadio a tutte le statistiche (ATK SP.ATK DEF SP.DEF SPD) di tutta la squadra alleata
+**Talento (liv 50):** MEDIASET — Aumenta passivamente la probabilità di raddoppiare i buff di cura scudo e stadi statistici ottenuti da tutta la squadra alleata, non solo SILVIO B. Scaling: +10% ogni 50 livelli (liv 50: 10%, liv 100: 20%, liv 150: 30%, liv 200: 40%...) infinito oltre il liv 200
 
 ---
 
@@ -317,17 +317,15 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 | TOH | Trasferisce tutti i malus di un Rot alleato a un Rot nemico |
 | CHINOTTO | Un Rot alleato selezionato recupera 50% HP |
 | PROVACI | +15% danno subito dal prossimo attacco, restituisce 100% del danno all'attaccante |
-| FRULLATO DETOX | +1 stadio Difesa e Difesa Speciale a tutto il team |
-| SHOTTINI | +1 stadio Attacco e Attacco Speciale a tutto il team |
-| REDBULL | +1 stadio Velocità a tutto il team |
+| FRULLATO DETOX | +2 stadi Difesa e Difesa Speciale a tutto il team |
+| SHOTTINI | +2 stadi Attacco e Attacco Speciale a tutto il team |
+| REDBULL | +2 stadi Velocità a tutto il team |
 
 ### ATOMICHE (5%)
 | Mossa | Effetto |
 |---|---|
 | BESTEMMIA | Protezione completa da qualsiasi attacco per 1 turno. Non usabile consecutivamente |
 | LANDLORDARE | Per 5 turni il team recupera 10% HP massimi a fine turno |
-| CENTRO SOCIALE | Per 3 turni ogni buff ricevuto viene copiato su un alleato casuale |
-| CORONAVIRUS | Per 3 turni ogni status negativo applicato a un nemico viene copiato su un altro nemico casuale |
 
 ### MOSSE TIPO (10% — le 24 mosse di tipo sopra elencate)
 
@@ -393,6 +391,7 @@ Rarità: COMUNE (60%) · COMBO (35%) · ATOMICO (4%) · APOCALITTICO (1%)
 | COTTA | Restituisce 20% del danno subito | 40% | 60% | 80% |
 | AVANZI | Recupera 10% HP massimi a turno | 15% | 20% | 25% (a tutta la squadra alleata) |
 | ZECCA COMUNISTA | Drena 50% danno inflitto come HP | 83% | 100% (nessuno scudo) | 150% (eccesso oltre 100% diventa scudo) |
+| G FUEL | A fine turno applica scudo pari al 10% degli HP massimi al portatore | 20% | 30% | 50% (e aumenta il cap massimo scudo applicabile al ROT a 300% HP invece del 200% standard) |
 
 ### ATOMICO (4%) — non fondibili
 | Oggetto | Effetto |
@@ -401,6 +400,8 @@ Rarità: COMUNE (60%) · COMBO (35%) · ATOMICO (4%) · APOCALITTICO (1%)
 | CARTA DI CREDITO | Raddoppia il gold totale guadagnato in ogni battaglia (ricompensa + interessi + altro). Il raddoppio è incluso nel calcolo della riga ALTRO già esistente, senza riga dedicata visibile |
 | DIFRATTORE | Trasforma mosse a bersaglio singolo in mosse ad area |
 | COLBACCO | Replica cure scudi e buff ricevuti su tutta la squadra |
+| CORONAVIRUS | La prima volta in un turno che un qualsiasi status negativo viene applicato a un ROT nemico, lo stesso status viene copiato automaticamente su tutti gli altri ROT nemici in campo |
+| GUFO | Il ROT che lo possiede recupera il 100% del danno inflitto dagli status negativi triggerati sui ROT nemici, come HP curati |
 
 ### APOCALITTICO (1%) — fondibile fino a livello 4
 | Oggetto | Liv.1 | Liv.2 | Liv.3 | Liv.4 |
@@ -604,6 +605,7 @@ Ogni 50 livelli (50, 100, 150, 200...) appare una battaglia boss invece della no
 - Tutte le stat aumentano di **+1 per livello**
 - Le mosse di tipo si sbloccano ai livelli **10, 50, 100**
 - La passiva si sblocca al **livello 50** e scala ogni 50 livelli
+- **Difficoltà nemici (dal livello 51):** i ROT nemici ricevono un bonus aggiuntivo di +1% a tutte le stats totali per ogni livello oltre il 50, cumulativo e permanente per tutta la run (es. al livello 60 i nemici hanno +10% stats rispetto al valore base previsto per quel livello). Il moltiplicatore attuale è mostrato in piccolo nella barra superiore di battaglia, allineato a destra sotto il pulsante impostazioni, sulla stessa riga della velocità
 
 ---
 

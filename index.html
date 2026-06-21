@@ -973,6 +973,8 @@ body {
   font-size: 10px; padding: 2px 6px; border-radius: 2px;
   letter-spacing: 1px; text-transform: uppercase; font-weight: bold; opacity: 0.9;
 }
+.type-chip-clickable { cursor: pointer; transition: filter 0.15s; }
+.type-chip-clickable:hover { filter: brightness(1.35); opacity: 1; }
 
 /* Targeting */
 .rot-card.targetable .rot-sprite {
@@ -2639,9 +2641,8 @@ body {
 /* finestra acquisto OGGETTI: la sezione OGGETTI/DRUGS resta staccata dal bordo inferiore del box */
 #rot-manager-box.mode-items .rm-loadout { margin-bottom: 8px; }
 /* finestra assegnazione OGGETTO acquistato: solo header + slot oggetti grandi che riempiono il box */
-.rm-item-slots { display: flex; flex-wrap: wrap; gap: 10px; flex: 1; min-height: 0; margin-top: 10px; }
+.rm-item-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; flex: 1; min-height: 0; margin-top: 10px; align-content: start; }
 .rm-item-slots .loadout-token-item {
-  flex: 1 1 calc(50% - 10px); min-width: 80px;
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
   padding: 14px; border-radius: 6px; font-size: 28px;
   transition: outline 0.12s, box-shadow 0.12s;
@@ -2838,7 +2839,7 @@ body {
   text-shadow: 0 0 12px rgba(180,255,60,0.4);
 }
 #talent-box-desc {
-  font-family: 'Silkscreen', monospace; font-size: 10px;
+  font-family: 'Silkscreen', monospace; font-size: 13px;
   color: #556655; letter-spacing: 1px; text-align: center; line-height: 1.6;
   font-style: italic;
 }
@@ -2867,9 +2868,9 @@ body {
 .marsupio-slot .loadout-token { cursor: grab; }
 .marsupio-slot .loadout-token-item {
   width: 100% !important; height: 100% !important; min-width: unset !important;
-  font-size: 88cqmin !important; line-height: 1; flex-direction: column; gap: 0;
-  justify-content: center; align-items: center;
-  padding: 0; box-sizing: border-box; position: relative;
+  font-size: 66cqmin !important; line-height: 1; flex-direction: column; gap: 0;
+  display: flex !important; justify-content: center; align-items: center;
+  padding: 11% 10% 9% 10% !important; box-sizing: border-box; position: relative;
   transition: transform 0.3s ease-out, opacity 0.3s ease-out;
 }
 .marsupio-slot .loadout-token-item.dragging {
@@ -3281,7 +3282,7 @@ body {
 }
 #enc-detail .info-title { font-size: 28px; font-weight: bold; letter-spacing: 3px; margin-bottom: 14px; }
 #enc-detail .info-section { font-size: 12px; letter-spacing: 4px; color: #6b7280; margin: 22px 0 10px; }
-#enc-detail .info-text { font-size: 16px; line-height: 1.75; color: #c9d1d9; }
+#enc-detail .info-text { font-size: 20px; line-height: 1.75; color: #c9d1d9; }
 #enc-detail .info-stat-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 10px 0; }
 #enc-detail .info-stat { display: flex; flex-direction: column; align-items: center; background: rgba(255,255,255,0.05); border-radius: 4px; padding: 8px 16px; min-width: 72px; }
 #enc-detail .info-stat-lbl { font-size: 10px; letter-spacing: 2px; color: #6b7280; }
@@ -3291,7 +3292,7 @@ body {
 #enc-detail .enc-fusion-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-top: 1px solid rgba(255,255,255,0.06); }
 #enc-detail .enc-fusion-lv { font-size: 13px; font-weight: bold; letter-spacing: 2px; flex-shrink: 0; width: 40px; padding-top: 3px; }
 #enc-detail .enc-fusion-arrow { font-size: 15px; color: #4b5563; flex-shrink: 0; padding-top: 2px; }
-#enc-detail .enc-fusion-desc { font-size: 15px; line-height: 1.65; color: #c9d1d9; }
+#enc-detail .enc-fusion-desc { font-size: 18px; line-height: 1.65; color: #c9d1d9; }
 #enc-detail .enc-fusion-req { font-size: 11px; color: #4b5563; letter-spacing: 1px; margin: 6px 0 4px; padding-left: 52px; }
 /* Sprite ROT nell'enciclopedia */
 .enc-rot-sprite {
@@ -3817,34 +3818,34 @@ const ROT_DEFS = {
       effect:'splash', splashPct:0.20,
       desc:'40 danni fisici al bersaglio. Infligge il 20% del danno ai ROT nemici adiacenti al bersaglio (se presenti).' },
     talent:{ name:'PROLE' },
-    sprite: { src:'spritesheet/rot/idle/kamoon.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/kamoon.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   FUMACAZZI: {
     id:18, name:'FUMACAZZI', type:'TIPA',
     base:{ hp:50, atk:65, spAtk:35, def:40, spDef:40, spd:70 },
     uniqueMove:{ name:'FOTUZZA', type:'TIPA', cat:'PHYSICAL', power:40, pp:10, target:'ENEMY',
       effect:'always_first', status:{ type:'COLLASSO', chance:0.30 },
-      desc:'40 danni fisici. Va sempre per primo ignorando la velocità di tutti i ROT. 30% di probabilità di stunnare (COLLASSO) il bersaglio.' },
+      desc:'40 danni fisici. Va sempre per primo ignorando la velocità di tutti i ROT. 30% di probabilità di stunnare (COLLASSO) il bersaglio.', linkDesc:true },
     talent:{ name:'PAPARAZZA' },
-    sprite: { src:'spritesheet/rot/idle/fumacazzi.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/fumacazzi.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   DIO_PORSCHE: {
     id:19, name:'DIO PORSCHE', type:'TRANS',
     base:{ hp:55, atk:60, spAtk:30, def:55, spDef:50, spd:50 },
     uniqueMove:{ name:'TRAFFICO MATTUTINO', type:'TRANS', cat:'PHYSICAL', power:25, pp:10, target:'ENEMY',
       hits:2, effect:'apply_traffico',
-      desc:'25 danni fisici al bersaglio 2 volte. Ogni colpo applica 1 stack di TRAFFICO (fino a 4). TRAFFICO riduce danno inflitto e velocità del 5% per stack.' },
+      desc:'25 danni fisici al bersaglio 2 volte. Ogni colpo applica 1 stack di TRAFFICO (fino a 4). TRAFFICO riduce danno inflitto e velocità del 5% per stack.', linkDesc:true },
     talent:{ name:'INGOMBRANTE' },
-    sprite: { src:'spritesheet/rot/idle/dio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/dio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   EURO_0: {
     id:20, name:'EURO 0', type:'TRANS',
     base:{ hp:50, atk:30, spAtk:70, def:40, spDef:55, spd:55 },
     uniqueMove:{ name:'MICRO PARTICELLE', type:'TRANS', cat:'SPECIAL', power:0, pp:10, target:'ENEMY_ALL',
       effect:'micro_particelle',
-      desc:'Colpisce tutti i ROT nemici: applica AVVELENATO, BRUCIATO e 1 stack di TRAFFICO a ognuno.' },
+      desc:'Colpisce tutti i ROT nemici: applica AVVELENATO, BRUCIATO e 1 stack di TRAFFICO a ognuno.', linkDesc:true },
     talent:{ name:'PERMESSO AREA C' },
-    sprite: { src:'spritesheet/rot/idle/euro.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/euro.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   ARTMIR: {
     id:21, name:'ARTMIR', type:'MACHO',
@@ -3853,16 +3854,16 @@ const ROT_DEFS = {
       effect:'alcolismo', shieldPct:0.15, redirectTurns:3,
       desc:'Applica uno scudo al 15% degli HP massimi di ARTMIR e per 3 turni reindirizza su ARTMIR ogni attacco che colpirebbe un alleato.' },
     talent:{ name:'TESTOTERRONE' },
-    sprite: { src:'spritesheet/rot/idle/artmir.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/artmir.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
   SILVIO_B: {
     id:22, name:'SILVIO B.', type:'MACHO',
     base:{ hp:60, atk:50, spAtk:50, def:50, spDef:50, spd:40 },
-    uniqueMove:{ name:'BUNGA BUNGA', type:'MACHO', cat:'UTILITY', power:0, pp:10, target:'SELF',
+    uniqueMove:{ name:'BUNGA BUNGA', type:'MACHO', cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL',
       effect:'bunga_bunga',
-      desc:'+1 stadio a tutte le statistiche (ATK, SP.ATK, DEF, SP.DEF, SPD) di SILVIO B.' },
+      desc:'+1 stadio a tutte le statistiche (ATK, SP.ATK, DEF, SP.DEF, SPD) di tutta la squadra alleata.' },
     talent:{ name:'MEDIASET' },
-    sprite: { src:'spritesheet/rot/idle/slivio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
+    sprite: { src:'spritesheet/rot/idle/slivio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false, displayScale:1.25, anchorBottom:true, anchorOffsetY:0.12 }
   },
 };
 
@@ -3886,40 +3887,42 @@ function computeTalentInfo(rot) {
   const talent = rot.def?.talent;
   if (!talent) return { name: '—', desc: 'Nessun talento.' };
   const t = tier;
+  const locked = 'Non ancora sbloccato (lv. 50).';
   switch (rot.def.id) {
-    case 1:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `AVVELENATO si accumula fino a ${t*2} stack sui nemici. Ogni stack infligge il 10% HP max per turno.` };
-    case 2:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Inizio battaglia: ${t*2} buff casuali agli stadi (+1 a stat casuale tra ATK/SP.ATK/DEF/SP.DEF/SPD).` };
-    case 3:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Restituisce il ${t*10}% del danno subito all'attaccante. ${t*5}% di probabilità di applicare COLLASSO all'attaccante.` };
-    case 4:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni ROT NEMICO in campo con STRAFATTO: +${t*50}% a tutte le stat eccetto HP di CHEESECAKE.` };
-    case 5:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti gli scudi del team alleato aumentati del ${t*10}%.` };
-    case 6:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Per ogni ROT nemico morto in questa run: TROLLO guadagna +${t*0.5}% permanente a tutte le stat eccetto HP. Uccisioni accumulate: ${rot.trolloKills || 0}.` };
-    case 7:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `BRUCIATO si accumula fino a ${3+t*2} stack sui nemici.` };
-    case 8:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le mosse applicano FERITE ai nemici. Ogni stack FERITE: +${t*10}% danno ricevuto.` };
-    case 9:  return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stadi di MOG MOB e dei suoi alleati: ±${8+t} (base ±8, +${t} per talento).` };
+    case 1:  return { name: talent.name, desc: t === 0 ? locked : `AVVELENATO si accumula fino a ${t*2} stack per bersaglio (base 1). Ogni stack infligge il 10% degli HP massimi a fine turno. Scaling: +2 stack max ogni 50 lv.` };
+    case 2:  return { name: talent.name, desc: t === 0 ? locked : `A inizio battaglia: +${t*2} stadi casuali su CRIPTO (ATK/SP.ATK/DEF/SP.DEF/SPD). Scaling: +2 stadi ogni 50 lv.` };
+    case 3:  return { name: talent.name, desc: t === 0 ? locked : `Riflette il ${t*10}% del danno subito al mittente. ${t*5}% di probabilità di applicare COLLASSO all'attaccante. Scaling: +10% riflessione, +5% COLLASSO ogni 50 lv.` };
+    case 4:  return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico vivo con STRAFATTO: CHEESECAKE guadagna +${t*50}% a tutte le stat (eccetto HP). Scaling: +50% per ROT strafatto ogni 50 lv.` };
+    case 5:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli scudi del team alleato aumentati del ${t*10}%. Il cap massimo di scudo di tutta la squadra sale al ${200 + t*10}% degli HP. Scaling: +10% ogni 50 lv.` };
+    case 6:  return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico eliminato in questa run: +${t*0.5}% permanente a tutte le stat di TROLLO (eccetto HP). Uccisioni totali: ${rot.trolloKills || 0}. Scaling: +0.5% per kill ogni 50 lv.` };
+    case 7:  return { name: talent.name, desc: t === 0 ? locked : `BRUCIATO si accumula fino a ${3+t*2} stack (base 3). Ogni stack infligge 5 HP a fine turno. Scaling: +2 stack max ogni 50 lv.` };
+    case 8:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli attacchi di BRASATO applicano FERITE al bersaglio. Ogni stack FERITE: +${t*10}% danno subito da quel ROT. Scaling: +10% danno per stack ogni 50 lv.` };
+    case 9:  return { name: talent.name, desc: t === 0 ? locked : `Cap stadi di MOG MOB e di tutti i suoi alleati: ±${8+t} (base ±8). Scaling: +1 al cap degli stadi ogni 50 lv.` };
     case 10: {
       const gold = (typeof runState !== 'undefined' ? runState?.gold : 0) || 0;
       const pct = (t + 1) * 10;
-      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco: +${Math.floor(gold * pct / 100)} danni extra (${pct}% del gold attuale: ${gold}).` };
+      return { name: talent.name, desc: t === 0 ? locked : `Ogni attacco infligge +${Math.floor(gold * pct / 100)} danni bonus (${pct}% del gold attuale: ${gold}). Scaling: +10% del gold ogni 50 lv.` };
     }
-    case 11: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutte le cure del team alleato aumentate del ${t*10}%.` };
-    case 12: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `STRAFATTO applicato da SVAPO KINK dura ${3+t} turni invece di 3.` };
-    case 13: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Finché FRANCO è in campo, tutto il danno di AVVELENATO e BRUCIATO in battaglia è amplificato del ${t*10}%, indipendentemente da chi li ha applicati.` };
-    case 14: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `+${t*5}% elusività — i nemici mancano ${t*5}% degli attacchi diretti a USBATTI.` };
-    case 15: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `EVASIONE FISCALE: +${t*2} gold extra per nemico colpito (${1+t*2} gold totali invece di 1).` };
-    case 16: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Tutti i danni subiti da GIANNI ridotti del ${t*5}%.` };
-    case 17: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `+${t*5}% al danno di tutti gli attacchi di KAMOOM, incluso il danno splash di BOMBOCLAT.` };
-    case 18: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni attacco di FUMACAZZI ha il ${t*10}% di probabilità passiva di applicare COLLASSO al bersaglio colpito.` };
+    case 11: return { name: talent.name, desc: t === 0 ? locked : `Tutte le cure del team alleato aumentate del ${t*10}%. Scaling: +10% ogni 50 lv.` };
+    case 12: return { name: talent.name, desc: t === 0 ? locked : `STRAFATTO applicato da SVAPO KINK dura ${3+t} turni (base 3). Scaling: +1 turno ogni 50 lv.` };
+    case 13: return { name: talent.name, desc: t === 0 ? locked : `Finché FRANCO è in campo, il danno di AVVELENATO e BRUCIATO è amplificato del ${t*10}% per tutti i ROT. Scaling: +10% ogni 50 lv.` };
+    case 14: return { name: talent.name, desc: t === 0 ? locked : `I nemici mancano il ${t*5}% degli attacchi diretti a USBATTI. Scaling: +5% elusività ogni 50 lv.` };
+    case 15: return { name: talent.name, desc: t === 0 ? locked : `Ogni nemico colpito da SEAO frutta ${1+t*2} gold (base 1, +${t*2} bonus). Scaling: +2 gold per bersaglio ogni 50 lv.` };
+    case 16: return { name: talent.name, desc: t === 0 ? locked : `Tutti i danni subiti da GIANNI ridotti del ${t*5}% (base 0%). Scaling: -5% danno subito ogni 50 lv.` };
+    case 17: return { name: talent.name, desc: t === 0 ? locked : `+${t*5}% al danno di tutti gli attacchi di KAMOOM, incluso il danno splash di BOMBOCLAT. Scaling: +5% ogni 50 lv.` };
+    case 18: return { name: talent.name, desc: t === 0 ? locked : `+${t*5}% alla probabilità di tutti gli status e talenti della squadra alleata. FUMACAZZI guadagna +${t*10}% danno per ogni status negativo sul team nemico (non su critici). Scaling: +5% status, +10% danno/status ogni 50 lv.` };
     case 19: {
       const traffCap = 4 + t;
-      const traffReduction = t * 5;
-      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap stack TRAFFICO: ${traffCap} (base 4 +${t}). Riduzione per stack: ${5 + traffReduction}% (base 5% +${traffReduction}%).` };
+      const traffReduction = 5 + t * 5;
+      return { name: talent.name, desc: t === 0 ? locked : `Cap TRAFFICO: ${traffCap} stack (base 4, +${t}). Ogni stack riduce danno e velocità del ${traffReduction}% (base 5%). Scaling: +1 stack cap, +5% riduzione per stack ogni 50 lv.` };
     }
-    case 20: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Cap AVVELENATO, BRUCIATO e TRAFFICO aumentato di +${t} stack.` };
+    case 20: return { name: talent.name, desc: t === 0 ? locked : `Cap di AVVELENATO, BRUCIATO e TRAFFICO aumentato di +${t} stack ciascuno. Scaling: +1 stack cap per status ogni 50 lv.` };
     case 21: {
-      const shieldBonus = t * 10;
-      return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Scudo ALCOLISMO: ${15 + shieldBonus}% HP (base 15% +${shieldBonus}%). Durata reindirizzamento: ${3 + t} turni (base 3 +${t}).` };
+      const shieldPct = 15 + t * 10;
+      const redirectTurns = 3 + t;
+      return { name: talent.name, desc: t === 0 ? locked : `Scudo ALCOLISMO: ${shieldPct}% degli HP massimi (base 15%). Reindirizzamento attacchi nemici su ARTMIR per ${redirectTurns} turni (base 3). Scaling: +10% scudo, +1 turno ogni 50 lv.` };
     }
-    case 22: return { name: talent.name, desc: t === 0 ? 'Non ancora sbloccato (lv. 50).' : `Ogni buff, cura, scudo o stadio ottenuto da SILVIO B. ha il ${t*10}% di probabilità di essere raddoppiato.` };
+    case 22: return { name: talent.name, desc: t === 0 ? locked : `${t*10}% di probabilità che ogni buff, cura, scudo o stadio ottenuto da un alleato sia raddoppiato. Scala anche con PAPARAZZA. Scaling: +10% ogni 50 lv.` };
     default: return { name: talent.name, desc: 'DESCRIZIONE DA DEFINIRE.' };
   }
 }
@@ -4031,6 +4034,11 @@ const ITEM_DEFS = {
     desc: 'Drena il 50% del danno infierito come HP per il ROT attaccante.', color: RARITY_COLOR.combo,
     fusionDescs: ['Drena il 83% del danno inflitto.', 'Drena il 100% del danno inflitto.', 'Drena il 150% del danno inflitto — l\'eccesso oltre 100% diventa scudo.'],
   },
+  G_FUEL: {
+    name: 'G FUEL', icon: '🥤', rarity: 'combo', maxFusion: 4,
+    desc: 'A fine turno applica uno scudo al portatore pari al 10% degli HP massimi.', color: RARITY_COLOR.combo,
+    fusionDescs: ['Scudo a fine turno: 20% HP.', 'Scudo a fine turno: 30% HP.', 'Scudo a fine turno: 50% HP. Il cap massimo di scudo del portatore sale al 300% degli HP massimi.'],
+  },
 
   // ── ATOMICO (4%) — non fondibili ──
   FENICE: {
@@ -4048,6 +4056,14 @@ const ITEM_DEFS = {
   COLBACCO: {
     name: 'COLBACCO', icon: '🎩', rarity: 'atomico', maxFusion: 1,
     desc: 'Ogni cura, scudo o buff ricevuto dal ROT viene replicato automaticamente su tutta la squadra alleata.', color: RARITY_COLOR.atomico,
+  },
+  CORONAVIRUS: {
+    name: 'CORONAVIRUS', icon: '🦠', rarity: 'atomico', maxFusion: 1,
+    desc: 'Ogni volta che un status negativo viene applicato a un ROT nemico (da qualsiasi fonte), lo stesso status viene copiato automaticamente su tutti gli altri ROT nemici in campo.', color: RARITY_COLOR.atomico,
+  },
+  GUFO: {
+    name: 'GUFO', icon: '🦉', rarity: 'atomico', maxFusion: 1,
+    desc: 'Il ROT recupera HP pari al 100% del danno inflitto dagli status negativi (AVVELENATO, BRUCIATO) quando triggerano sui ROT nemici, indipendentemente da chi ha applicato lo status.', color: RARITY_COLOR.atomico,
   },
 
   // ── APOCALITTICO (1%) — fondibile fino a livello 4 ──
@@ -4073,6 +4089,7 @@ const ITEM_POWER = {
   COTTA:                   [0.20, 0.40, 0.60, 0.80],
   AVANZI:                  [0.10, 0.15, 0.20, 0.25],
   ZECCA_COMUNISTA:         [0.50, 0.83, 1.00, 1.50],
+  G_FUEL:                  [0.10, 0.20, 0.30, 0.50],
   SBUBBO:                 [2,    3,    4,    5   ],
 };
 
@@ -4315,7 +4332,7 @@ const GENERIC_MOVE_DEFS = {
     effect:'cleanse_single', desc:'Elimina ogni malus da un ROT alleato selezionato.' },
   OFFRO_IO:          { name:'OFFRO IO',          type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune', effect:'heal', healPct:0.15 },
   APRI_LE_FINESTRE:  { name:'APRI LE FINESTRE',  type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'comune',
-    effect:'reset_stages', desc:'Rimuove tutti gli status negativi (AVVELENATO, BRUCIATO, STRAFATTO, TASCHE BUCATE, BURNOUT, COLLASSO, FERITE) e i debuff di stadio da tutta la squadra alleata. Non rimuove i buff positivi.' },
+    effect:'reset_stages', desc:'Rimuove tutti gli status negativi e i debuff di stadio da tutta la squadra alleata. Non rimuove i buff positivi.' },
 
   // ── RARE ──
   SBERLATE:         { name:'SBERLATE',         type:null, cat:'PHYSICAL', power:50, pp:10, target:'ENEMY_ALL', rarity:'rara', desc:'Uno schiaffo distribuito simultaneamente a tutti i ROT nemici.' },
@@ -4329,8 +4346,8 @@ const GENERIC_MOVE_DEFS = {
     effect:'counter', vulnPct:0.15, returnPct:2.0,
     desc:'+15% danno subito dal prossimo attacco. Restituisce il 200% del danno subito all\'attaccante.' },
   FRULLATO_DETOX:   { name:'FRULLATO DETOX',  type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
-    effect:'stage', stages:[ { stat:'def', delta:1, team:'ALLY' }, { stat:'spDef', delta:1, team:'ALLY' } ],
-    desc:'+1 stadio DEF e SP.DEF a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
+    effect:'stage', stages:[ { stat:'def', delta:2, team:'ALLY' }, { stat:'spDef', delta:2, team:'ALLY' } ],
+    desc:'+2 stadi DEF e SP.DEF a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
   SHOTTINI:         { name:'SHOTTINI',        type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'rara',
     effect:'stage', stages:[ { stat:'atk', delta:2, team:'ALLY' }, { stat:'spAtk', delta:2, team:'ALLY' } ],
     desc:'+2 stadi ATK e SP.ATK a tutta la squadra alleata. Gli stadi persistono fino alla fine della battaglia.' },
@@ -4342,9 +4359,9 @@ const GENERIC_MOVE_DEFS = {
   LANDLORDARE:      { name:'LANDLORDARE',     type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'atomica',
     effect:'team_regen', turns:5, healPct:0.10, desc:'Per 5 turni il team recupera il 10% degli HP massimi a fine turno.' },
   CENTRO_SOCIALE:   { name:'CENTRO SOCIALE',  type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'atomica',
-    effect:'copy_buff', turns:3, desc:'Per 3 turni, ogni buff ricevuto viene copiato su un alleato casuale.' },
+    effect:'copy_buff', turns:3, desc:'Per 3 turni, ogni buff ricevuto viene copiato su un alleato casuale.', shopExcluded:true },
   CORONAVIRUS:      { name:'CORONAVIRUS',     type:null, cat:'UTILITY', power:0, pp:10, target:'ENEMY_ALL',rarity:'atomica',
-    effect:'copy_status', desc:'Ogni status negativo applicato a un ROT nemico si propaga automaticamente a tutti gli altri ROT nemici.' },
+    effect:'copy_status', desc:'Ogni status negativo applicato a un ROT nemico si propaga automaticamente a tutti gli altri ROT nemici.', shopExcluded:true },
 };
 
 // Mosse di tipo (sbloccate ai livelli 10/50/100, acquistabili anche al negozio — 10%)
@@ -4456,6 +4473,7 @@ const BEPPE_SALA_MOVES = {
 // ═══════════════════════════════════════════════════
 
 let B = null;
+let _coroItemSpreading = false;
 let turnNum = 1;
 let kbSelIndex = -1; // indice dell'opzione evidenziata via tastiera (-1 = nessuna)
 
@@ -4582,6 +4600,22 @@ function spdForSort(rot) {
   return spd;
 }
 
+// ── FUMACAZZI — PAPARAZZA: bonus % alle probabilità di status di tutta la squadra alleata ──
+function paparazzaStatusBonus() {
+  if (!B?.player) return 0;
+  const fuma = B.player.find(r => r.def === ROT_DEFS.FUMACAZZI && r.isAlive);
+  return fuma ? talentTier(fuma) * 0.05 : 0;
+}
+
+// ── SILVIO B. — MEDIASET: probabilità di raddoppiare buff/cura/scudo/stadi di tutta la squadra ──
+function mediasetDoubleChance() {
+  if (!B?.player) return 0;
+  const silvio = B.player.find(r => r.def === ROT_DEFS.SILVIO_B && r.isAlive);
+  const tier = silvio ? talentTier(silvio) : 0;
+  if (!tier) return 0;
+  return tier * 0.10 + paparazzaStatusBonus();
+}
+
 function calcDmg(atk, def, move) {
   const lvl = atk.level;
   const pow = move.power;
@@ -4613,6 +4647,15 @@ function calcDmg(atk, def, move) {
   const critChance = atk.critChanceOverride != null ? atk.critChanceOverride : (0.10 + (atk.critBonus || 0) * 0.01);
   const crit = Math.random() < critChance;
   if (crit) dmg *= 1.5;
+  // FUMACAZZI — PAPARAZZA: +10%×tier danno per ogni status negativo sui nemici (non su critici)
+  if (!crit && atk.isPlayer && atk.def === ROT_DEFS.FUMACAZZI) {
+    const fumaT = talentTier(atk);
+    if (fumaT > 0) {
+      const enemyTeam = B?.enemy || [];
+      const statusCount = enemyTeam.reduce((n, r) => n + (r.isAlive ? r.statuses.length : 0), 0);
+      if (statusCount > 0) dmg *= (1 + fumaT * 0.10 * statusCount);
+    }
+  }
   // FERITE: ogni stack del bersaglio aumenta il danno subito — scala con BRASATO talent
   const ferite = def.statuses.find(s => s.type === 'FERITE');
   if (ferite) {
@@ -4765,6 +4808,9 @@ function applyHealAmount(rot, amount, source, skipReplicate) {
   const pokeTier = (rot.isPlayer && B?.player)
     ? (() => { const r = B.player.find(r => r.def === ROT_DEFS.POKE_MON && r.isAlive); return r ? talentTier(r) : 0; })()
     : 0;
+  // MEDIASET: possibile raddoppio cure per l'intera squadra alleata
+  const healMediaChance = (!skipReplicate && rot.isPlayer) ? mediasetDoubleChance() : 0;
+  if (healMediaChance > 0 && Math.random() < healMediaChance) amount *= 2;
   const finalAmt = Math.floor(amount * welfareMult(rot, source) * (1 + 0.10 * pokeTier));
   const before = rot.curHp;
   rot.curHp = Math.min(rot.maxHp, rot.curHp + finalAmt);
@@ -4782,23 +4828,39 @@ function applyHealPct(rot, pct, source, skipReplicate) {
   return applyHealAmount(rot, rot.maxHp * pct, source, skipReplicate);
 }
 
+// ── Cap massimo di scudo: base 200%, +100% da G FUEL lv4, +10% per tier di LINO STAGNO in squadra ──
+function getShieldCap(rot) {
+  let capMult = 2.0;
+  if (rot.items.includes('G_FUEL') && (rotItemLvl(rot, 'G_FUEL') ?? 1) >= 4) capMult += 1.0;
+  if (rot.isPlayer && B?.player) {
+    capMult += B.player.filter(r => r.def === ROT_DEFS.LINO_STAGNO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 0.10, 0);
+  }
+  return rot.maxHp * capMult;
+}
+
 // ── Applica uno scudo (con bonus WELFARE GRATUITO + LINO STAGNO talent), replicandolo su tutta la squadra se il ricevente ha COLBACCO ──
 function applyShieldAmount(rot, amount, source, skipReplicate) {
   if (!rot.isAlive) return 0;
   // LINO STAGNO — IMMUNITÀ NATURALE: +10% per tier agli scudi del team giocatore
   const linoTier = (rot.isPlayer && B?.player)
-    ? (() => { const r = B.player.find(r => r.def === ROT_DEFS.LINO_STAGNO && r.isAlive); return r ? talentTier(r) : 0; })()
+    ? B.player.filter(r => r.def === ROT_DEFS.LINO_STAGNO && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0)
     : 0;
+  // MEDIASET: possibile raddoppio scudi per l'intera squadra alleata
+  const shieldMediaChance = (!skipReplicate && rot.isPlayer) ? mediasetDoubleChance() : 0;
+  if (shieldMediaChance > 0 && Math.random() < shieldMediaChance) amount *= 2;
   const finalAmt = Math.floor(amount * welfareMult(rot, source) * (1 + 0.10 * linoTier));
-  rot.shield += finalAmt;
-  if (finalAmt > 0) playSfx('buff');
-  if (!skipReplicate && finalAmt > 0 && rot.items.includes('COLBACCO')) {
+  const shieldCap = getShieldCap(rot);
+  const prevShield = rot.shield;
+  rot.shield = Math.min(rot.shield + finalAmt, shieldCap);
+  const actualApplied = rot.shield - prevShield;
+  if (actualApplied > 0) playSfx('buff');
+  if (!skipReplicate && actualApplied > 0 && rot.items.includes('COLBACCO')) {
     const team = rot.isPlayer ? B.player : B.enemy;
     for (const ally of team.filter(r => r.isAlive && r !== rot)) {
       applyShieldAmount(ally, amount, source, true);
     }
   }
-  return finalAmt;
+  return actualApplied;
 }
 function applyShieldPct(rot, pct, source, skipReplicate) {
   return applyShieldAmount(rot, rot.maxHp * pct, source, skipReplicate);
@@ -4807,22 +4869,21 @@ function applyShieldPct(rot, pct, source, skipReplicate) {
 function addStatus(rot, type) {
   if (rot.items.includes('PELLE_DI_ROSPO')) return false;
   const ex = rot.statuses.find(s => s.type === type);
-  // EURO 0 — PERMESSO AREA C: aumenta i cap di AVVELENATO, BRUCIATO, TRAFFICO
-  const _euroAreaC = B?.player?.find(r => r.def === ROT_DEFS.EURO_0 && r.isAlive);
-  const _areaCBonus = _euroAreaC ? talentTier(_euroAreaC) : 0;
+  // EURO 0 — PERMESSO AREA C: aumenta i cap di AVVELENATO, BRUCIATO, TRAFFICO (additive per ogni EURO 0 in squadra)
+  const _areaCBonus = B?.player?.filter(r => r.def === ROT_DEFS.EURO_0 && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
 
   if (type === 'BRUCIATO') {
-    // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici
+    // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici (additive per ogni ELONIO in squadra)
     const bruCap = (!rot.isPlayer && B?.player)
-      ? (() => { const e = B.player.find(r => r.def === ROT_DEFS.ELONIO && r.isAlive); return e ? 3 + talentTier(e) * 2 + _areaCBonus : 3 + _areaCBonus; })()
+      ? 3 + B.player.filter(r => r.def === ROT_DEFS.ELONIO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0) + _areaCBonus
       : 3 + _areaCBonus;
     if (ex) { if (ex.stacks < bruCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'AVVELENATO') {
-    // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (cap = tier * 2)
+    // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (additive per ogni MIKEY in squadra)
     const avvCap = (!rot.isPlayer && B?.player)
-      ? (() => { const m = B.player.find(r => r.def === ROT_DEFS.MIKEY && r.isAlive); return m ? Math.max(1, talentTier(m) * 2) + _areaCBonus : 1 + _areaCBonus; })()
+      ? (() => { const mikeyBonus = B.player.filter(r => r.def === ROT_DEFS.MIKEY && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0); return Math.max(1, mikeyBonus) + _areaCBonus; })()
       : 1 + _areaCBonus;
     if (ex) { if (ex.stacks < avvCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
@@ -4832,9 +4893,8 @@ function addStatus(rot, type) {
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'TRAFFICO') {
-    // DIO PORSCHE — INGOMBRANTE: aumenta il cap di TRAFFICO
-    const _dioPorsche = B?.player?.find(r => r.def === ROT_DEFS.DIO_PORSCHE && r.isAlive);
-    const _ingombranteCap = _dioPorsche ? talentTier(_dioPorsche) : 0;
+    // DIO PORSCHE — INGOMBRANTE: aumenta il cap di TRAFFICO (additive per ogni DIO PORSCHE in squadra)
+    const _ingombranteCap = B?.player?.filter(r => r.def === ROT_DEFS.DIO_PORSCHE && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
     const trafficoCap = 4 + _ingombranteCap + _areaCBonus;
     if (ex) { if (ex.stacks < trafficoCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
@@ -4881,6 +4941,17 @@ function endTurnStatuses(rot) {
           { text: `! -${d} HP` }
         ], cls:'status' });
       }
+      if (!rot.isPlayer) {
+        const _gufo = B?.player?.find(r => r.isAlive && r.items.includes('GUFO'));
+        if (_gufo) {
+          const _gh = applyHealAmount(_gufo, d, _gufo, true);
+          if (_gh > 0) logs.push({ parts:[
+            { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
+            { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
+            { text: `: +${_gh} HP` }
+          ], cls:'info' });
+        }
+      }
     }
     if (st.type === 'BRUCIATO') {
       const _francoVP2 = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
@@ -4893,6 +4964,17 @@ function endTurnStatuses(rot) {
         { text: 'BRUCIATO', onclick: () => showStatusInfo('BRUCIATO') },
         { text: ` x${st.stacks})! -${d} HP` }
       ], cls:'dmg' });
+      if (!rot.isPlayer) {
+        const _gufo = B?.player?.find(r => r.isAlive && r.items.includes('GUFO'));
+        if (_gufo) {
+          const _gh = applyHealAmount(_gufo, d, _gufo, true);
+          if (_gh > 0) logs.push({ parts:[
+            { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
+            { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
+            { text: `: +${_gh} HP` }
+          ], cls:'info' });
+        }
+      }
     }
     if (st.type === 'STRAFATTO') {
       st.turns--;
@@ -5009,6 +5091,21 @@ function endTurnStatuses(rot) {
       { text: `! Guadagni ${piggyAmt} gold` }
     ], cls:'status' });
   }
+  // ── G FUEL: a fine turno applica uno scudo al portatore ──
+  if (rot.items.includes('G_FUEL')) {
+    const gfuelPct = itemPow(rot, 'G_FUEL') ?? 0.10;
+    const gfuelShield = applyShieldPct(rot, gfuelPct, rot);
+    if (gfuelShield > 0) {
+      logs.push({ parts:[
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' ottiene ' },
+        { text: `${gfuelShield} scudo` },
+        { text: ' grazie a ' },
+        { text: 'G FUEL', onclick: () => showItemInfo('G_FUEL') },
+        { text: '!' }
+      ], cls:'info' });
+    }
+  }
   rot.statuses = rot.statuses.filter(s => !toRemove.includes(s));
   return logs;
 }
@@ -5108,8 +5205,20 @@ document.addEventListener('click', e => {
 // Fisso in alto a destra dello schermo, indipendente da ogni altro elemento.
 function openSecondaryInfoBattle(html) {
   console.log('[openSecondaryInfoBattle] apertura pannello secondario battaglia');
-  document.getElementById('info-content-secondary').innerHTML = html;
+  const content = document.getElementById('info-content-secondary');
+  content.innerHTML = html;
   document.getElementById('info-panel-secondary').classList.add('open');
+  const titleEl = content.querySelector('.info-title');
+  if (titleEl) {
+    titleEl.style.fontSize = '';
+    const panelW = 178; // 210px panel - 2×16px padding
+    const words = titleEl.textContent.trim().split(/\s+/);
+    const longest = words.reduce((a, b) => a.length > b.length ? a : b, '');
+    // Each char in Press Start 2P at 18px ≈ 18px + 1px letter-spacing = 19px
+    if (longest.length * 19 > panelW) {
+      titleEl.style.fontSize = Math.max(9, Math.floor(panelW / longest.length) - 1) + 'px';
+    }
+  }
 }
 function closeSecondaryInfoBattle() {
   const panel = document.getElementById('info-panel-secondary');
@@ -5235,10 +5344,21 @@ function showRotBattleInfo(rot) {
   `);
 }
 
+// Sostituisce i nomi di status nel testo con link cliccabili usando la statusLinkFn fornita
+function autoLinkDesc(text, statusLinkFn) {
+  if (!text || !statusLinkFn) return text || '';
+  const names = Object.keys(STATUS_COLORS).sort((a, b) => b.length - a.length);
+  let out = text;
+  for (const nm of names) {
+    if (out.includes(nm)) out = out.split(nm).join(statusLinkFn(nm));
+  }
+  return out;
+}
+
 // Testo descrittivo dell'effetto secondario di una mossa (usato nel pannello info e nel negozio)
 function moveEffectDesc(move, statusLinkFn) {
   statusLinkFn = statusLinkFn || statusLink;
-  return move.desc                 ? move.desc
+  return move.desc                 ? (move.linkDesc ? autoLinkDesc(move.desc, statusLinkFn) : move.desc)
     : move.effect === 'heal'    ? `Cura tutti gli alleati del ${Math.round((move.healPct||0)*100)}% degli HP massimi dell\'utilizzatore.`
     : move.effect === 'cleanse' ? 'Rimuove tutti gli status dagli alleati.'
     : move.effect === 'stage'   ? 'Modifica le stat della squadra.'
@@ -5598,7 +5718,7 @@ function showCategoryInfo(cat) {
   openSecondaryInfo(html);
 }
 
-const TYPE_ORDER = ['NORMIE','SCHIZO','PSYCHO','TROLL','CRYPTO','MOG','VAPE','BASED'];
+const TYPE_ORDER = ['NORMIE','SCHIZO','PSYCHO','TROLL','CRYPTO','MOG','VAPE','MACHO','TRANS','TIPA','BASED'];
 
 // Font size automatico in base alla lunghezza della parola più lunga: parola corta -> carattere grande.
 // Le singole parole non vanno mai a capo (white-space: nowrap nel CSS).
@@ -6614,35 +6734,38 @@ async function executePhase() {
       await wait(250);
       render(); await wait(350);
 
-    // ── BUNGA BUNGA (SILVIO B.): +1 stadio a tutte le stat (MEDIASET: possibile ×2) ──
+    // ── BUNGA BUNGA (SILVIO B.): +1 stadio a tutta la squadra (MEDIASET: possibile ×2) ──
     } else if (move.effect === 'bunga_bunga') {
-      const bungaTier = rot.isPlayer ? talentTier(rot) : 0;
+      const aliveAllies = (rot.isPlayer ? B.player : B.enemy).filter(r => r.isAlive);
+      const bungaCap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.MOG_MOB)) : 8;
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' usa ' },
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
-      const mediasetDouble = bungaTier > 0 && Math.random() < bungaTier * 0.10;
+      const mediaChance = rot.isPlayer ? mediasetDoubleChance() : 0;
+      const mediasetDouble = mediaChance > 0 && Math.random() < mediaChance;
       const bungaDelta = mediasetDouble ? 2 : 1;
-      const bungaCap = rot.isPlayer ? (8 + playerTalentTier(ROT_DEFS.MOG_MOB)) : 8;
-      let bungaBuffed = false;
-      for (const stat of ['atk', 'spAtk', 'def', 'spDef', 'spd']) {
-        const old = rot.stages[stat] || 0;
-        const next = Math.min(bungaCap, old + bungaDelta);
-        if (next !== old) {
-          rot.stages[stat] = next;
-          logRich([
-            { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
-            { text: `: ${STAGE_STAT_LABELS[stat]} ▲${mediasetDouble ? '▲' : ''} (stadio +${next})` }
-          ], 'status');
-          bungaBuffed = true;
+      const buffedRots = [];
+      for (const ally of aliveAllies) {
+        let allyBuffed = false;
+        for (const stat of ['atk', 'spAtk', 'def', 'spDef', 'spd']) {
+          const old = ally.stages[stat] || 0;
+          const next = Math.min(bungaCap, old + bungaDelta);
+          if (next !== old) {
+            ally.stages[stat] = next;
+            logRich([
+              { text: ally.def.name, onclick: () => showRotInfo(ally.def) },
+              { text: `: ${STAGE_STAT_LABELS[stat]} ▲${mediasetDouble ? '▲' : ''} (stadio +${next})` }
+            ], 'status');
+            allyBuffed = true;
+          }
         }
+        if (allyBuffed) buffedRots.push(ally);
       }
-      if (mediasetDouble) {
-        logRich([{ text: 'MEDIASET raddoppia i buff!' }], 'status');
-      }
-      if (bungaBuffed) { playSfx('buff'); buffHopAnim([rot]); await wait(250); }
+      if (mediasetDouble) logRich([{ text: 'MEDIASET raddoppia i buff!' }], 'status');
+      if (buffedRots.length) { playSfx('buff'); buffHopAnim(buffedRots); await wait(250); }
       render(); await wait(350);
 
     // ── MICRO PARTICELLE (EURO 0): AVVELENATO + BRUCIATO + TRAFFICO a tutti i nemici ──
@@ -6654,6 +6777,10 @@ async function executePhase() {
         { text: move.name, onclick: () => showMoveInfo(move) },
         { text: '!' }
       ], 'info');
+      attackAnim(rot);
+      await wait(150);
+      mpEnemies.forEach(t => { flashHit(t.uid); hitRecoilAnim(t); });
+      await wait(280);
       for (const tgt of mpEnemies) {
         for (const stType of ['AVVELENATO', 'BRUCIATO', 'TRAFFICO']) {
           const ok = addStatus(tgt, stType);
@@ -6668,7 +6795,7 @@ async function executePhase() {
           }
         }
       }
-      render(); await wait(600);
+      render(); await wait(400);
 
     // ── DANNO ──
     } else if (move.power > 0) {
@@ -6684,6 +6811,8 @@ async function executePhase() {
       if (!hitTargets.length) break;
       attackAnim(rot);
       await wait(150);
+      const _isAreaHit = hitTargets.length > 1;
+      if (_isAreaHit) { hitTargets.forEach(t => { flashHit(t.uid); hitRecoilAnim(t); }); await wait(250); }
       for (const tgt of hitTargets) {
         logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -6775,11 +6904,7 @@ async function executePhase() {
           { text: hitCount > 1 ? ` subisce ${dmg} danni! (colpo ${hitIdx + 1}/${hitCount})` : ` subisce ${dmg} danni!` }
         ], 'dmg');
 
-        flashHit(tgt.uid);
-        hitRecoilAnim(tgt);
-        await wait(300);
-        render();
-        await wait(150);
+        if (!_isAreaHit) { flashHit(tgt.uid); hitRecoilAnim(tgt); await wait(300); render(); await wait(150); }
 
         // ── PROVACI: restituisce una percentuale del danno subito all'attaccante (one-shot) ──
         if (tgt.counterNext && dmg > 0 && rot.isAlive) {
@@ -6817,7 +6942,7 @@ async function executePhase() {
           const drainAmt = applyHealAmount(rot, zeccaRaw, rot);
           if (zeccaLv >= 4 && zeccaRaw > rot.maxHp - before) {
             const excess = zeccaRaw - (rot.maxHp - before);
-            if (excess > 0) rot.shield += excess;
+            if (excess > 0) rot.shield = Math.min(rot.shield + excess, getShieldCap(rot));
           }
           if (drainAmt > 0 || (zeccaLv >= 4 && zeccaRaw > rot.maxHp - before)) {
             logRich([
@@ -6894,7 +7019,9 @@ async function executePhase() {
         // ── FRANCO — VITA PAZZA: amplifica AVVELENATO/BRUCIATO via endTurnStatuses ──
         // (nessun trigger immediato al momento del colpo — effetto passivo in endTurnStatuses)
 
-        const statusChance = move.status ? move.status.chance + (rot.items.includes('PORTAFORTUNA') ? (itemPow(rot, 'PORTAFORTUNA') ?? 0.25) : 0) : 0;
+        const statusChance = move.status ? move.status.chance
+          + (rot.items.includes('PORTAFORTUNA') ? (itemPow(rot, 'PORTAFORTUNA') ?? 0.25) : 0)
+          + (rot.isPlayer ? paparazzaStatusBonus() : 0) : 0;
         if (move.status && Math.random() < statusChance) {
           const stType = move.status.type === 'RANDOM'
             ? RANDOM_STATUSES[Math.floor(Math.random() * RANDOM_STATUSES.length)]
@@ -6937,6 +7064,31 @@ async function executePhase() {
                   render();
                   await wait(350);
                 }
+              }
+            }
+            // ── CORONAVIRUS ITEM: propaga il status a tutti gli altri nemici ──
+            if (!tgt.isPlayer && !_coroItemSpreading) {
+              const _coroCarrier = B?.player?.find(r => r.isAlive && r.items.includes('CORONAVIRUS'));
+              if (_coroCarrier) {
+                _coroItemSpreading = true;
+                const _coroOthers = B.enemy.filter(o => o.isAlive && o !== tgt);
+                for (const other of _coroOthers) {
+                  const ok2 = addStatus(other, stType);
+                  if (ok2) {
+                    const st2 = other.statuses.find(s => s.type === stType);
+                    logRich([
+                      { text: other.def.name, onclick: () => showRotInfo(other.def) },
+                      { text: stType === 'FERITE' ? ' ha ' : ' è ' },
+                      { text: stType, onclick: () => showStatusInfo(stType) },
+                      { text: `${st2&&st2.stacks>1?' (x'+st2.stacks+')':''} per ` },
+                      { text: 'CORONAVIRUS', onclick: () => showItemInfo('CORONAVIRUS') },
+                      { text: '!' }
+                    ], 'status');
+                    render();
+                    await wait(350);
+                  }
+                }
+                _coroItemSpreading = false;
               }
             }
             // ── PORTAFORTUNA lv4: il malus applicato si replica su tutti gli altri nemici ──
@@ -7012,21 +7164,7 @@ async function executePhase() {
           }
         }
 
-        // ── FUMACAZZI — PAPARAZZA: probabilità passiva di stunnare il bersaglio ──
-        if (rot.def === ROT_DEFS.FUMACAZZI && rot.isPlayer && talentTier(rot) > 0 && dmg > 0 && tgt.isAlive) {
-          if (Math.random() < talentTier(rot) * 0.10) {
-            const ok = addStatus(tgt, 'COLLASSO');
-            if (ok) {
-              logRich([
-                { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
-                { text: ' è in ' },
-                { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
-                { text: ' (PAPARAZZA)!' }
-              ], 'status');
-              render(); await wait(350);
-            }
-          }
-        }
+        // PAPARAZZA (FUMACAZZI): il bonus danno per status è già gestito in calcDmg
 
         // ── EVASIONE FISCALE: gold per ogni bersaglio colpito — prima del controllo KO ──
         if (move.goldPerHit && runState) {
@@ -7072,6 +7210,7 @@ async function executePhase() {
         }
         }
       }
+      if (_isAreaHit) { render(); await wait(250); }
 
       // ── KAMOOM — BOMBOCLAT: 20% danno splash ai ROT nemici adiacenti al bersaglio principale ──
       if (move.effect === 'splash' && totalDmgDealt > 0 && rot.isAlive) {
@@ -7080,24 +7219,27 @@ async function executePhase() {
         if (mainTgt) {
           const splashTeam = mainTgt.isPlayer ? B.player : B.enemy;
           const mainIdx = splashTeam.indexOf(mainTgt);
-          for (const adjIdx of [mainIdx - 1, mainIdx + 1]) {
-            const adjTgt = splashTeam[adjIdx];
-            if (!adjTgt || !adjTgt.isAlive) continue;
-            takeDmg(adjTgt, splashDmg);
-            logRich([
-              { text: adjTgt.def.name, onclick: () => showRotInfo(adjTgt.def) },
-              { text: ` subisce ${splashDmg} danni (area BOMBOCLAT)!` }
-            ], 'dmg');
-            flashHit(adjTgt.uid);
-            hitRecoilAnim(adjTgt);
-            render(); await wait(300);
-            if (!adjTgt.isAlive) {
+          const adjTgts = [mainIdx - 1, mainIdx + 1].map(i => splashTeam[i]).filter(t => t?.isAlive);
+          if (adjTgts.length) {
+            adjTgts.forEach(adjTgt => {
+              takeDmg(adjTgt, splashDmg);
               logRich([
                 { text: adjTgt.def.name, onclick: () => showRotInfo(adjTgt.def) },
-                { text: ' è KO!' }
+                { text: ` subisce ${splashDmg} danni (area BOMBOCLAT)!` }
               ], 'dmg');
-              render(); await wait(500);
-              if (checkEnd()) return;
+              flashHit(adjTgt.uid);
+              hitRecoilAnim(adjTgt);
+            });
+            render(); await wait(300);
+            for (const adjTgt of adjTgts) {
+              if (!adjTgt.isAlive) {
+                logRich([
+                  { text: adjTgt.def.name, onclick: () => showRotInfo(adjTgt.def) },
+                  { text: ' è KO!' }
+                ], 'dmg');
+                render(); await wait(500);
+                if (checkEnd()) return;
+              }
             }
           }
         }
@@ -7435,6 +7577,7 @@ function showVictoryScreen() {
   document.getElementById('progress-restart-btn').style.display = 'none';
 
   renderLevelUpPanel(levelUps);
+  clearKbContinue();
   document.getElementById('progress-overlay').classList.add('on');
   // posiziona il pannello LEVEL UP e adatta i font dei token nome
   requestAnimationFrame(() => {
@@ -7549,7 +7692,7 @@ function rollShopMove() {
     const key = keys[Math.floor(Math.random() * keys.length)];
     return { key, pool:'type', price: MOVE_PRICE.tipo };
   }
-  const keys = Object.keys(GENERIC_MOVE_DEFS).filter(k => GENERIC_MOVE_DEFS[k].rarity === rarity);
+  const keys = Object.keys(GENERIC_MOVE_DEFS).filter(k => GENERIC_MOVE_DEFS[k].rarity === rarity && !GENERIC_MOVE_DEFS[k].shopExcluded);
   const key = keys[Math.floor(Math.random() * keys.length)];
   return { key, pool:'generic', price: MOVE_PRICE[rarity] };
 }
@@ -7573,6 +7716,7 @@ function rollShopOffers() {
 function openShop() {
   closeAllBattlePanels();
   shopState = rollShopOffers();
+  clearKbContinue();
   document.getElementById('shop-overlay').classList.add('on');
   renderShop();
   saveRun();
@@ -8590,6 +8734,9 @@ function onSellDrop(event) {
     runState.gold += ITEM_PRICE[rarity] || 1;
     removeItemFromSource(rotManagerDrag);
     updateHud();
+    const shopGoldEl = document.getElementById('shop-gold');
+    if (shopGoldEl) shopGoldEl.textContent = `GOLD ${runState.gold}`;
+    saveRun();
   }
   rotManagerDrag = null;
   renderRotManager();
@@ -8735,7 +8882,7 @@ function renderShop() {
           ${def.sprite ? `<canvas class="shop-rot-sprite-canvas${def.sprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310"></canvas>` : ''}
         </div>
         <div class="shop-card-bottom">
-          <span class="type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${def.type}</span>
+          <span class="type-chip type-chip-clickable" style="background:rgba(0,0,0,0.5);color:${tc.text}" onclick="showTypeInfoCentered(event,'${def.type}')">${def.type}</span>
           <span class="shop-price">${shopState.rot.price} GOLD</span>
           <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="event.stopPropagation(); buyRot()" ${buyDisabled ? 'disabled' : ''} title="Aggiungi questo ROT alla tua squadra.">${buyLabel}</button>
         </div>
@@ -9104,6 +9251,15 @@ function initRotSpriteCanvas(canvas, spriteCfg) {
       let dx = 0, dy = 0, dw = canvas.width, dh = canvas.height;
       if (srcR > dstR + 0.01) { dh = canvas.width / srcR; dy = (canvas.height - dh) / 2; }
       else if (dstR > srcR + 0.01) { dw = canvas.height * srcR; dx = (canvas.width - dw) / 2; }
+      if (spriteCfg.displayScale && spriteCfg.displayScale !== 1) {
+        const s = spriteCfg.displayScale;
+        dw *= s; dh *= s;
+        dx = (canvas.width - dw) / 2;
+        dy = spriteCfg.anchorBottom ? canvas.height - dh : (canvas.height - dh) / 2;
+      } else if (spriteCfg.anchorBottom) {
+        dy = canvas.height - dh;
+      }
+      if (spriteCfg.anchorOffsetY) dy += spriteCfg.anchorOffsetY * dh;
       ctx.drawImage(
         entry.canvas,
         col * spriteCfg.frameW, row * spriteCfg.frameH, spriteCfg.frameW, spriteCfg.frameH,
@@ -9179,13 +9335,14 @@ function mkCard(rot, isPlayer) {
   }
 
   const sbHtml = rot.statuses.map(s => {
-    const lbl = s.type === 'AVVELENATO'    ? 'V'
+    const lbl = s.type === 'AVVELENATO'    ? `V${s.stacks}`
               : s.type === 'BRUCIATO'      ? `B${s.stacks}`
               : s.type === 'FERITE'        ? `F${s.stacks}`
               : s.type === 'STRAFATTO'     ? `ST`
               : s.type === 'BURNOUT'       ? `BU${s.turns||''}`
               : s.type === 'COLLASSO'      ? `ZZ`
               : s.type === 'TASCHE BUCATE' ? `TB`
+              : s.type === 'TRAFFICO'      ? `T${s.stacks}`
               : '?';
     const sel = activeBadge?.uid === rot.uid && activeBadge?.type === s.type ? ' selected' : '';
     const cls = s.type.replace(/\s+/g, '-');
@@ -9241,7 +9398,7 @@ function mkCard(rot, isPlayer) {
     <div class="rot-sprite ${rot.def.sprite ? 'sprite-mode' : ''}" id="spr-${rot.uid}" style="${rot.def.sprite ? '' : `background:${tc.bg}`}">
       ${rot.def.sprite ? `<canvas class="rot-sprite-canvas${rot.def.sprite.mirrorWhen === (isPlayer ? 'player' : 'enemy') ? ' mirrored' : ''}" width="${isBoss ? 560 : 280}" height="${isBoss ? 308 : 310}"></canvas>` : ''}
       ${effHtml}
-      <span class="type-chip" style="background:rgba(0,0,0,0.5);color:${tc.text}">${rot.def.type}</span>
+      <span class="type-chip type-chip-clickable" style="background:rgba(0,0,0,0.5);color:${tc.text}" onmouseenter="showTypeInfo('${rot.def.type}')" onmouseleave="closeSecondaryInfo()">${rot.def.type}</span>
       <div class="status-badges">${sbHtml}</div>
     </div>
   `;
@@ -9516,6 +9673,52 @@ document.addEventListener('keydown', e => {
   }
 });
 
+// ── Controllo da tastiera: schermata vittoria e negozio ──
+let kbContinueSelected = false;
+
+function clearKbContinue() {
+  kbContinueSelected = false;
+  ['progress-continue-btn', 'shop-continue-btn'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.remove('kb-focused');
+  });
+}
+
+document.addEventListener('keydown', e => {
+  if (e.code !== 'Space') return;
+
+  const progressOverlay = document.getElementById('progress-overlay');
+  if (progressOverlay?.classList.contains('on')) {
+    e.preventDefault();
+    const btn = document.getElementById('progress-continue-btn');
+    if (!btn) return;
+    if (!kbContinueSelected) {
+      kbContinueSelected = true;
+      btn.classList.add('kb-focused');
+    } else {
+      clearKbContinue();
+      btn.click();
+    }
+    return;
+  }
+
+  const shopOverlay = document.getElementById('shop-overlay');
+  if (shopOverlay?.classList.contains('on')) {
+    if (document.querySelector('#shop-move-info-overlay.on, #rot-manager-overlay.on, #rot-confirm-overlay.on, #marsupio-overlay.show')) return;
+    e.preventDefault();
+    const btn = document.getElementById('shop-continue-btn');
+    if (!btn) return;
+    if (!kbContinueSelected) {
+      kbContinueSelected = true;
+      btn.classList.add('kb-focused');
+    } else {
+      clearKbContinue();
+      btn.click();
+    }
+    return;
+  }
+});
+
 // ═══════════════════════════════════════════════════
 // UTILS
 // ═══════════════════════════════════════════════════
@@ -9657,7 +9860,7 @@ function buildStarterScreen() {
 }
 
 function uniqueMoveDescText(um) {
-  return um.desc                 ? um.desc
+  return um.desc                 ? (um.linkDesc ? autoLinkDesc(um.desc, statusLink) : um.desc)
   : um.effect === 'heal'    ? `Cura tutti gli alleati del ${Math.round((um.healPct||0)*100)}% degli HP massimi dell'utilizzatore.`
   : um.effect === 'cleanse' ? `Rimuove tutti gli status da tutti gli alleati in campo.${um.shieldPct ? ` Applica uno scudo pari al ${Math.round(um.shieldPct*100)}% degli HP massimi a tutto il team.` : ''}`
   : um.effect === 'stage'   ? 'Modifica le stat della squadra (ATK, SP.ATK, DEF, SP.DEF).'
@@ -10065,7 +10268,7 @@ function encShowRot(key) {
     ${spriteHtml}
     <div class="info-title" style="color:${tc.text}">${def.name}</div>
     <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:10px;">
-      <span class="info-badge" style="background:${tc.bg};color:${tc.text};margin-bottom:0;vertical-align:middle">${def.type}</span>
+      <span class="info-badge info-badge-clickable" style="background:${tc.bg};color:${tc.text};margin-bottom:0;vertical-align:middle" onclick="showTypeInfoCentered(event,'${def.type}')">${def.type}</span>
       ${def.talent ? `<button class="talenti-token" style="font-size:10px;padding:4px 10px;letter-spacing:1px;vertical-align:middle;" onclick="openTalentOverlayForDef(event,'${key}')">✦ TALENTO</button>` : ''}
     </div>
     <div class="info-section">STAT BASE</div>
