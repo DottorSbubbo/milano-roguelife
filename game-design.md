@@ -10,8 +10,8 @@ Roguelike a turni con meccanica di cattura e potenziamento di creature chiamate 
 Le creature si chiamano **ROT** (non Pokémon).
 
 ### Rot Shiny
-- Probabilità **0.01%** di apparire (come starter o nel negozio)
-- Aspetto: saturazione aumentata + leggermente più grande in battaglia
+- Probabilità **1%** di apparire (come starter o nel negozio)
+- Aspetto: saturazione moderatamente aumentata (non esagerata) + leggermente più grande in battaglia
 - Stats: **+10% a tutte le stat base**
 
 ---
@@ -84,7 +84,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** CRYPTO
 **Stat base:** HP 40 / ATK 30 / SP.ATK 80 / DEF 30 / SP.DEF 60 / SPD 60 (TOT 300)
 **Mossa unica:** REDDIT — Speciale, 50 danni, 30% di applicare TASCHE BUCATE
-**Talento (liv 50):** AIRDROP — CRYPTOBISMOL inizia ogni battaglia con 2 buff casuali già attivi. Scaling: +2 buff casuali ogni 50 livelli (liv 50: 2 buff, liv 100: 4 buff, liv 150: 6 buff, liv 200: 8 buff...) infinito oltre il liv 200
+**Talento (liv 50):** AIRDROP — CRYPTOBISMOL inizia ogni battaglia con 2 buff casuali già attivi. Rende TASCHE BUCATE stackabile: ogni stack aggiuntivo aumenta del 20% il gold generato dal danno ricevuto, e ogni stack infligge danno al ROT afflitto pari al gold generato tramite TASCHE BUCATE in quel turno. Scaling: +2 buff casuali ogni 50 livelli (liv 50: 2 buff, liv 100: 4 buff, liv 150: 6 buff, liv 200: 8 buff...) infinito oltre il liv 200
 
 ### ROT #03 — BIG MAC
 **Tipo:** NORMIE
@@ -197,7 +197,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 ### ROT #21 — ARTMIR
 **Tipo:** MACHO
 **Stat base:** HP 70 / ATK 70 / SP.ATK 30 / DEF 60 / SP.DEF 40 / SPD 30 (TOT 300)
-**Mossa unica:** ALCOLISMO — Utility, ARTMIR ottiene uno scudo pari al 15% dei propri HP totali. Per 3 turni, se un attacco colpirebbe un ROT alleato, viene reindirizzato su ARTMIR invece
+**Mossa unica:** ALCOLISMO — Utility, ARTMIR ottiene uno scudo pari al 15% dei propri HP totali. Per 3 turni, se un attacco colpirebbe un ROT alleato, viene reindirizzato su ARTMIR invece. Visibile come icona dedicata (manina alzata con dito indice alzato) sopra ARTMIR, con finestra info cliccabile come gli altri status/buff. Non può essere copiato, duplicato o replicato da nessun effetto (es. COLBACCO, talenti di duplicazione) — può esistere un solo ALCOLISMO attivo per squadra contemporaneamente
 **Talento (liv 50):** TESTOTERRONE — Aumenta la durata di ALCOLISMO di +1 turno ogni 50 livelli e lo scudo applicato di +10% ogni 50 livelli, infinito oltre il liv 200 (liv 50: 4 turni / +10% scudo, liv 100: 5 turni / +20%, liv 150: 6 turni / +30%, liv 200: 7 turni / +40%...)
 
 ### ROT #22 — SILVIO B.
@@ -220,47 +220,109 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ---
 
-## MOSSE DI TIPO (sbloccate ai livelli 10/50/100, acquistabili al negozio)
+## MOSSE DI TIPO
+
+Le mosse native dei ROT non sono acquistabili al negozio. Le mosse tipo acquistabili sono solo quelle indicate come "Acquistabile". Le mosse tipo sono fondibili come le mosse COMBO.
 
 ### MOG
-- **COLPO SIGMA** — Fisico, 40 danni
-- **NO NUT** — Speciale, 40 danni
-- **SHAKER PROTEICO** — Utility: nel turno di utilizzo danno ricevuto -50% + applica AVVELENATO a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| SIRINGONE | Fisico 50 | 30% AVVELENATO | Nativa MIKEY TREMBOLONE |
+| CRIMSON MENTONE | Utility | -1 DEF/SP.DEF + +3 ATK/SP.ATK a tutto il team | Nativa MOG MOB |
+| COLPO SIGMA | Fisico 40 | — | Acquistabile |
+| NO NUT | Speciale 40 | — | Acquistabile |
+| SHAKER PROTEICO | Utility | -50% danno nel turno + AVVELENATO a chi attacca, non consecutiva | Acquistabile |
 
 ### CRYPTO
-- **BITCOINK** — Fisico, 40 danni
-- **MEME COIN** — Speciale, 40 danni
-- **POLYMARKET** — Utility: nel turno di utilizzo danno ricevuto -50% + applica TASCHE BUCATE a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| REDDIT | Speciale 50 | 30% TASCHE BUCATE | Nativa CRYPTOBISMOL |
+| RUGPULL | Speciale | 15 danni + 1 danno per ogni gold posseduto | Nativa LOGAN FRAUD |
+| BITCOINK | Fisico 40 | — | Acquistabile |
+| MEME COIN | Speciale 40 | — | Acquistabile |
+| POLYMARKET | Utility | -50% danno nel turno + TASCHE BUCATE a chi attacca, non consecutiva | Acquistabile |
 
 ### NORMIE
-- **FOTO DI GRUPPO** — Fisico, 40 danni
-- **CELEBRITY GOSSIP** — Speciale, 40 danni
-- **NPC ROUTINE** — Utility: nel turno di utilizzo danno ricevuto -50% + applica COLLASSO a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| MENU LARGE | Speciale 50 | 30% COLLASSO | Nativa BIG MAC |
+| TREDICESIMA | Utility | Cura 20% HP massimi a tutto il team | Nativa POKE MON |
+| FOTO DI GRUPPO | Fisico 40 | — | Acquistabile |
+| CELEBRITY GOSSIP | Speciale 40 | — | Acquistabile |
+| NPC ROUTINE | Utility | -50% danno nel turno + COLLASSO a chi attacca, non consecutiva | Acquistabile |
 
 ### VAPE
-- **TOSSE CRONICA** — Fisico, 40 danni
-- **SVAPATA** — Speciale, 40 danni
-- **MISCELATORE** — Utility: nel turno di utilizzo danno ricevuto -50% + applica STRAFATTO a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| SVAPO DIESEL | Speciale 50 | 30% STRAFATTO | Nativa CHEESECAKE |
+| SOFFOCOTTO | Speciale 30 | Colpisce tutti i nemici, 18% STRAFATTO per nemico | Nativa SVAPO KINK |
+| TOSSE CRONICA | Fisico 40 | — | Acquistabile |
+| SVAPATA | Speciale 40 | — | Acquistabile |
+| MISCELATORE | Utility | -50% danno nel turno + STRAFATTO a chi attacca, non consecutiva | Acquistabile |
 
 ### SCHIZO
-- **2 DIMENSIONI** — Fisico, 2 colpi da 20 danni
-- **4CHAN THEORY** — Speciale, 2 colpi da 20 danni
-- **POTERI FORTI** — Utility: tutta la squadra alleata ottiene probabilità critico al 75% per tutta la battaglia. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| NO VAX | Utility | Rimuove status negativi e debuff stadi + scudo 20% HP a tutto il team | Nativa LINO STAGNO |
+| RICICLAGGIO | Speciale 30 | 50% di applicare uno status casuale | Nativa FRANCO |
+| 2 DIMENSIONI | Fisico 20 | Colpisce 2 volte | Acquistabile |
+| 4CHAN THEORY | Speciale 20 | Colpisce 2 volte | Acquistabile |
+| POTERI FORTI | Utility | 75% probabilità critico a tutto il team per la battaglia, non consecutiva | Acquistabile |
 
 ### TROLL
-- **TESCHIO** — Fisico, 40 danni
-- **GHIGNO MALEFICO** — Speciale, 40 danni
-- **BAIT SUPREMO** — Utility: nel turno di utilizzo danno ricevuto -50% + applica BURNOUT a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| RAGE BAIT | Fisico 50 | 30% BURNOUT | Nativa TROLLO |
+| USB-C | Fisico 80 | Recoil 20% del danno inflitto, cap 20% HP massimi | Nativa USBATTI |
+| TESCHIO | Fisico 40 | — | Acquistabile |
+| GHIGNO MALEFICO | Speciale 40 | — | Acquistabile |
+| BAIT SUPREMO | Utility | -50% danno nel turno + BURNOUT a chi attacca, non consecutiva | Acquistabile |
 
 ### PSYCHO
-- **CORPORATE** — Fisico, 30 danni, +10 per ogni uso consecutivo (si resetta cambiando mossa)
-- **HR** — Speciale, 30 danni, +10 per ogni uso consecutivo (si resetta cambiando mossa)
-- **DOGE** — Utility: nel turno di utilizzo danno ricevuto -50% + applica BRUCIATO a chi attacca. Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| FIRED! | Fisico 50 | 30% BRUCIATO | Nativa ELONIO MUSCHIO |
+| EVASIONE FISCALE | Fisico 30 | Colpisce tutti i nemici, +1 gold per nemico colpito | Nativa SEAO |
+| CORPORATE | Fisico 30 | +10 danni per ogni uso consecutivo, si resetta cambiando mossa | Acquistabile |
+| HR | Speciale 30 | +10 danni per ogni uso consecutivo, si resetta cambiando mossa | Acquistabile |
+| DOGE | Utility | -50% danno nel turno + BRUCIATO a chi attacca, non consecutiva | Acquistabile |
 
 ### BASED
-- **CHA CHA CHAD** — Fisico, 20 danni, colpisce da 1 a 4 volte (probabilità colpi aggiuntivi proporzionale alle stat)
-- **CANNONE SWAG** — Speciale, 20 danni, colpisce da 1 a 4 volte. Stessa meccanica di CHA CHA CHAD ma usa SP.ATK invece di ATK per calcolare la probabilità
-- **SALSA BASE** — Utility: per 3 turni ogni colpo ha 10% di probabilità di stunnare il bersaglio (salta il turno). Non usabile consecutivamente
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| MANNAIA MANNAGGIA | Fisico 40 | 100% FERITE | Nativa BRASATO |
+| CHIACCHIERE DA BAR | Utility | +2 stadi DEF e SP.DEF a tutto il team | Nativa GIANNI IL PIZZAIOLO |
+| CHA CHA CHAD | Fisico 20 | 1-4 colpi, probabilità colpi aggiuntivi proporzionale ad ATK | Acquistabile |
+| CANNONE SWAG | Speciale 20 | 1-4 colpi, probabilità colpi aggiuntivi proporzionale a SP.ATK | Acquistabile |
+| SALSA BASE | Utility | Per 3 turni ogni colpo ha 10% di stunnare il bersaglio, non consecutiva | Acquistabile |
+
+### TIPA
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| BOMBOCLAT | Fisico 40 | 20% danno propagato ai nemici adiacenti | Nativa KAMOOM |
+| FOTUZZA | Fisico 40 | Va sempre per prima, 30% stun | Nativa FUMACAZZI |
+| GOSSIP | Fisico 40 | — | Acquistabile |
+| DRAMA QUEEN | Speciale 40 | — | Acquistabile |
+| POSA STUDIATA | Utility | -50% danno nel turno + COLLASSO a chi attacca, non consecutiva | Acquistabile |
+
+### MACHO
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| ALCOLISMO | Utility | Scudo 15% HP + per 3 turni reindirizza attacchi su ARTMIR | Nativa ARTMIR |
+| BUNGA BUNGA | Utility | +1 stadio a tutte le stats a tutto il team | Nativa SILVIO B. |
+| GOMITATA | Fisico 40 | — | Acquistabile |
+| SPACCATA | Speciale 40 | — | Acquistabile |
+| ALZATA DI SPALLE | Utility | -50% danno nel turno + BRUCIATO a chi attacca, non consecutiva | Acquistabile |
+
+### TRANS
+| Mossa | Tipo | Effetto | Disponibilità |
+|---|---|---|---|
+| TRAFFICO MATTUTINO | Fisico 25 | Colpisce 2 volte, ogni colpo applica 1 stack TRAFFICO | Nativa DIO PORSCHE |
+| MICRO PARTICELLE | Speciale | Colpisce tutti i nemici, applica AVVELENATO BRUCIATO e 1 stack TRAFFICO | Nativa EURO 0 |
+| SVOLTA | Fisico 40 | — | Acquistabile |
+| RIVELAZIONE | Speciale 40 | — | Acquistabile |
+| CAMBIO CORSIA | Utility | -50% danno nel turno + AVVELENATO a chi attacca, non consecutiva | Acquistabile |
+
 
 ---
 
@@ -270,11 +332,12 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 |---|---|---|---|---|
 | **AVVELENATO** | -10% HP per turno | Permanente | No | Non staccabile |
 | **STRAFATTO** | 50% chance di mancare | 3 turni | No | Non staccabile |
-| **TASCHE BUCATE** | -5 gold per turno | Intero combattimento | No | Gold min 0 |
+| **TASCHE BUCATE** | Il ROT afflitto genera il 20% del danno ricevuto come gold per l'avversario (si applica anche sull'attacco che ha applicato il debuff). Se un ROT alleato è afflitto da TASCHE BUCATE il giocatore perde gold equivalente invece di guadagnarlo. | Intero combattimento | No (stackabile solo con talento AIRDROP di CRYPTOBISMOL) | Gold min 0 |
 | **BRUCIATO** | -5 HP fissi per turno | Permanente | Sì, max 3 | 3 stack = -15 HP per turno |
 | **BURNOUT** | No stessa mossa 2x + doppio PP consumo | 5 turni | No | |
 | **COLLASSO** | Salta turno, 50% sveglia per turno | Variabile | No | |
 | **FERITE** | +10% danno subito per stack | Permanente | Sì, max 5 | Ogni attacco di Brasato aggiunge 1 stack |
+| **STUN** | Blocca l'azione del ROT nel turno corrente se non ha ancora attaccato | 1 turno | No | Come tentennamento Pokémon |
 
 ### PP
 - Tutte le mosse hanno **10 PP** (tranne ATTACCO base che è infinito)
@@ -286,48 +349,103 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 
 ---
 
-## MOSSE GENERICHE NEGOZIO
+## MOSSE NEGOZIO
 
-### COMUNI (70%)
-| Mossa | Effetto |
-|---|---|
-| BIRRETTA | +2 stadi Attacco personale |
-| CAFFE | +2 stadi Velocità personale |
-| ACTIMEL | +2 stadi Difesa personale |
-| UNO BRAVO | +2 stadi Difesa Speciale personale |
-| PIPPARE | +2 stadi Attacco Speciale personale |
-| MAKE UP | Scudo 25% HP massimi personali |
-| URCA | -50% danno dal prossimo attacco ricevuto |
-| SCHEDINA | Guadagni 10% del gold posseduto |
-| LAMPIONE | Per 3 turni il team è immune a stun e abbassamento stat |
-| TERME | Elimina ogni malus da un Rot |
-| OFFRO IO | Il team recupera 15% HP massimi |
-| APRI LE FINESTRE | Elimina tutti gli status che modificano le statistiche |
+Le mosse si dividono in COMBO, ATOMICHE e TIPO. Non esiste più il sistema di rarità COMUNE/RARA/ATOMICA. Tutte le mosse COMBO e TIPO possono essere fuse (3 copie identiche = EVO superiore). Le mosse cambiano nome quando evolvono e diventano più forti.
 
-### RARE (15%)
-| Mossa | Effetto |
-|---|---|
-| **SBERLATE** | Fisico, 50 danni a tutti i ROT nemici contemporaneamente |
-| **BORDELLO** | Speciale, 50 danni a tutti i ROT nemici contemporaneamente |
+Ogni ROT può avere al massimo 1 copia di una specifica mossa assegnata (non si può avere 2 SHOTTINI sullo stesso ROT).
 
-### RARE (15%)
-| Mossa | Effetto |
-|---|---|
-| ABBRACCIO | Scudo 15% HP massimi a tutto il team |
-| TOH | Trasferisce tutti i malus di un Rot alleato a un Rot nemico |
-| CHINOTTO | Un Rot alleato selezionato recupera 50% HP |
-| PROVACI | +15% danno subito dal prossimo attacco, restituisce 100% del danno all'attaccante |
-| FRULLATO DETOX | +2 stadi Difesa e Difesa Speciale a tutto il team |
-| SHOTTINI | +2 stadi Attacco e Attacco Speciale a tutto il team |
-| REDBULL | +2 stadi Velocità a tutto il team |
+Le mosse acquistate vanno nel LIBRETTO — un magazzino visibile a destra nella finestra acquisto mosse (i box dei ROT si restringono per fare spazio). Il LIBRETTO ha box rettangolari con il nome della mossa, trascinabili. Trascinando una mossa dal LIBRETTO appare la griglia con SPOSTA sopra e VENDI sotto. Le mosse possono essere trascinate tra LIBRETTO e slot mosse dei ROT liberamente — incluse le mosse EVO. Le mosse uniche base dei ROT sono fisse e non spostabili.
 
-### ATOMICHE (5%)
-| Mossa | Effetto |
-|---|---|
-| BESTEMMIA | Protezione completa da qualsiasi attacco per 1 turno. Non usabile consecutivamente |
-| LANDLORDARE | Per 5 turni il team recupera 10% HP massimi a fine turno |
+### MOSSE COMBO (fondibili fino a liv 4, cambiano nome ad ogni EVO)
+| Mossa | Liv1 | Liv2 | Liv3 | Liv4 |
+|---|---|---|---|---|
+| SHOTTINI | +1 ATK personale | +1 ATK tutto il team | +2 ATK tutto il team | +4 ATK tutto il team, si casta automaticamente all'inizio battaglia |
+| CAFFE | +1 Velocità personale | +1 Velocità tutto il team | +2 Velocità tutto il team | +4 Velocità tutto il team, si casta automaticamente all'inizio battaglia |
+| ACTIMEL | +1 DEF personale | +1 DEF tutto il team | +2 DEF tutto il team | +4 DEF tutto il team, si casta automaticamente all'inizio battaglia |
+| UNO BRAVO | +1 SP.DEF personale | +1 SP.DEF tutto il team | +2 SP.DEF tutto il team | +4 SP.DEF tutto il team, si casta automaticamente all'inizio battaglia |
+| PIPPARE | +1 SP.ATK personale | +1 SP.ATK tutto il team | +2 SP.ATK tutto il team | +4 SP.ATK tutto il team, si casta automaticamente all'inizio battaglia |
+| MAKE UP | Scudo 15% HP personali | Scudo 15% HP tutto il team | Scudo 25% HP tutto il team | Scudo 50% HP tutto il team, si casta automaticamente all'inizio battaglia |
+| RICCIOLO (ex URCA) | -25% danno durante la prossima fase di attacco (riduce TUTTI gli attacchi della fase) | -50% danno durante la prossima fase di attacco | -50% danno ricevuto per 2 turni | -50% danno ricevuto per 2 turni a tutto il team |
+| SCHEDINA | +5% gold posseduto | +10% gold posseduto | +50% gold posseduto | +100% gold posseduto, 5% probabilità JACKPOT!! — finestra animata con coriandoli e fuochi d'artificio, poi +50% a tutte le stats dei ROT in battaglia permanentemente |
+| TERME | Elimina status negativi inclusi abbassamenti stadi di un ROT | Elimina status negativi inclusi abbassamenti stadi di tutto il team | Elimina status negativi + abbassamenti stadi tutto il team + elimina tutti i buff del team avversario | Elimina status negativi + elimina tutti i buff avversari + raddoppia ogni buff della squadra alleata (aggiunge +1 turno agli effetti a durata) |
+| OFFRO IO | Recupera 15% HP di un singolo ROT | Team recupera 15% HP | Team recupera 25% HP | Team recupera 50% HP, l'eccesso si tramuta in scudo |
+| SBERLATE | Fisico 20 danni a tutti i nemici | Fisico 40 danni a tutti i nemici | Fisico 60 danni a tutti i nemici + 15% STUN | Fisico 80 danni a tutti i nemici + 25% STUN |
+| BORDELLO | Speciale 20 danni a tutti i nemici | Speciale 40 danni a tutti i nemici | Speciale 60 danni a tutti i nemici + 15% STUN | Speciale 80 danni a tutti i nemici + 25% STUN |
+| CHINOTTO | +1 stadio elusività personale (1 stadio = 12.5% probabilità schivare) | +1 stadio elusività tutto il team | +2 stadi elusività tutto il team | +4 stadi elusività tutto il team, si casta automaticamente all'inizio battaglia |
+| PROVACI | +20% danno subito, restituisce 50% all'attaccante | +20% danno subito, restituisce 80% all'attaccante | +10% danno subito, restituisce 100% all'attaccante | Restituisce 200% del danno ricevuto all'attaccante |
+| LANDLORDARE | Team recupera 5% HP per 3 turni | Team recupera 10% HP per 3 turni | Team recupera 15% HP per 4 turni | Team recupera 20% HP per 5 turni, eccesso si tramuta in scudo |
+| GRANATALE | +1 stack FERITE a un ROT nemico | 1 stack FERITE a tutto il team nemico | 2 stack FERITE a tutto il team nemico | 4 stack FERITE a tutto il team nemico all'inizio della battaglia automaticamente |
 
-### MOSSE TIPO (10% — le 24 mosse di tipo sopra elencate)
+### MOSSE ATOMICHE — da definire
+
+### MOSSE TIPO — fondibili fino a liv 4
+
+**Logica standard fisico/speciale (MOG, CRYPTO, NORMIE, VAPE, TROLL, PSYCHO, TRANS):**
+- Liv1: 40 danni
+- Liv2: 40 danni + 25% status del tipo
+- Liv3: 30×2 danni + 50% status per ogni attacco
+- Liv4: 40×2 danni + 75% status per ogni attacco
+Status per tipo: MOG=AVVELENATO, CRYPTO=TASCHE BUCATE, NORMIE=COLLASSO, VAPE=STRAFATTO, TROLL=BURNOUT, PSYCHO=BRUCIATO, TRANS=TRAFFICO
+CORPORATE e HR seguono la stessa logica PSYCHO (non più meccanica +10/uso consecutivo)
+
+**Logica standard utility (SHAKER PROTEICO, POLYMARKET, NPC ROUTINE, MISCELATORE, BAIT SUPREMO, DOGE, CAMBIO CORSIA):**
+- Liv1: -25% danno ricevuto nel turno + 50% di applicare status del tipo
+- Liv2: -50% danno + 75% status
+- Liv3: -75% danno + 100% status
+- Liv4: -75% danno + 100% status applicato a tutto il team nemico nel turno
+
+**SCHIZO fisico (2 DIMENSIONI) e speciale (4CHAN THEORY):**
+- Liv1: 40 danni, 25% status negativo casuale (escluso FERITE)
+- Liv2: 50 danni, 50% status negativo casuale
+- Liv3: 25×2 danni, 100% status per ogni attacco
+- Liv4: 25×2 danni a tutto il team nemico, 100% status per ogni attacco
+
+**POTERI FORTI (utility SCHIZO):**
+- Liv1: scudo 5% HP a tutto il team + 1 status negativo casuale a 1 ROT nemico casuale
+- Liv2: scudo 10% HP + 2 status negativi distribuiti random tra i nemici
+- Liv3: scudo 15% HP + 3 status negativi distribuiti random tra i nemici
+- Liv4: scudo 20% HP + 2 status negativi a testa per ogni ROT nemico
+
+**BASED fisico (CHA CHA CHAD) e speciale (CANNONE SWAG):**
+- Liv1: 1-2 colpi da 20 danni
+- Liv2: 1-3 colpi da 20 danni
+- Liv3: 1-4 colpi da 20 danni
+- Liv4: 1-5 colpi da 20 danni
+
+**SALSA BASE (utility BASED):**
+- Liv1: 10% stun sugli attacchi a tutto il team alleato
+- Liv2: 20% stun
+- Liv3: 50% stun
+- Liv4: 65% stun, si autocasta all'inizio della battaglia
+
+**GOSSIP (fisico TIPA):**
+- Liv1: 40 danni, 25% di abbassare DEF bersaglio di 1 stadio
+- Liv2: 60 danni, 50% di abbassare DEF di 1 stadio
+- Liv3: 70 danni, 100% di abbassare DEF di 1 stadio
+- Liv4: 80 danni, 100% di abbassare DEF di 3 stadi
+
+**DRAMA QUEEN (speciale TIPA):** stessa logica GOSSIP ma abbassa SP.DEF invece di DEF
+
+**POSA STUDIATA (utility TIPA):**
+- Liv1: abbassa DEF e SP.DEF di tutti i nemici di 1 stadio
+- Liv2: abbassa di 2 stadi
+- Liv3: abbassa di 3 stadi
+- Liv4: abbassa di 4 stadi, si autocasta all'inizio della battaglia
+
+**GOMITATA (fisico MACHO):**
+- Liv1: 40 danni, 20% di aumentare ATK personale di 1 stadio
+- Liv2: 50 danni, 50% di aumentare ATK di 1 stadio
+- Liv3: 60 danni, 75% di aumentare ATK di 2 stadi
+- Liv4: 80 danni, 100% di aumentare ATK di 3 stadi a tutto il team
+
+**MARTELLO (ex SPACCATA, speciale MACHO):** stessa logica GOMITATA ma su SP.ATK invece di ATK
+
+**ALZATA DI SPALLE (utility MACHO):**
+- Liv1: riduce danno fisico e speciale ricevuto del 10% per 2 turni a tutto il team
+- Liv2: riduzione 20% per 2 turni
+- Liv3: riduzione 35% per 3 turni
+- Liv4: riduzione 50% per 3 turni, si autocasta all'inizio della battaglia
 
 ---
 
@@ -575,6 +693,24 @@ Ogni 50 livelli (50, 100, 150, 200...) appare una battaglia boss invece della no
 - Dal turno 50 in poi nessun bonus
 - Si resetta ad ogni nuova battaglia
 
+### Fusione ROT — Sistema CASAFORTE
+- Nella finestra gestione ROT, sotto la sezione marsupio, appare un pulsante CASAFORTE con icona casetta
+- Cliccando si apre una grande finestra in sovraimpressione con griglia 4x4 (come il marsupio) dove si depositano i ROT extra acquistati nel negozio, con sezione VENDI tratteggiata in basso
+- Se si possiedono 3 ROT dello stesso tipo (in qualsiasi combinazione tra squadra e casaforte), i loro token lampeggiano di rosso come per gli oggetti
+- Click destro su un token fondibile apre finestra: "VUOI FONDERE [nome ROT]?" con opzioni VAIIII e NO
+- Animazione di fusione → il ROT risultante è uguale ma con scritta EVO 1 accanto al nome nel token
+- Fusione di 3 ROT EVO 1 → ROT EVO 2 con sprite aggiornato dalla cartella spritesheet/evo/
+- Fusione di 3 ROT EVO 2 → ROT EVO 3 (sprite rimane EVO 2, solo stats aumentate)
+- Massimo EVO 3
+- La finestra CASAFORTE si chiude cliccando fuori
+
+**Formula stats fusione (due fasi):**
+1. Media delle stats dei 3 ROT da fondere includendo l'effetto OVERDOSE già applicato come modifica permanente fissa (l'OVERDOSE è già incorporata nelle stats del ROT che l'ha assunta, si spalma automaticamente nella media) × 1.5
+2. Sopra la media evoluta si sommano tutti i bonus delle altre drugs assunte dai 3 ROT fusi, esclusa OVERDOSE già incorporata nella media
+- OVERDOSE può essere assunta da qualsiasi ROT a qualsiasi livello EVO senza restrizioni — se un ROT EVO assume OVERDOSE, modifica permanentemente le sue stats e questo si riflette nella media alla fusione successiva
+- Il ROT evoluto mantiene un tracking completo di tutte le drugs assunte dai ROT che hanno partecipato alla fusione, inclusa OVERDOSE — nella sezione drugs del ROT evoluto vengono mostrate tutte le drugs cumulative di tutti i ROT fusi con il conteggio corretto per ciascuna drug, incluso il numero totale di OVERDOSE assunte dai ROT componenti e da eventuali OVERDOSE assunte direttamente dal ROT evoluto stesso. L'effetto di OVERDOSE rimane sempre applicato solo sul singolo ROT al momento dell'assunzione, mai post-fusione, ma il tracking del numero totale rimane visibile nella scheda del ROT evoluto
+- EVO 1: media × 1.5 + drugs sommate (esclusa OVERDOSE) | EVO 2: media delle 3 EVO 1 × 1.5 + drugs sommate | EVO 3: media delle 3 EVO 2 × 1.5 + drugs sommate
+
 ### Oggetti per ROT
 - Ogni ROT può equipaggiare massimo **2 oggetti** fino al livello 49
 - Dal livello 50: +1 slot oggetto ogni 50 livelli
@@ -605,7 +741,15 @@ Ogni 50 livelli (50, 100, 150, 200...) appare una battaglia boss invece della no
 - Tutte le stat aumentano di **+1 per livello**
 - Le mosse di tipo si sbloccano ai livelli **10, 50, 100**
 - La passiva si sblocca al **livello 50** e scala ogni 50 livelli
-- **Difficoltà nemici (dal livello 51):** i ROT nemici ricevono un bonus aggiuntivo di +1% a tutte le stats totali per ogni livello oltre il 50, cumulativo e permanente per tutta la run (es. al livello 60 i nemici hanno +10% stats rispetto al valore base previsto per quel livello). Il moltiplicatore attuale è mostrato in piccolo nella barra superiore di battaglia, allineato a destra sotto il pulsante impostazioni, sulla stessa riga della velocità
+- **Difficoltà nemici (dal livello 51):** i ROT nemici ricevono un bonus aggiuntivo di +1% a tutte le stats totali per ogni livello oltre il 50, cumulativo e permanente per tutta la run. Il moltiplicatore attuale è mostrato in piccolo nella barra superiore di battaglia, allineato a destra sotto il pulsante impostazioni, sulla stessa riga della velocità
+
+### Progressione nemici per fascia di livello
+| Fascia | EVO ROT nemici | Mosse equipaggiate | Oggetti equipaggiati | Slot oggetti |
+|---|---|---|---|---|
+| Livello 1-49 | Nessuna EVO (base) | Mossa nativa fissa + mosse Liv 1 casuali tra quelle acquistabili nel negozio (ATTACCO sostituibile) | Liv 1 casuali | 2 slot |
+| Livello 50-99 | EVO 1 (sprite base) | Mossa nativa fissa + mosse Liv 2 casuali tra quelle acquistabili nel negozio | Liv 2 casuali | 3 slot |
+| Livello 100-149 | EVO 2 (sprite aggiornato da spritesheet/evo/) | Mossa nativa fissa + mosse Liv 3 casuali tra quelle acquistabili nel negozio | Liv 3 casuali | 4 slot |
+| Livello 150+ | EVO 3 (sprite EVO 2 invariato, solo stats aumentate) | Mossa nativa fissa + mosse Liv 4 casuali tra quelle acquistabili nel negozio | Liv 4 casuali | 5 slot |
 
 ---
 
