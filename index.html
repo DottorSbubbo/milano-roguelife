@@ -7,6 +7,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&family=VT323&family=Monoton&family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
+@font-face {
+  font-family: 'Kenney Future';
+  src: url('assets/ui/UI1/Font/Kenney Future.ttf') format('truetype');
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Kenney Future Narrow';
+  src: url('assets/ui/UI1/Font/Kenney Future Narrow.ttf') format('truetype');
+  font-display: swap;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
@@ -756,6 +767,7 @@ body {
   position: relative; z-index: 1;
 }
 .team-grp { display: flex; align-items: flex-end; gap: 16px; flex: 0 0 42%; }
+#enemy-group:has(.boss-card) { flex: 0 0 auto; }
 #enemy-group  { justify-content: flex-start; }
 #player-group { justify-content: flex-end; }
 .stage-center {
@@ -1028,6 +1040,7 @@ body {
 .sbadge.STRAFATTO     { background: #1e3a5f; color: #bfdbfe; }
 .sbadge.BURNOUT       { background: #1d4ed8; color: #bfdbfe; }
 .sbadge.COLLASSO      { background: #374151; color: #e5e7eb; }
+.sbadge.STUN          { background: #92400e; color: #fde68a; }
 .sbadge.TASCHE-BUCATE { background: #854d0e; color: #fef3c7; }
 .sbadge.TRAFFICO      { background: #7c2d12; color: #fed7aa; }
 
@@ -2445,6 +2458,79 @@ body {
 .shop-picker-cancel { color: #7a3a3a; }
 #shop-continue-btn { align-self: center; font-size: 15px; letter-spacing: 5px; padding: 16px 48px; }
 
+/* ═══════════════════════════════════════════════════════════
+   UI ASSET OVERRIDES — solo pulsanti ACQUISTA e REROLL
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Pulsante ACQUISTA: buttonLong_blue.png (UI2) ── */
+.shop-buy-btn {
+  background: url('assets/ui/UI2/PNG/buttonLong_blue.png') center / 100% 100% no-repeat !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  color: #e8f4ff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  padding: 8px 14px;
+  transform: none;
+  transition: filter 0.08s, transform 0.06s;
+}
+.shop-buy-btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+  color: #fff;
+  box-shadow: none !important;
+}
+.shop-buy-btn:active:not(:disabled) {
+  background-image: url('assets/ui/UI2/PNG/buttonLong_blue_pressed.png') !important;
+  transform: translateY(2px);
+  filter: brightness(0.95);
+  box-shadow: none !important;
+}
+.shop-buy-btn:disabled {
+  background-image: url('assets/ui/UI2/PNG/buttonLong_grey.png') !important;
+  box-shadow: none !important;
+  color: #888 !important;
+  text-shadow: none;
+  opacity: 0.6;
+}
+.shop-buy-btn.bought {
+  background-image: url('assets/ui/UI2/PNG/buttonLong_grey.png') !important;
+  box-shadow: none !important;
+  color: #888 !important;
+  text-shadow: none;
+  opacity: 0.5;
+  border: none !important;
+}
+
+/* ── Pulsante REROLL: buttonLong_beige.png (UI2) ── */
+.shop-reroll-btn {
+  background: url('assets/ui/UI2/PNG/buttonLong_beige.png') center / 100% 100% no-repeat !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0;
+  color: #3a2000;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.35);
+  padding: 8px 16px;
+  transform: none;
+  transition: filter 0.08s, transform 0.06s;
+}
+.shop-reroll-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  color: #1a0a00;
+  box-shadow: none !important;
+}
+.shop-reroll-btn:active:not(:disabled) {
+  background-image: url('assets/ui/UI2/PNG/buttonLong_beige_pressed.png') !important;
+  transform: translateY(2px);
+  box-shadow: none !important;
+}
+.shop-reroll-btn:disabled {
+  background-image: url('assets/ui/UI2/PNG/buttonLong_grey.png') !important;
+  box-shadow: none !important;
+  color: #666 !important;
+  text-shadow: none;
+  opacity: 0.55;
+}
+
 /* ── GESTIONE ROT (modale: squadra + marsupio) ── */
 #rot-manager-overlay {
   display: none; position: fixed; inset: 0;
@@ -3209,15 +3295,15 @@ body {
 
 /* ── BOSS CARD ── */
 .boss-card {
-  flex: 0 0 280px; width: 280px;
+  flex: 0 0 452px; width: 452px;
 }
 .boss-card .rot-sprite {
-  width: 100%; height: 210px;
+  width: 100%; height: 250px;
 }
-.boss-card .rot-name-wrap { width: 100%; }
+.boss-card .rot-name-wrap { width: 100%; height: 56px; }
 .boss-card .stage-row { width: 100%; }
-.boss-card .hp-bar-track { height: 18px; overflow: visible; }
-.boss-card .rot-name-token { font-size: 15px !important; padding: 4px 10px; }
+.boss-card .hp-bar-track { height: 28px; overflow: visible; }
+.boss-card .rot-name-token { width: 100% !important; height: 56px !important; border-radius: 12px; font-size: 22px !important; padding: 6px 20px; }
 .boss-card .bars-frame { width: 100%; max-width: none; box-sizing: border-box; }
 
 /* Barra HP boss: rosso vivo ad alto contrasto, pulsante */
@@ -4140,7 +4226,8 @@ const ROT_DEFS = {
     id:1, name:'MIKEY TREMBOLONE', type:'MOG',
     base:{ hp:50, atk:80, spAtk:30, def:60, spDef:30, spd:50 },
     uniqueMove:{ name:'SIRINGONE', type:'MOG', cat:'PHYSICAL', power:50, pp:10,
-      status:{ type:'AVVELENATO', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'AVVELENATO', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni fisici. 30% di probabilità di applicare AVVELENATO.' },
     talent:{ name:'IPERTROFIA' },
     sprite: { src:'spritesheet/rot/idle/mikey.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player' }
   },
@@ -4148,7 +4235,8 @@ const ROT_DEFS = {
     id:2, name:'CRYPTOBISMOL', type:'CRYPTO',
     base:{ hp:40, atk:30, spAtk:80, def:30, spDef:60, spd:60 },
     uniqueMove:{ name:'REDDIT', type:'CRYPTO', cat:'SPECIAL', power:50, pp:10,
-      status:{ type:'TASCHE BUCATE', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'TASCHE BUCATE', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni speciali. 30% di probabilità di applicare TASCHE BUCATE.' },
     talent:{ name:'AIRDROP' },
     sprite: { src:'spritesheet/rot/idle/cripto.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4156,7 +4244,8 @@ const ROT_DEFS = {
     id:3, name:'BIG MAC', type:'NORMIE',
     base:{ hp:90, atk:40, spAtk:60, def:60, spDef:40, spd:10 },
     uniqueMove:{ name:'MENU LARGE', type:'NORMIE', cat:'SPECIAL', power:50, pp:10,
-      status:{ type:'COLLASSO', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'COLLASSO', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni speciali. 30% di probabilità di applicare COLLASSO.' },
     talent:{ name:'EXTRA LARGE' },
     sprite: { src:'spritesheet/rot/idle/big.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4164,7 +4253,8 @@ const ROT_DEFS = {
     id:4, name:'CHEESECAKE', type:'VAPE',
     base:{ hp:50, atk:40, spAtk:60, def:40, spDef:50, spd:60 },
     uniqueMove:{ name:'SVAPO DIESEL', type:'VAPE', cat:'SPECIAL', power:50, pp:10,
-      status:{ type:'STRAFATTO', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'STRAFATTO', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni speciali. 30% di probabilità di applicare STRAFATTO.' },
     talent:{ name:'MIXOLOGIA' },
     sprite: { src:'spritesheet/rot/idle/cheese.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
@@ -4181,7 +4271,8 @@ const ROT_DEFS = {
     id:6, name:'TROLLO', type:'TROLL',
     base:{ hp:50, atk:60, spAtk:50, def:40, spDef:40, spd:60 },
     uniqueMove:{ name:'RAGE BAIT', type:'TROLL', cat:'PHYSICAL', power:50, pp:10,
-      status:{ type:'BURNOUT', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'BURNOUT', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni fisici. 30% di probabilità di applicare BURNOUT.' },
     talent:{ name:'PUMP IT' },
     sprite: { src:'spritesheet/rot/idle/troll.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4189,7 +4280,8 @@ const ROT_DEFS = {
     id:7, name:'ELONIO MUSCHIO', type:'PSYCHO',
     base:{ hp:50, atk:70, spAtk:50, def:40, spDef:40, spd:50 },
     uniqueMove:{ name:'FIRED!', type:'PSYCHO', cat:'PHYSICAL', power:50, pp:10,
-      status:{ type:'BRUCIATO', chance:0.30 }, target:'ENEMY' },
+      status:{ type:'BRUCIATO', chance:0.30 }, target:'ENEMY',
+      desc:'50 danni fisici. 30% di probabilità di applicare BRUCIATO.' },
     talent:{ name:'VISIONE DISRUPTIVA' },
     sprite: { src:'spritesheet/rot/idle/elonio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4197,7 +4289,8 @@ const ROT_DEFS = {
     id:8, name:'BRASATO', type:'BASED',
     base:{ hp:60, atk:80, spAtk:30, def:50, spDef:30, spd:50 },
     uniqueMove:{ name:'MANNAIA MANNAGGIA', type:'BASED', cat:'PHYSICAL', power:40, pp:10,
-      status:{ type:'FERITE', chance:1.0 }, target:'ENEMY' },
+      status:{ type:'FERITE', chance:1.0 }, target:'ENEMY',
+      desc:'40 danni fisici. Applica FERITE al bersaglio.' },
     talent:{ name:'ACCIAIO TEMPERATO' },
     sprite: { src:'spritesheet/rot/idle/brasato.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4244,7 +4337,8 @@ const ROT_DEFS = {
     id:13, name:'FRANCO', type:'SCHIZO',
     base:{ hp:60, atk:40, spAtk:60, def:40, spDef:40, spd:60 },
     uniqueMove:{ name:'RICICLAGGIO', type:'SCHIZO', cat:'SPECIAL', power:30, pp:10,
-      status:{ type:'RANDOM', chance:0.50 }, target:'ENEMY' },
+      status:{ type:'RANDOM', chance:0.50 }, target:'ENEMY',
+      desc:'30 danni speciali. 50% di probabilità di applicare uno status casuale al bersaglio.' },
     talent:{ name:'VITA PAZZA' },
     sprite: { src:'spritesheet/rot/idle/franco.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'none', chromaKey:false }
   },
@@ -4252,7 +4346,8 @@ const ROT_DEFS = {
     id:14, name:'USBATTI', type:'TROLL',
     base:{ hp:40, atk:80, spAtk:30, def:30, spDef:30, spd:90 },
     uniqueMove:{ name:'USB-C', type:'TROLL', cat:'PHYSICAL', power:80, pp:10,
-      recoil:20, status:null, target:'ENEMY' },
+      recoil:20, status:null, target:'ENEMY',
+      desc:'80 danni fisici. Il lanciatore subisce il 20% del danno inflitto come recoil.' },
     talent:{ name:'CARICA VELOCE' },
     sprite: { src:'spritesheet/rot/idle/usb.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'player', chromaKey:false }
   },
@@ -4289,8 +4384,8 @@ const ROT_DEFS = {
     id:18, name:'FUMACAZZI', type:'TIPA',
     base:{ hp:50, atk:65, spAtk:35, def:40, spDef:40, spd:70 },
     uniqueMove:{ name:'FOTUZZA', type:'TIPA', cat:'PHYSICAL', power:40, pp:10, target:'ENEMY',
-      effect:'always_first', status:{ type:'COLLASSO', chance:0.30 },
-      desc:'40 danni fisici. Va sempre per primo ignorando la velocità di tutti i ROT. 30% di probabilità di stunnare (COLLASSO) il bersaglio.', linkDesc:true },
+      effect:'always_first', stunEffect:true, stunChance:0.30,
+      desc:'40 danni fisici. Va sempre per primo ignorando la velocità di tutti i ROT. 30% di probabilità di applicare STUN al bersaglio (salta il turno corrente se non ha ancora agito).', linkDesc:true },
     talent:{ name:'PAPARAZZA' },
     sprite: { src:'spritesheet/rot/idle/fumacazzi.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
@@ -4359,9 +4454,9 @@ function computeTalentInfo(rot) {
     case 3:  return { name: talent.name, desc: t === 0 ? locked : `Riflette il ${t*10}% del danno subito al mittente. ${t*5}% di probabilità di applicare COLLASSO all'attaccante. Scaling: +10% riflessione, +5% COLLASSO ogni 50 lv.` };
     case 4:  return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico vivo con STRAFATTO: CHEESECAKE guadagna +${t*50}% a tutte le stat (eccetto HP). Scaling: +50% per ROT strafatto ogni 50 lv.` };
     case 5:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli scudi del team alleato aumentati del ${t*10}%. Il cap massimo di scudo di tutta la squadra sale al ${200 + t*10}% degli HP. Scaling: +10% ogni 50 lv.` };
-    case 6:  return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico eliminato in questa run: +${t*0.5}% permanente a tutte le stat di TROLLO (eccetto HP). Uccisioni totali: ${rot.trolloKills || 0}. Scaling: +0.5% per kill ogni 50 lv.` };
+    case 6: { const kills = rot.trolloKills || 0; const bonusPct = (kills * t * 0.5).toFixed(1); return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico eliminato in presenza di TROLLO: +${t*0.5}% permanente a tutte le stat (eccetto HP). Scaling: +0.5% per kill ogni 50 lv. — PUMP IT: +${bonusPct}% a tutte le stats (${kills} nemici eliminati in presenza di TROLLO).` }; }
     case 7:  return { name: talent.name, desc: t === 0 ? locked : `BRUCIATO si accumula fino a ${3+t*2} stack (base 3). Ogni stack infligge 5 HP a fine turno. Scaling: +2 stack max ogni 50 lv.` };
-    case 8:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli attacchi di BRASATO applicano FERITE al bersaglio. Ogni stack FERITE: +${t*10}% danno subito da quel ROT. Scaling: +10% danno per stack ogni 50 lv.` };
+    case 8:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli attacchi di BRASATO applicano ${1 + t*2} stack di FERITE al bersaglio (base 1 + ${t*2} dal talento). Ogni stack FERITE: +${t*10}% danno subito da quel ROT. Scaling: +2 stack per colpo e +10% danno per stack ogni 50 lv.` };
     case 9:  return { name: talent.name, desc: t === 0 ? locked : `Cap stadi di MOG MOB e di tutti i suoi alleati: ±${8+t} (base ±8). Scaling: +1 al cap degli stadi ogni 50 lv.` };
     case 10: {
       const gold = (typeof runState !== 'undefined' ? runState?.gold : 0) || 0;
@@ -4381,7 +4476,7 @@ function computeTalentInfo(rot) {
       const traffReduction = 5 + t * 5;
       return { name: talent.name, desc: t === 0 ? locked : `Cap TRAFFICO: ${traffCap} stack (base 4, +${t}). Ogni stack riduce danno e velocità del ${traffReduction}% (base 5%). Scaling: +1 stack cap, +5% riduzione per stack ogni 50 lv.` };
     }
-    case 20: return { name: talent.name, desc: t === 0 ? locked : `Cap di AVVELENATO, BRUCIATO e TRAFFICO aumentato di +${t} stack ciascuno. Scaling: +1 stack cap per status ogni 50 lv.` };
+    case 20: return { name: talent.name, desc: t === 0 ? locked : `Finché EURO 0 è in campo, PELLE DI ROSPO perde completamente la sua immunità agli status negativi — i ROT nemici con PELLE DI ROSPO possono ricevere AVVELENATO, BRUCIATO, TRAFFICO e qualsiasi altro status negativo normalmente. Gli status già applicati possono essere rimossi solo da mosse specifiche come NO VAX di LINO STAGNO.` };
     case 21: {
       const shieldPct = 15 + t * 10;
       const redirectTurns = 3 + t;
@@ -4915,8 +5010,8 @@ const GENERIC_MOVE_DEFS = {
     fuseLevel:3, fuseBase:'RICCIOLO', fusesInto:'RICCIOLO_L4', shopSellable:false,
     effect:'guard_phase', reduction:0.50, turns:2, team:false, desc:'-50% danno ricevuto per 2 turni.' },
   RICCIOLO_L4:  { name:'ELMETTO', type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'combo',
-    fuseLevel:4, fuseBase:'RICCIOLO', fusesInto:null, shopSellable:false,
-    effect:'guard_phase', reduction:0.50, turns:2, team:true, desc:'-50% danno ricevuto per 2 turni a tutta la squadra.' },
+    fuseLevel:4, fuseBase:'RICCIOLO', fusesInto:null, shopSellable:false, autocast:true,
+    effect:'guard_phase', reduction:0.50, turns:3, team:true, desc:'-50% danno ricevuto per 3 turni a tutta la squadra. Si casta automaticamente a inizio battaglia.' },
 
   // SCHEDINA — gold
   SCHEDINA:     { name:'SCHEDINA', type:null, cat:'UTILITY', power:0, pp:10, target:'SELF', rarity:'combo',
@@ -5685,10 +5780,11 @@ function takeDmg(rot, amount, _skipTB = false) {
       rot.isAlive = false;
     } else {
       rot.isAlive = false;
-      // ── TROLLO — PUMP IT: ogni nemico morto dà +0.5%×tier a TROLLO (incrementale in-battle) ──
+      // ── TROLLO — PUMP IT: ogni nemico morto incrementa il contatore di ogni istanza di TROLLO
+      //    attualmente viva sul campo (inclusi EVO e istanze multiple pre-fusione).
+      //    Ogni istanza traccia le proprie kills indipendentemente; i contatori si sommano alla fusione.
       if (!rot.isPlayer && B?.player) {
-        const trollo = B.player.find(r => r.def === ROT_DEFS.TROLLO && r.isAlive);
-        if (trollo && talentTier(trollo) > 0) {
+        for (const trollo of B.player.filter(r => r.def === ROT_DEFS.TROLLO && r.isAlive && talentTier(r) > 0)) {
           trollo.trolloKills = (trollo.trolloKills || 0) + 1;
           const incBonus = talentTier(trollo) * 0.005;
           trollo.stats.atk   = Math.floor(trollo.stats.atk   * (1 + incBonus));
@@ -5790,24 +5886,24 @@ function applyShieldPct(rot, pct, source, skipReplicate) {
 }
 
 function addStatus(rot, type) {
-  if (rot.items.includes('PELLE_DI_ROSPO')) return false;
+  // PERMESSO AREA C (EURO 0): sopprime l'immunità di PELLE DI ROSPO sui nemici finché EURO 0 è in campo
+  const areaCActive = !rot.isPlayer && B?.player?.some(r => r.def === ROT_DEFS.EURO_0 && r.isAlive && talentTier(r) > 0);
+  if (rot.items.includes('PELLE_DI_ROSPO') && !areaCActive) return false;
   const ex = rot.statuses.find(s => s.type === type);
-  // EURO 0 — PERMESSO AREA C: aumenta i cap di AVVELENATO, BRUCIATO, TRAFFICO (additive per ogni EURO 0 in squadra)
-  const _areaCBonus = B?.player?.filter(r => r.def === ROT_DEFS.EURO_0 && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
 
   if (type === 'BRUCIATO') {
     // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici (additive per ogni ELONIO in squadra)
     const bruCap = (!rot.isPlayer && B?.player)
-      ? 3 + B.player.filter(r => r.def === ROT_DEFS.ELONIO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0) + _areaCBonus
-      : 3 + _areaCBonus;
+      ? 3 + B.player.filter(r => r.def === ROT_DEFS.ELONIO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0)
+      : 3;
     if (ex) { if (ex.stacks < bruCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'AVVELENATO') {
     // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (additive per ogni MIKEY in squadra)
     const avvCap = (!rot.isPlayer && B?.player)
-      ? (() => { const mikeyBonus = B.player.filter(r => r.def === ROT_DEFS.MIKEY && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0); return Math.max(1, mikeyBonus) + _areaCBonus; })()
-      : 1 + _areaCBonus;
+      ? (() => { const mikeyBonus = B.player.filter(r => r.def === ROT_DEFS.MIKEY && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0); return Math.max(1, mikeyBonus); })()
+      : 1;
     if (ex) { if (ex.stacks < avvCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
@@ -5818,7 +5914,7 @@ function addStatus(rot, type) {
   if (type === 'TRAFFICO') {
     // DIO PORSCHE — INGOMBRANTE: aumenta il cap di TRAFFICO (additive per ogni DIO PORSCHE in squadra)
     const _ingombranteCap = B?.player?.filter(r => r.def === ROT_DEFS.DIO_PORSCHE && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
-    const trafficoCap = 4 + _ingombranteCap + _areaCBonus;
+    const trafficoCap = 4 + _ingombranteCap;
     if (ex) { if (ex.stacks < trafficoCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
@@ -5847,8 +5943,7 @@ function addStatus(rot, type) {
   return false;
 }
 
-function endTurnStatuses(rot) {
-  const logs = [];
+async function endTurnStatuses(rot) {
   const toRemove = [];
   for (const st of rot.statuses) {
     if (st.type === 'AVVELENATO') {
@@ -5856,79 +5951,96 @@ function endTurnStatuses(rot) {
       const _vitaPazzaMult = _francoVP ? (1 + talentTier(_francoVP) * 0.10) : 1;
       const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1) * _vitaPazzaMult));
       takeDmg(rot, d);
+      flashHit(rot.uid); hitRecoilAnim(rot);
       if (st.stacks > 1) {
-        logs.push({ parts:[
+        logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
           { text: ` è AVVELENATO (x${st.stacks})! -${d} HP` }
-        ], cls:'status' });
+        ], 'status');
       } else {
-        logs.push({ parts:[
+        logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
           { text: ' è ' },
           { text: 'AVVELENATO', onclick: () => showStatusInfo('AVVELENATO') },
           { text: `! -${d} HP` }
-        ], cls:'status' });
+        ], 'status');
       }
+      render(); await wait(380);
       if (!rot.isPlayer) {
         const _gufo = B?.player?.find(r => r.isAlive && r.items.includes('GUFO'));
         if (_gufo) {
           const _gh = applyHealAmount(_gufo, d, _gufo, true);
-          if (_gh > 0) logs.push({ parts:[
-            { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
-            { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
-            { text: `: +${_gh} HP` }
-          ], cls:'info' });
+          if (_gh > 0) {
+            playCardAnim(_gufo.uid, 'buff-hop', 380);
+            logRich([
+              { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
+              { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
+              { text: `: +${_gh} HP` }
+            ], 'info');
+            render(); await wait(300);
+          }
         }
       }
+      if (!rot.isAlive) { rot.statuses = rot.statuses.filter(s => !toRemove.includes(s)); return; }
     }
     if (st.type === 'BRUCIATO') {
       const _francoVP2 = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
       const _vitaPazzaMult2 = _francoVP2 ? (1 + talentTier(_francoVP2) * 0.10) : 1;
       const d = Math.max(1, Math.floor(5 * (st.stacks || 1) * _vitaPazzaMult2));
       takeDmg(rot, d);
-      logs.push({ parts:[
+      flashHit(rot.uid); hitRecoilAnim(rot);
+      logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' brucia (' },
         { text: 'BRUCIATO', onclick: () => showStatusInfo('BRUCIATO') },
         { text: ` x${st.stacks})! -${d} HP` }
-      ], cls:'dmg' });
+      ], 'dmg');
+      render(); await wait(380);
       if (!rot.isPlayer) {
         const _gufo = B?.player?.find(r => r.isAlive && r.items.includes('GUFO'));
         if (_gufo) {
           const _gh = applyHealAmount(_gufo, d, _gufo, true);
-          if (_gh > 0) logs.push({ parts:[
-            { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
-            { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
-            { text: `: +${_gh} HP` }
-          ], cls:'info' });
+          if (_gh > 0) {
+            playCardAnim(_gufo.uid, 'buff-hop', 380);
+            logRich([
+              { text: _gufo.def.name, onclick: () => showRotInfo(_gufo.def) },
+              { text: ' → ' }, { text: 'GUFO', onclick: () => showItemInfo('GUFO') },
+              { text: `: +${_gh} HP` }
+            ], 'info');
+            render(); await wait(300);
+          }
         }
       }
+      if (!rot.isAlive) { rot.statuses = rot.statuses.filter(s => !toRemove.includes(s)); return; }
     }
     if (st.type === 'STRAFATTO') {
       st.turns--;
       if (st.turns <= 0) {
         toRemove.push(st);
-        logs.push({ parts:[
+        logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
           { text: ' non è più ' },
           { text: 'STRAFATTO', onclick: () => showStatusInfo('STRAFATTO') },
           { text: '.' }
-        ], cls:'info' });
+        ], 'info');
+        render(); await wait(380);
       }
     }
     if (st.type === 'BURNOUT') {
       st.turns--;
       if (st.turns <= 0) {
         toRemove.push(st);
-        logs.push({ parts:[
+        logRich([
           { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
           { text: ' non è più in ' },
           { text: 'BURNOUT', onclick: () => showStatusInfo('BURNOUT') },
           { text: '.' }
-        ], cls:'info' });
+        ], 'info');
+        render(); await wait(380);
       }
     }
   }
+  rot.statuses = rot.statuses.filter(s => !toRemove.includes(s));
   // ── LANDLORDARE: per N turni il team recupera una % HP massimi a fine turno ──
   if (rot.landlordareTurns > 0) {
     const pct = rot.landlordarePct ?? 0.10;
@@ -5941,13 +6053,15 @@ function endTurnStatuses(rot) {
       if (shieldAmt > 0) extra = ` (+${shieldAmt} scudo)`;
     }
     if (heal > 0 || extra) {
-      logs.push({ parts:[
+      playCardAnim(rot.uid, 'buff-hop', 380);
+      logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' recupera ' },
         { text: `${heal} HP${extra} grazie a ` },
         { text: 'LANDLORDARE', onclick: () => showLandlordareInfo(rot) },
         { text: '!' }
-      ], cls:'info' });
+      ], 'info');
+      render(); await wait(380);
     }
     rot.landlordareTurns--;
     if (rot.landlordareTurns === 0) { rot.landlordarePct = null; rot.landlordareOverflow = false; }
@@ -5960,10 +6074,11 @@ function endTurnStatuses(rot) {
   if (rot.artmirRedirectTurns > 0) {
     rot.artmirRedirectTurns--;
     if (rot.artmirRedirectTurns === 0) {
-      logs.push({ parts:[
+      logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' non assorbe più gli attacchi sui compagni.' }
-      ], cls:'info' });
+      ], 'info');
+      render(); await wait(380);
     }
   }
   // ── AVANZI: il ROT (lv1) o tutta la squadra alleata (lv2+) recupera HP a fine turno ──
@@ -5976,14 +6091,16 @@ function endTurnStatuses(rot) {
     for (const tgt of avanziTargets) {
       const heal = applyHealPct(tgt, avanziPct, rot);
       if (heal > 0) {
-        logs.push({ parts:[
+        playCardAnim(tgt.uid, 'buff-hop', 380);
+        logRich([
           { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
           { text: ' recupera ' },
           { text: `${heal} HP` },
           { text: ' grazie a ' },
           { text: 'AVANZI', onclick: () => showItemInfo('AVANZI') },
           { text: '!' }
-        ], cls:'info' });
+        ], 'info');
+        render(); await wait(380);
       }
     }
   }
@@ -5994,35 +6111,36 @@ function endTurnStatuses(rot) {
     recordGoldGain('PIGGYBANK', piggyAmt);
     updateHud();
     showGoldFloat(piggyAmt);
-    logs.push({ parts:[
+    logRich([
       { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
       { text: ' attiva ' },
       { text: 'PIGGYBANK', onclick: () => showItemInfo('PIGGYBANK') },
       { text: `! Guadagni ${piggyAmt} gold` }
-    ], cls:'status' });
+    ], 'status');
+    render(); await wait(380);
   }
   // ── G FUEL: a fine turno applica uno scudo al portatore ──
   if (rot.items.includes('G_FUEL')) {
     const gfuelPct = itemPow(rot, 'G_FUEL') ?? 0.10;
     const gfuelShield = applyShieldPct(rot, gfuelPct, rot);
     if (gfuelShield > 0) {
-      logs.push({ parts:[
+      playCardAnim(rot.uid, 'buff-hop', 380);
+      logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
         { text: ' ottiene ' },
         { text: `${gfuelShield} scudo` },
         { text: ' grazie a ' },
         { text: 'G FUEL', onclick: () => showItemInfo('G_FUEL') },
         { text: '!' }
-      ], cls:'info' });
+      ], 'info');
+      render(); await wait(380);
     }
   }
-  rot.statuses = rot.statuses.filter(s => !toRemove.includes(s));
   // ── ALZATA DI SPALLE: decrementa durata riduzione danno ──
   if (rot.alzataReducTurns > 0) {
     rot.alzataReducTurns--;
     if (rot.alzataReducTurns === 0) rot.alzataReducPct = 0;
   }
-  return logs;
 }
 
 // ═══════════════════════════════════════════════════
@@ -6036,6 +6154,7 @@ const STATUS_COLORS = {
   STRAFATTO:     '#bfdbfe',
   BURNOUT:       '#bfdbfe',
   COLLASSO:      '#e5e7eb',
+  STUN:          '#fde68a',
   'TASCHE BUCATE': '#fef3c7',
   TRAFFICO:      '#fed7aa',
   ALCOLISMO:     '#fb923c',
@@ -6071,7 +6190,12 @@ const STATUS_INFO = {
   },
   COLLASSO: {
     effect:    'Salta il turno. Ogni turno c\'è il 50% di probabilità di svegliarsi.',
-    duration:  'Variabile',
+    duration:  'Variabile (50% di wake-up per turno)',
+    stackable: 'No',
+  },
+  STUN: {
+    effect:    'Il ROT salta il turno corrente se non ha ancora agito in quel turno. Effetto istantaneo: non persiste tra i turni e non richiede wake-up. Distinto da COLLASSO che è uno status persistente.',
+    duration:  'Istantaneo (turno corrente)',
     stackable: 'No',
   },
   'TASCHE BUCATE': {
@@ -6082,7 +6206,7 @@ const STATUS_INFO = {
   TRAFFICO: {
     effect:    'Ogni stack riduce del 5% il danno inflitto e la velocità del ROT. Effetto: −5%×stack a danno e SPD.',
     duration:  'Permanente',
-    stackable: 'Sì — fino a 4 stack (base), aumentabile da INGOMBRANTE e PERMESSO AREA C',
+    stackable: 'Sì — fino a 4 stack (base), aumentabile da INGOMBRANTE',
   },
   ALCOLISMO: {
     effect:    'Crea uno scudo temporaneo pari al 15% degli HP massimi e reindirizza tutti gli attacchi nemici singoli su ARTMIR per 3 turni. ARTMIR assorbe i colpi destinati agli alleati.',
@@ -6474,6 +6598,13 @@ function showShopMoveOfferInfo(event, idx) {
   `);
 }
 
+function showShopMoveCardInfo(event, idx) {
+  if (event) event.stopPropagation();
+  const offer = shopState.moves[idx];
+  if (!offer) return;
+  showLibroMoveInfo(shopMoveDef(offer));
+}
+
 // Mosse del ROT in vendita: memorizzate per l'accesso dal click sulla griglia compatta
 let SHOP_ROT_INFO_MOVES = [];
 
@@ -6784,7 +6915,7 @@ function showDrugInfo(drugKey) {
 }
 
 // ── finestra info centrata (click su token oggetto/drug): link a sinistra per status e tipi ──
-const STATUS_NAMES_FOR_LINK = ['AVVELENATO','BRUCIATO','FERITE','STRAFATTO','BURNOUT','COLLASSO','TASCHE BUCATE'];
+const STATUS_NAMES_FOR_LINK = ['AVVELENATO','BRUCIATO','FERITE','STRAFATTO','BURNOUT','COLLASSO','STUN','TASCHE BUCATE'];
 function statusLinkItemInfo(statusType) {
   const color = STATUS_COLORS[statusType] || '#fff';
   return `<span class="status-link" style="color:${color}" onmouseenter="openShopMoveInfoSecondaryLeft(statusInfoHtml('${statusType}'))" onmouseleave="closeShopMoveInfoSecondaryLeft()">${statusType}</span>`;
@@ -6864,8 +6995,8 @@ function openTalentOverlayForDef(event, defKey) {
   if (event) event.stopPropagation();
   const def = ROT_DEFS[defKey];
   if (!def?.talent) return;
-  // Usa livello 50 minimo per mostrare la descrizione del talento nell'enciclopedia
-  const mockRot = { def, level: Math.max(50, runState?.level ?? 50) };
+  const rosterMatch = runState?.roster?.find(r => r.def === def);
+  const mockRot = { def, level: rosterMatch?.level ?? Math.max(50, runState?.level ?? 50), trolloKills: rosterMatch?.trolloKills ?? 0 };
   const info = computeTalentInfo(mockRot);
   document.getElementById('talent-box-name').textContent = info.name;
   document.getElementById('talent-box-desc').textContent = info.desc;
@@ -8296,15 +8427,13 @@ async function executePhase() {
           }
         }
 
-        // ── SALSA BASE: probabilità di stunnare il bersaglio a ogni colpo ──
+        // ── SALSA BASE: probabilità di STUN (salta turno corrente) a ogni colpo ──
         if (rot.salsaBaseTurns > 0 && tgt.isAlive && Math.random() < (rot.salsaBaseChance || 0.10)) {
-          const ok = addStatus(tgt, 'COLLASSO');
-          if (ok) {
+          if (!tgt.stunnedThisTurn) {
+            tgt.stunnedThisTurn = true;
             logRich([
               { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
-              { text: ' è in ' },
-              { text: 'COLLASSO', onclick: () => showStatusInfo('COLLASSO') },
-              { text: ' per ' },
+              { text: ' è stordito (STUN) per ' },
               { text: 'SALSA BASE', onclick: () => showMoveInfo(TYPE_MOVE_DEFS.SALSA_BASE) },
               { text: '!' }
             ], 'status');
@@ -8359,8 +8488,13 @@ async function executePhase() {
         // ── BRASATO — ACCIAIO TEMPERATO: ogni mossa che infligge danno applica FERITE ──
         if (rot.def === ROT_DEFS.BRASATO && rot.isPlayer && talentTier(rot) > 0 && dmg > 0 && tgt.isAlive) {
           if (!move.status || move.status.type !== 'FERITE') {
-            const ok = addStatus(tgt, 'FERITE');
-            if (ok) {
+            const bTier = talentTier(rot);
+            const stacksToAdd = 1 + bTier * 2;
+            let added = 0;
+            for (let _s = 0; _s < stacksToAdd; _s++) {
+              if (addStatus(tgt, 'FERITE')) added++;
+            }
+            if (added > 0) {
               const fst = tgt.statuses.find(s => s.type === 'FERITE');
               logRich([
                 { text: tgt.def.name, onclick: () => showRotInfo(tgt.def) },
@@ -8513,12 +8647,7 @@ async function executePhase() {
   log('— status di fine turno —', 'sep');
   const allAlive = [...B.player, ...B.enemy].filter(r => r.isAlive);
   for (const rot of allAlive) {
-    const entries = endTurnStatuses(rot);
-    for (const e of entries) {
-      logRich(e.parts, e.cls);
-      render();
-      await wait(380);
-    }
+    await endTurnStatuses(rot);
     if (!rot.isAlive) {
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -9282,6 +9411,7 @@ function rotCardHeaderHtml(r, tc) {
 }
 function rotCardMovesHtml(r, selectable) {
   const rows = r.moves.map((m, i) => {
+    if (!m || !m.name) return `<div class="rm-move-row rm-move-empty">—</div>`;
     const mtc = m.type ? (TYPE_COLORS[m.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
     const isSelectable = selectable && i !== 1;
     const onclick = isSelectable
@@ -9367,6 +9497,7 @@ function rotCardDefaultHtml(r) {
     ? `<canvas class="rmcard-sprite-canvas${rSprite.mirrorWhen === 'player' ? ' mirrored' : ''}" width="280" height="310" data-uid="${r.uid}"></canvas>`
     : '';
   const movesHtml = r.moves.map((m, i) => {
+    if (!m || !m.name) return `<div class="rmcard-move-row rmcard-move-empty">—</div>`;
     const mtc = m.type ? (TYPE_COLORS[m.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
     return `<div class="rmcard-move-row" onclick="showMoveInfoShop(event,'${r.uid}',${i})"><span class="rmcard-move-name" style="color:${mtc.text}">${m.name}</span></div>`;
   }).join('');
@@ -9632,12 +9763,13 @@ function rotCardMovesLibrettoHtml(r, hasPending) {
   const rows = [];
   for (let i = 0; i < 4; i++) {
     const m = r.moves[i];
-    const isNative = i < 2;
+    // isNative dipende dal contenuto: la mossa è nativa se non è acquistabile (non trovata nei pool)
+    const isNative = m ? !_findMoveLibItem(m) : (i < 2);
     if (m) {
       const mtc = m.type ? (TYPE_COLORS[m.type] || {bg:'#333',text:'#aaa'}) : {bg:'#6b7280',text:'#fff'};
       const lvlTag = (m.fuseLevel > 1) ? ` <span class="rm-move-lvl">[L${m.fuseLevel}]</span>` : '';
       if (isNative) {
-        // Mossa nativa: non trascinabile, sempre cliccabile (info se no pending, confirm se pending)
+        // Mossa nativa: non trascinabile, droppable (può ricevere sostituzione), cliccabile
         rows.push(`<div class="rm-move-row rm-move-native"
           ondragover="libroSlotDragOver(event)"
           ondragleave="libroSlotDragLeave(event)"
@@ -9646,7 +9778,7 @@ function rotCardMovesLibrettoHtml(r, hasPending) {
           <span class="rm-move-name" style="color:${mtc.text}">${m.name}${lvlTag}</span>
         </div>`);
       } else {
-        // Mossa acquistata: trascinabile + cliccabile
+        // Mossa acquistata (anche in slot 0-1 se nativa sostituita): trascinabile + cliccabile
         rows.push(`<div class="rm-move-row libretto-droppable"
           data-fuse-rot="${r.uid}" data-fuse-slot="${i}"
           draggable="true"
@@ -9660,8 +9792,8 @@ function rotCardMovesLibrettoHtml(r, hasPending) {
           <span class="rm-move-name" style="color:${mtc.text}">${m.name}${lvlTag}</span>
         </div>`);
       }
-    } else if (!isNative) {
-      // Slot vuoto (solo slot 2 o 3): droppable + cliccabile
+    } else {
+      // Slot vuoto: droppable per slots 2-3, e per 0-1 se la mossa nativa era stata rimossa
       rows.push(`<div class="rm-move-row rm-move-empty libretto-droppable"
         ondragover="libroSlotDragOver(event)"
         ondragleave="libroSlotDragLeave(event)"
@@ -9723,15 +9855,15 @@ function refreshMoveFusibleSet() {
     const k = `${fuseBase}:${fuseLevel}`;
     counts.set(k, (counts.get(k) || 0) + 1);
   };
-  // Libretto (solo mosse generiche fondibili)
+  // Libretto (generiche + tipo)
   for (const item of runState.libretto) {
-    if (!item || item.pool === 'type') continue;
-    const def = GENERIC_MOVE_DEFS[item.key];
+    if (!item) continue;
+    const def = item.pool === 'type' ? TYPE_MOVE_DEFS[item.key] : GENERIC_MOVE_DEFS[item.key];
     if (def && def.fuseBase) add(def.fuseBase, def.fuseLevel);
   }
-  // Slot mossa acquistate (indice 2+) di ogni ROT
+  // Tutti gli slot mossa acquistate (compresi 0-1 se contengono mosse acquistabili)
   for (const rot of runState.roster) {
-    for (let i = 2; i < rot.moves.length; i++) {
+    for (let i = 0; i < rot.moves.length; i++) {
       const m = rot.moves[i];
       if (m && m.fuseBase) add(m.fuseBase, m.fuseLevel);
     }
@@ -9740,8 +9872,9 @@ function refreshMoveFusibleSet() {
     const sepIdx = k.lastIndexOf(':');
     const lv = parseInt(k.slice(sepIdx + 1), 10);
     const fuseBase = k.slice(0, sepIdx);
-    // Trova la def di questo livello per verificare che fonda in qualcosa
-    const def = Object.values(GENERIC_MOVE_DEFS).find(d => d.fuseBase === fuseBase && d.fuseLevel === lv);
+    // Cerca la def in entrambi i pool
+    const def = Object.values(GENERIC_MOVE_DEFS).find(d => d.fuseBase === fuseBase && d.fuseLevel === lv)
+             || Object.values(TYPE_MOVE_DEFS).find(d => d.fuseBase === fuseBase && d.fuseLevel === lv);
     if (n >= 3 && def && def.fusesInto) _moveFusibleSet.add(k);
   }
 }
@@ -9758,8 +9891,8 @@ function refreshMoveFusibleUI() {
     const idx = parseInt(el.dataset.libIdx, 10);
     const item = runState.libretto[idx];
     let fusible = false;
-    if (item && item.pool !== 'type') {
-      const def = GENERIC_MOVE_DEFS[item.key];
+    if (item) {
+      const def = item.pool === 'type' ? TYPE_MOVE_DEFS[item.key] : GENERIC_MOVE_DEFS[item.key];
       if (def && def.fuseBase) fusible = isMoveFusible(def.fuseBase, def.fuseLevel);
     }
     el.classList.toggle('fusible-item', fusible);
@@ -9778,10 +9911,10 @@ function refreshMoveFusibleUI() {
 function libroMoveFusionMenu(event, idx) {
   event.preventDefault();
   const item = runState.libretto[idx];
-  if (!item || item.pool === 'type') return;
-  const def = GENERIC_MOVE_DEFS[item.key];
+  if (!item) return;
+  const def = item.pool === 'type' ? TYPE_MOVE_DEFS[item.key] : GENERIC_MOVE_DEFS[item.key];
   if (!def || !def.fuseBase || !isMoveFusible(def.fuseBase, def.fuseLevel)) return;
-  openMoveFusionConfirm(def.fuseBase, def.fuseLevel);
+  openMoveFusionConfirm(def.fuseBase, def.fuseLevel, item.pool);
 }
 
 // Right-click su slot mossa acquistata di un ROT
@@ -9790,14 +9923,19 @@ function libroMoveFusionMenuRot(event, uid, slotIdx) {
   const rot = runState.roster.find(r => r.uid === uid);
   const m = rot?.moves[slotIdx];
   if (!m || !m.fuseBase || !isMoveFusible(m.fuseBase, m.fuseLevel)) return;
-  openMoveFusionConfirm(m.fuseBase, m.fuseLevel);
+  const libItem = _findMoveLibItem(m);
+  const pool = libItem ? libItem.pool : 'generic';
+  openMoveFusionConfirm(m.fuseBase, m.fuseLevel, pool);
 }
 
-function openMoveFusionConfirm(fuseBase, fuseLevel) {
-  const curDef = Object.values(GENERIC_MOVE_DEFS).find(d => d.fuseBase === fuseBase && d.fuseLevel === fuseLevel);
+function openMoveFusionConfirm(fuseBase, fuseLevel, pool) {
+  pool = pool || 'generic';
+  const defs = pool === 'type' ? TYPE_MOVE_DEFS : GENERIC_MOVE_DEFS;
+  const curDef = Object.values(defs).find(d => d.fuseBase === fuseBase && d.fuseLevel === fuseLevel);
   if (!curDef || !curDef.fusesInto) return;
-  const nextDef = GENERIC_MOVE_DEFS[curDef.fusesInto];
-  _moveFusionPending = { fuseBase, fuseLevel, nextKey: curDef.fusesInto };
+  const nextDef = defs[curDef.fusesInto];
+  if (!nextDef) return;
+  _moveFusionPending = { fuseBase, fuseLevel, nextKey: curDef.fusesInto, pool };
   document.getElementById('move-fusion-confirm-text').innerHTML =
     `FONDI <b>3 ${curDef.name}</b> in <b style="color:#ffd700">${nextDef.name}</b>?`;
   document.getElementById('move-fusion-confirm-overlay').classList.add('on');
@@ -9810,25 +9948,25 @@ function closeMoveFusionConfirm() {
 
 function executeMoveFusion() {
   if (!_moveFusionPending) return;
-  const { fuseBase, fuseLevel, nextKey } = _moveFusionPending;
+  const { fuseBase, fuseLevel, nextKey, pool } = _moveFusionPending;
   closeMoveFusionConfirm();
   refreshMoveFusibleSet();
   if (!isMoveFusible(fuseBase, fuseLevel)) return;
 
   const matchesLevel = (m) => m && m.fuseBase === fuseBase && m.fuseLevel === fuseLevel;
   let consumed = 0;
-  // Priorità: prima il libretto, poi gli slot ROT (indice 2+)
+  // Priorità: prima il libretto (generiche + tipo), poi tutti gli slot ROT
   for (let i = 0; i < runState.libretto.length && consumed < 3; i++) {
     const item = runState.libretto[i];
-    if (!item || item.pool === 'type') continue;
-    const def = GENERIC_MOVE_DEFS[item.key];
+    if (!item) continue;
+    const def = item.pool === 'type' ? TYPE_MOVE_DEFS[item.key] : GENERIC_MOVE_DEFS[item.key];
     if (def && def.fuseBase === fuseBase && def.fuseLevel === fuseLevel) {
       runState.libretto[i] = null;
       consumed++;
     }
   }
   for (const rot of runState.roster) {
-    for (let i = 2; i < rot.moves.length && consumed < 3; i++) {
+    for (let i = 0; i < rot.moves.length && consumed < 3; i++) {
       if (matchesLevel(rot.moves[i])) {
         rot.moves[i] = null;
         consumed++;
@@ -9838,17 +9976,18 @@ function executeMoveFusion() {
   }
 
   // Inserisci 1 copia della mossa fusa nel primo slot libero del libretto
-  const nextItem = { key: nextKey, pool: 'generic' };
+  const nextPool = pool || 'generic';
+  const nextItem = { key: nextKey, pool: nextPool };
   const slot = runState.libretto.findIndex(s => s === null);
   if (slot !== -1) runState.libretto[slot] = nextItem;
   else {
-    // Nessuno slot libero: rimetti nel primo slot libero anche compattando null residui creati sopra
     const s2 = runState.libretto.indexOf(null);
     if (s2 !== -1) runState.libretto[s2] = nextItem;
   }
 
   saveRun();
-  const nextDef = GENERIC_MOVE_DEFS[nextKey];
+  const defs = nextPool === 'type' ? TYPE_MOVE_DEFS : GENERIC_MOVE_DEFS;
+  const nextDef = defs[nextKey];
   document.getElementById('move-fusion-result-name').innerHTML =
     `<span style="color:#ffd700">${nextDef.name}</span> <span class="fusion-result-lv">[L${nextDef.fuseLevel}]</span>`;
   document.getElementById('move-fusion-result-desc').textContent = nextDef.desc || '';
@@ -9876,6 +10015,14 @@ function _libroAddItem(item) {
 
 // ── Helper: trova il { key, pool } di una mossa dal suo oggetto ──
 function _findMoveLibItem(move) {
+  if (!move) return null;
+  // Exact match tramite fuseBase+fuseLevel (evita false positivi su mosse TYPE con nome condiviso)
+  if (move.fuseBase && move.fuseLevel !== undefined) {
+    const k = move.fuseLevel > 1 ? move.fuseBase + '_L' + move.fuseLevel : move.fuseBase;
+    if (GENERIC_MOVE_DEFS[k]) return { key: k, pool: 'generic' };
+    if (TYPE_MOVE_DEFS[k]) return { key: k, pool: 'type' };
+  }
+  // Fallback: cerca per nome (usato per mosse native o senza fuseBase)
   for (const [key, def] of Object.entries(GENERIC_MOVE_DEFS)) {
     if (def.name === move.name) return { key, pool:'generic' };
   }
@@ -9923,7 +10070,7 @@ function libroClickCard(rotUid, event) {
   } else {
     // Tutti gli slot pieni: conferma per dimenticare la prima mossa
     _libroConfirm = { action:'place-slot', rot, slotIdx:0, incoming };
-    showLibroConfirmDialog(rot.moves[0].name, def.name);
+    showLibroConfirmDialog(rot.moves[0]?.name ?? '?', def.name);
   }
 }
 
@@ -9934,14 +10081,14 @@ function showLibroMoveInfo(def) {
   const catInfo = CATEGORY_INFO[def.cat] || {};
   const ppTxt = def.pp === Infinity ? '∞' : def.pp;
 
-  // Tabella fusione per mosse COMBO
+  // Tabella fusione per mosse COMBO e TIPO
   let fusionHtml = '';
   if (def.fuseBase && def.fuseLevel) {
     const lvColors = ['#e2e8f0','#f97316','#e879f9','#60a5fa'];
     const autoTag = lv => lv.autocast ? ' <span class="libro-move-fusion-badge">AUTO</span>' : '';
     const keys = [def.fuseBase, def.fuseBase+'_L2', def.fuseBase+'_L3', def.fuseBase+'_L4'];
     const rows = keys.map((k, i) => {
-      const lv = GENERIC_MOVE_DEFS[k];
+      const lv = GENERIC_MOVE_DEFS[k] || TYPE_MOVE_DEFS[k];
       if (!lv) return '';
       const col = lvColors[i] || '#9ca3af';
       const isCurrent = lv.fuseLevel === def.fuseLevel;
@@ -10165,11 +10312,9 @@ function libroSlotDrop(event, rotUid, slotIdx, isNative) {
     } else {
       runState.libretto[ds.idx] = null;
     }
-    if (slotIdx < rot.moves.length) {
-      rot.moves[slotIdx] = { ...def, curPp: def.pp };
-    } else {
-      rot.moves.push({ ...def, curPp: def.pp });
-    }
+    // Inserisce senza creare buchi nell'array (per slot 2-3 usa push se oltre la fine)
+    while (rot.moves.length < slotIdx) rot.moves.push(null);
+    rot.moves[slotIdx] = { ...def, curPp: def.pp };
   } else if (ds.source === 'rot-slot') {
     if (ds.rotUid === rotUid && ds.slotIdx === slotIdx) return;
     const srcRot = runState.roster.find(r => r.uid === ds.rotUid);
@@ -10179,12 +10324,19 @@ function libroSlotDrop(event, rotUid, slotIdx, isNative) {
     if (rot.moves.some((m, i) => i !== slotIdx && m && m.name === srcMove.name)) return;
     const dstMove = rot.moves[slotIdx] || null;
     if (ds.rotUid === rotUid) {
+      while (rot.moves.length < slotIdx) rot.moves.push(null);
       rot.moves[slotIdx] = srcMove;
       rot.moves[ds.slotIdx] = dstMove;
     } else {
+      while (rot.moves.length < slotIdx) rot.moves.push(null);
       rot.moves[slotIdx] = srcMove;
-      srcRot.moves[ds.slotIdx] = dstMove;
-      if (!srcRot.moves[ds.slotIdx]) srcRot.moves.splice(ds.slotIdx, 1);
+      if (ds.slotIdx < 2) {
+        // Slot nativo: lascia null (mossa nativa era stata sostituita da acquistabile)
+        srcRot.moves[ds.slotIdx] = dstMove;
+      } else {
+        srcRot.moves[ds.slotIdx] = dstMove;
+        if (!srcRot.moves[ds.slotIdx]) srcRot.moves.splice(ds.slotIdx, 1);
+      }
     }
   }
   saveRun();
@@ -10222,9 +10374,13 @@ function libroLibSlotDrop(event, targetIdx) {
       const swapDef = existingLibItem.pool === 'type' ? TYPE_MOVE_DEFS[existingLibItem.key] : GENERIC_MOVE_DEFS[existingLibItem.key];
       if (swapDef) {
         rot.moves[ds.slotIdx] = { ...swapDef, curPp: swapDef.pp };
+      } else if (ds.slotIdx < 2) {
+        rot.moves[ds.slotIdx] = null;
       } else {
         rot.moves.splice(ds.slotIdx, 1);
       }
+    } else if (ds.slotIdx < 2) {
+      rot.moves[ds.slotIdx] = null;
     } else {
       rot.moves.splice(ds.slotIdx, 1);
     }
@@ -10247,7 +10403,9 @@ function libroVendiDrop(event) {
     runState.libretto[ds.idx] = null;
   } else if (ds.source === 'rot-slot') {
     const rot = runState.roster.find(r => r.uid === ds.rotUid);
-    if (rot) rot.moves.splice(ds.slotIdx, 1);
+    if (rot) {
+      if (ds.slotIdx < 2) { rot.moves[ds.slotIdx] = null; } else { rot.moves.splice(ds.slotIdx, 1); }
+    }
   }
   saveRun();
   renderRotManagerMoves();
@@ -10275,7 +10433,7 @@ function libroListDrop(event) {
   if (!move) return;
   const item = _findMoveLibItem(move);
   if (item && _libroAddItem(item)) {
-    rot.moves.splice(ds.slotIdx, 1);
+    if (ds.slotIdx < 2) { rot.moves[ds.slotIdx] = null; } else { rot.moves.splice(ds.slotIdx, 1); }
     saveRun();
     renderRotManagerMoves();
   }
@@ -10863,7 +11021,7 @@ function renderShop() {
       const disabled = bought || runState.gold < offer.price;
       const catInfo = CATEGORY_INFO[def.cat];
       return `
-        <div class="shop-card shop-move-card" style="${rarityCardStyle(rarity)}">
+        <div class="shop-card shop-move-card" style="${rarityCardStyle(rarity)};cursor:pointer" onclick="showShopMoveCardInfo(event, ${idx})">
           <div class="shop-card-top">
             <span class="shop-card-name shop-move-name-clickable" style="color:${tc.text};font-size:${shopNameFontSize(def.name)}px" onclick="showShopMoveOfferInfo(event, ${idx})">${def.name}${def.power ? `<span class="shop-move-power"> · POT ${def.power}</span>` : ''}</span>
             <div style="display:flex; align-items:center; gap:8px;">
@@ -10879,7 +11037,7 @@ function renderShop() {
           <div class="shop-card-desc">${moveEffectDesc(def, statusLinkCentered)}</div>
           <div class="shop-card-bottom">
             <span class="shop-price">${offer.price} GOLD</span>
-            <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="buyMove(${idx})" ${disabled ? 'disabled' : ''} data-price="${offer.price}" title="Aggiunge la mossa al LIBRETTO.">${bought ? 'ACQUISTATO' : 'ACQUISTA'}</button>
+            <button class="shop-buy-btn ${bought ? 'bought' : ''}" onclick="event.stopPropagation(); buyMove(${idx})" ${disabled ? 'disabled' : ''} data-price="${offer.price}" title="Aggiunge la mossa al LIBRETTO.">${bought ? 'ACQUISTATO' : 'ACQUISTA'}</button>
           </div>
         </div>
       `;
@@ -10943,7 +11101,7 @@ function startNextBattle() {
     r.scarpeActedThisBattle = false;
     r.cer8UsedThisBattle = false;
     r.savedByAssicurazione = false;
-    r.moves.forEach(m => { if (m.curPp !== Infinity) m.curPp = m.pp; });
+    r.moves.forEach(m => { if (m && m.curPp !== Infinity) m.curPp = m.pp; });
     // CRYPTOBISMOL — AIRDROP: buff casuali agli stadi all'inizio della battaglia
     if (r.def === ROT_DEFS.CRYPTOBISMOL) {
       const t = talentTier(r);
@@ -10982,7 +11140,7 @@ function startNextBattle() {
     log(`⚠ BOSS — Livello ${lvl} — BEPPE SALA SI AVVICINA`, 'info');
     applyBattleAutocasts();
     saveRun();
-    showBossWarning().then(() => render());
+    showBossWarning().then(() => { render(); playAutocastAnims(); });
   } else {
     const enemyDefs = pickRandomDefs(runState.enemyCount);
     B = {
@@ -10997,6 +11155,37 @@ function startNextBattle() {
     applyBattleAutocasts();
     saveRun();
     render();
+    playAutocastAnims();
+  }
+}
+
+// ── Animazioni visive per le mosse autocast, chiamata dopo render() ──
+async function playAutocastAnims() {
+  if (!B) return;
+  for (const rot of B.player.filter(r => r.isAlive)) {
+    for (const move of rot.moves) {
+      if (!move || !move.autocast) continue;
+      if (move.effect === 'ferite_all') {
+        attackAnim(rot);
+        const feTargets = B.enemy.filter(r => r.isAlive);
+        await wait(150);
+        feTargets.forEach(t => { flashHit(t.uid); hitRecoilAnim(t); });
+        await wait(300);
+      } else if (move.effect === 'posa_studiata') {
+        attackAnim(rot);
+        const psTargets = B.enemy.filter(r => r.isAlive);
+        await wait(150);
+        psTargets.forEach(t => { flashHit(t.uid); hitRecoilAnim(t); });
+        await wait(300);
+      } else {
+        const isTeamBuff = move.target === 'ALLY_ALL'
+          || (move.effect === 'stage' && (move.stages || []).some(s => s.team === 'ALLY'));
+        const animTargets = isTeamBuff ? B.player.filter(r => r.isAlive) : [rot];
+        playSfx('buff');
+        buffHopAnim(animTargets);
+        await wait(350);
+      }
+    }
   }
 }
 
@@ -11036,6 +11225,9 @@ function applyBattleAutocasts() {
           r.alzataReducPct = move.reductionPct;
           r.alzataReducTurns = move.turns;
         }
+      } else if (move.effect === 'guard_phase') {
+        const gpTeam = (move.team || move.target === 'ALLY_ALL') ? B.player.filter(r => r.isAlive) : [rot];
+        for (const r of gpTeam) r.guardPhase = { reduction: move.reduction, turns: move.turns };
       }
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -11095,13 +11287,25 @@ function stageIconsHtml(rot) {
     icons.push(`<span class="stage-icon" style="color:#e5e7eb" data-stage-special="ELUSIVITA">😶‍🌫️${rot.stages.eva}</span>`);
   }
   if (rot.guardPhase) {
-    icons.push(`<span class="stage-icon" style="color:#93c5fd" data-stage-special="RICCIOLO">🛡</span>`);
+    icons.push(`<span class="stage-icon" style="color:#93c5fd" data-stage-special="RICCIOLO">🛡${rot.guardPhase.turns}</span>`);
   }
   if (rot.critChanceOverride != null) {
     icons.push(`<span class="stage-icon" style="color:#fb923c" data-stage-special="POTERI_FORTI">▲</span>`);
   }
   if (rot.landlordareTurns > 0) {
-    icons.push(`<span class="stage-icon" style="color:#f472b6" data-stage-special="LANDLORDARE">▲</span>`);
+    icons.push(`<span class="stage-icon" style="color:#f472b6" data-stage-special="LANDLORDARE">▲${rot.landlordareTurns}</span>`);
+  }
+  if (rot.lampioneTurns > 0) {
+    icons.push(`<span class="stage-icon" style="color:#fbbf24" data-stage-special="LAMPIONE">💡${rot.lampioneTurns}</span>`);
+  }
+  if (rot.centroSocialeTurns > 0) {
+    icons.push(`<span class="stage-icon" style="color:#4ade80" data-stage-special="CENTRO_SOCIALE">🤝${rot.centroSocialeTurns}</span>`);
+  }
+  if (rot.salsaBaseTurns > 0) {
+    icons.push(`<span class="stage-icon" style="color:#f87171" data-stage-special="SALSA_BASE">🌶️${rot.salsaBaseTurns}</span>`);
+  }
+  if (rot.alzataReducTurns > 0) {
+    icons.push(`<span class="stage-icon" style="color:#94a3b8" data-stage-special="ALZATA">🤷${rot.alzataReducTurns}</span>`);
   }
   if (rot.def === ROT_DEFS.ARTMIR && (rot.artmirRedirectTurns || 0) > 0) {
     icons.push(`<span class="stage-icon alcolismo-stage-icon" data-stage-special="ALCOLISMO">☝️${rot.artmirRedirectTurns}</span>`);
@@ -11142,10 +11346,10 @@ function showElusivitaInfo(rot) {
 }
 function showRiccioloInfo(rot) {
   const red = rot.guardPhase ? Math.round(rot.guardPhase.reduction * 100) : 0;
-  const turns = rot.guardPhase ? Math.max(1, rot.guardPhase.turns) : 0;
+  const turns = rot.guardPhase ? rot.guardPhase.turns : 0;
   openSecondaryInfoBattle(`
-    <div class="info-title" style="color:#93c5fd">🛡 RICCIOLO</div>
-    <div class="info-text">${rot.def.name}: -${red}% danno ricevuto da tutti gli attacchi. Fasi rimanenti: ${turns}.</div>
+    <div class="info-title" style="color:#93c5fd">🛡 ELMETTO (RICCIOLO)</div>
+    <div class="info-text">Tutta la squadra subisce -${red}% danno da tutti gli attacchi per ${turns} ${turns === 1 ? 'turno' : 'turni'} rimanenti. Si attiva automaticamente a inizio battaglia.</div>
   `);
 }
 function showAlcolismoInfo(rot) {
@@ -11160,6 +11364,33 @@ function showAlcolismoInfo(rot) {
     <div class="info-text">${turns}</div>
     <div class="info-section">NOTE</div>
     <div class="info-text">Un solo ALCOLISMO può essere attivo per squadra alla volta.</div>
+  `);
+}
+
+function showLampionInfo(rot) {
+  openSecondaryInfoBattle(`
+    <div class="info-title" style="color:#fbbf24">💡 LAMPIONE</div>
+    <div class="info-text">${rot.def.name}: la squadra è immune a stun e abbassamenti delle statistiche. Turni rimanenti: ${rot.lampioneTurns}.</div>
+  `);
+}
+function showCentroSocialeInfo(rot) {
+  openSecondaryInfoBattle(`
+    <div class="info-title" style="color:#4ade80">🤝 CENTRO SOCIALE</div>
+    <div class="info-text">${rot.def.name}: ogni buff ricevuto dalla squadra viene copiato su un alleato casuale. Turni rimanenti: ${rot.centroSocialeTurns}.</div>
+  `);
+}
+function showSalsaBaseInfo(rot) {
+  const pct = Math.round((rot.salsaBaseChance || 0.10) * 100);
+  openSecondaryInfoBattle(`
+    <div class="info-title" style="color:#f87171">🌶️ SALSA BASE</div>
+    <div class="info-text">${rot.def.name}: ${pct}% di probabilità di STUN per colpo. Turni rimanenti: ${rot.salsaBaseTurns}.</div>
+  `);
+}
+function showAlzataInfo(rot) {
+  const pct = Math.round((rot.alzataReducPct || 0) * 100);
+  openSecondaryInfoBattle(`
+    <div class="info-title" style="color:#94a3b8">🤷 ALZATA DI SPALLE</div>
+    <div class="info-text">${rot.def.name}: -${pct}% danno subito dalla squadra. Turni rimanenti: ${rot.alzataReducTurns}.</div>
   `);
 }
 
@@ -11416,11 +11647,11 @@ function mkCard(rot, isPlayer) {
   }
 
   div.querySelectorAll('.sbadge').forEach(badge => {
-    badge.addEventListener('click', e => {
+    badge.addEventListener('mouseenter', e => {
       e.stopPropagation();
-      activeBadge = { uid: rot.uid, type: badge.dataset.type };
-      showStatusInfo(badge.dataset.type);
+      showStatusInfoSecondary(badge.dataset.type);
     });
+    badge.addEventListener('mouseleave', () => closeSecondaryInfoBattle());
   });
 
   div.querySelectorAll('.stage-icon').forEach(icon => {
@@ -11430,6 +11661,10 @@ function mkCard(rot, isPlayer) {
       else if (icon.dataset.stageSpecial === 'LANDLORDARE') showLandlordareInfo(rot);
       else if (icon.dataset.stageSpecial === 'ELUSIVITA') showElusivitaInfo(rot);
       else if (icon.dataset.stageSpecial === 'RICCIOLO') showRiccioloInfo(rot);
+      else if (icon.dataset.stageSpecial === 'LAMPIONE') showLampionInfo(rot);
+      else if (icon.dataset.stageSpecial === 'CENTRO_SOCIALE') showCentroSocialeInfo(rot);
+      else if (icon.dataset.stageSpecial === 'SALSA_BASE') showSalsaBaseInfo(rot);
+      else if (icon.dataset.stageSpecial === 'ALZATA') showAlzataInfo(rot);
       else if (icon.dataset.stageSpecial) showCritBoostInfo(rot);
       else showStageInfo(rot, icon.dataset.stageStat);
     });
@@ -11437,6 +11672,7 @@ function mkCard(rot, isPlayer) {
   });
 
   div.addEventListener('mouseenter', () => showRotBattleInfo(rot));
+  div.addEventListener('mouseleave', () => closeInfo());
 
   return div;
 }
@@ -11474,6 +11710,7 @@ function renderPanel() {
   if (B.phase === 'MOVE_SELECT' && B.current) {
     const burnout = B.current.statuses.find(s => s.type === 'BURNOUT');
     B.current.moves.forEach((move, idx) => {
+      if (!move || !move.name) return;
       const depleted = move.curPp !== Infinity && move.curPp <= 0;
       // ── BURNOUT: la mossa usata al turno precedente è grigia e non selezionabile ──
       const burnoutLocked = !!burnout && B.current.lastMove?.name === move.name;
@@ -11485,6 +11722,7 @@ function renderPanel() {
         <span class="move-btn-name" style="${moveTextStyle(move)}">${move.name}</span>
       `;
       btn.addEventListener('mouseenter', () => showMoveInfo(move));
+      btn.addEventListener('mouseleave', () => closeInfo());
       btn.addEventListener('click', () => onMoveClick(move));
       // ── drag & drop: riordina i box mosse, scambiando le posizioni ──
       btn.addEventListener('dragstart', (e) => {
@@ -11555,10 +11793,12 @@ function renderSpeedBar(ordered) {
     tok.addEventListener('mouseenter', () => {
       tok.classList.add('spd-hover-blink');
       getCardEl(rot.uid)?.classList.add('spd-hover-highlight');
+      showRotBattleInfo(rot);
     });
     tok.addEventListener('mouseleave', () => {
       tok.classList.remove('spd-hover-blink');
       getCardEl(rot.uid)?.classList.remove('spd-hover-highlight');
+      closeInfo();
     });
     wrap.appendChild(tok);
   }
@@ -12660,16 +12900,23 @@ async function executeRotFusion() {
   // Tracking cumulativo: somma OD dirette + ereditate da tutti i ROT sorgente
   evolvedRot.overdoseInherited = sourceRots.reduce((s, r) => s + (r.overdoseStacks || 0) + (r.overdoseInherited || 0), 0);
   evolvedRot.trolloKills = mergedTrolloKills;
-  evolvedRot.moves = baseRot.moves.map(m => ({ ...m }));
-
-  // Mosse acquistabili in eccesso (dai ROT 2 e 3) → LIBRETTO
-  for (let si = 1; si < sourceRots.length; si++) {
-    for (let mi = 2; mi < sourceRots[si].moves.length; mi++) {
-      const m = sourceRots[si].moves[mi];
-      if (!m) continue;
+  // ── Raccoglie TUTTE le mosse acquistabili da tutti e 3 i ROT sorgente (qualsiasi slot, inclusi gli slot nativi) ──
+  const _collectedMoves = [];
+  for (const sr of sourceRots) {
+    for (const m of (sr.moves || [])) {
+      if (!m || !m.name) continue;
       const libItem = _findMoveLibItem(m);
-      if (libItem) _libroAddItem(libItem);
+      if (libItem) _collectedMoves.push(libItem);
     }
+  }
+  // Il ROT evoluto parte con le mosse native fresche (ATTACCO + uniqueMove da mkRot, slot 0-1).
+  // Le mosse raccolte riempiono i rimanenti slot (2 e 3); quelle in eccesso vanno al LIBRETTO.
+  for (const libItem of _collectedMoves) {
+    if (evolvedRot.moves.length < 4) {
+      const def = libItem.pool === 'type' ? TYPE_MOVE_DEFS[libItem.key] : GENERIC_MOVE_DEFS[libItem.key];
+      if (def) { evolvedRot.moves.push({ ...def, curPp: def.pp }); continue; }
+    }
+    _libroAddItem(libItem);
   }
 
   recomputeRotStats(evolvedRot);
@@ -12748,6 +12995,7 @@ function showCfRotInfo(uid) {
   ).join('');
 
   const movesHtml = rot.moves.map(m => {
+    if (!m || !m.name) return '';
     const mtc = m.type ? (TYPE_COLORS[m.type] || { bg: '#6b7280', text: '#fff' }) : { bg: '#6b7280', text: '#fff' };
     const ppTxt = m.curPp === Infinity ? '∞' : `${m.curPp}/${m.pp}`;
     const effectDesc = moveEffectDesc(m, s => s);
@@ -12907,29 +13155,75 @@ function _encPopulateDrugsSubs() {
 
 function _encPopulateMovesSubs() {
   const el = document.getElementById('enc-moves');
-  const dannoHtml = [], utilityHtml = [];
-  for (const [k, m] of Object.entries(GENERIC_MOVE_DEFS)) {
-    if (m.fuseLevel && m.fuseLevel > 1) continue; // mostra solo il livello base delle combo fondibili
-    const id = 'enc-e-gm-' + k;
-    const e = `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(GENERIC_MOVE_DEFS['${k}']))">${m.name}</div>`;
-    (m.cat === 'UTILITY' ? utilityHtml : dannoHtml).push(e);
-  }
-  for (const [k, m] of Object.entries(TYPE_MOVE_DEFS)) {
-    if (m.fuseLevel && m.fuseLevel > 1) continue; // mostra solo il livello base
-    const id = 'enc-e-tm-' + k;
-    const e = `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(TYPE_MOVE_DEFS['${k}']))">${m.name}</div>`;
-    (m.cat === 'UTILITY' ? utilityHtml : dannoHtml).push(e);
-  }
+
+  // ── NATIVE: mosse uniche di ogni ROT (escluse le boss) ──
+  const nativeHtml = Object.entries(ROT_DEFS).map(([k, def]) => {
+    if (!def.uniqueMove) return '';
+    const tc = TYPE_COLORS[def.type] || { text:'#9ca3af' };
+    const id = 'enc-e-nm-' + k;
+    return `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowNativeMove('${k}'))">
+      ${def.uniqueMove.name}<span style="color:${tc.text};font-size:10px;opacity:0.75;margin-left:5px">${def.name}</span>
+    </div>`;
+  }).join('');
+
+  // ── COMBO: livello 1 di tutte le GENERIC_MOVE_DEFS acquistabili ──
+  const comboHtml = Object.entries(GENERIC_MOVE_DEFS)
+    .filter(([, m]) => m.fuseLevel === 1 && !m.shopExcluded)
+    .map(([k, m]) => {
+      const id = 'enc-e-gm-' + k;
+      return `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(GENERIC_MOVE_DEFS['${k}']))">${m.name}</div>`;
+    }).join('');
+
+  // ── TIPO: livello 1 di tutte le TYPE_MOVE_DEFS, raggruppate per tipo ──
+  const typeOrder = ['MOG','CRYPTO','NORMIE','VAPE','SCHIZO','TROLL','PSYCHO','BASED','TIPA','MACHO','TRANS'];
+  const tipoHtml = typeOrder.map(type => {
+    const tc = TYPE_COLORS[type] || { text:'#9ca3af' };
+    const moves = Object.entries(TYPE_MOVE_DEFS).filter(([, m]) => m.fuseLevel === 1 && m.type === type);
+    if (!moves.length) return '';
+    const entries = moves.map(([k, m]) => {
+      const id = 'enc-e-tm-' + k;
+      return `<div class="enc-subentry" id="${id}" onclick="_encSelect('${id}', () => encShowMove(TYPE_MOVE_DEFS['${k}']))">${m.name}</div>`;
+    }).join('');
+    return `<div style="font-size:10px;letter-spacing:2px;padding:4px 10px 2px;color:${tc.text};border-left:2px solid ${tc.text};margin:6px 0 2px 0;opacity:0.85">${type}</div>${entries}`;
+  }).join('');
+
   el.innerHTML = `
-    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-danno')">
-      <span>DANNO</span><span class="enc-section-arrow" id="arr-enc-moves-danno">▶</span>
+    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-native')">
+      <span>NATIVE</span><span class="enc-section-arrow" id="arr-enc-moves-native">▶</span>
     </div>
-    <div class="enc-subsection-body" id="enc-moves-danno">${dannoHtml.join('')}</div>
-    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-utility')">
-      <span>UTILITY</span><span class="enc-section-arrow" id="arr-enc-moves-utility">▶</span>
+    <div class="enc-subsection-body" id="enc-moves-native">${nativeHtml}</div>
+    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-combo')">
+      <span>COMBO</span><span class="enc-section-arrow" id="arr-enc-moves-combo">▶</span>
     </div>
-    <div class="enc-subsection-body" id="enc-moves-utility">${utilityHtml.join('')}</div>
+    <div class="enc-subsection-body" id="enc-moves-combo">${comboHtml}</div>
+    <div class="enc-subsection-head" onclick="toggleEncSubSection('enc-moves-tipo')">
+      <span>TIPO</span><span class="enc-section-arrow" id="arr-enc-moves-tipo">▶</span>
+    </div>
+    <div class="enc-subsection-body" id="enc-moves-tipo">${tipoHtml}</div>
   `;
+}
+
+function encShowNativeMove(rotKey) {
+  const def = ROT_DEFS[rotKey];
+  if (!def) return;
+  const move = def.uniqueMove;
+  if (!move) return;
+  const tc    = move.type ? (TYPE_COLORS[move.type] || { bg:'#333', text:'#aaa' }) : { bg:'#6b7280', text:'#fff' };
+  const rotTc = TYPE_COLORS[def.type] || { text:'#9ca3af' };
+  const catInfo = CATEGORY_INFO[move.cat] || {};
+  const ppTxt = move.pp === Infinity ? '∞' : move.pp;
+  _encSetDetail(`
+    <div class="info-title" style="color:${tc.text}">${move.name}</div>
+    <div style="color:${rotTc.text};font-size:13px;margin-bottom:10px">Mossa nativa di <b>${def.name}</b></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+      <span class="info-badge" style="background:${tc.bg};color:${tc.text}">${move.type || 'NEUTRO'}</span>
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">${catInfo.label || move.cat}</span>
+      ${move.power ? `<span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">POT ${move.power}</span>` : ''}
+      <span class="info-badge" style="background:rgba(255,255,255,0.07);color:#ccc">PP ${ppTxt}</span>
+    </div>
+    <div class="info-section">EFFETTO</div>
+    <div class="info-text">${move.desc || moveEffectDesc(move)}</div>
+  `);
 }
 
 function _encPopulateEffettiSubs() {
@@ -12939,6 +13233,7 @@ function _encPopulateEffettiSubs() {
     { key: 'BRUCIATO',      icon: '🔥' },
     { key: 'STRAFATTO',     icon: '💊' },
     { key: 'COLLASSO',      icon: '💤' },
+    { key: 'STUN',         icon: '😵' },
     { key: 'BURNOUT',       icon: '⚡' },
     { key: 'FERITE',        icon: '🩸' },
     { key: 'TRAFFICO',      icon: '🚗' },
@@ -13092,7 +13387,7 @@ function encShowMove(move) {
     const autoTag = lv => lv.autocast ? ' <span style="font-size:10px;letter-spacing:2px;padding:1px 7px;border-radius:3px;background:rgba(30,60,180,0.5);color:#93c5fd;margin-left:6px;vertical-align:middle">AUTO</span>' : '';
     const keys = [move.fuseBase, move.fuseBase+'_L2', move.fuseBase+'_L3', move.fuseBase+'_L4'];
     const rows = keys.map((k, i) => {
-      const lv = GENERIC_MOVE_DEFS[k];
+      const lv = GENERIC_MOVE_DEFS[k] || TYPE_MOVE_DEFS[k];
       if (!lv) return '';
       const col = lvColors[i] || '#9ca3af';
       return `<div class="enc-fusion-row">
@@ -13152,7 +13447,7 @@ function saveRun() {
           jackpotStacks: r.jackpotStacks || 0,
           items: [...r.items],
           itemLevels: [...(r.itemLevels || [null, null])],
-          moves: r.moves.map(m => ({ ...m })),
+          moves: r.moves.map(m => m ? { ...m } : null),
         };
       }),
       casaforte: (runState.casaforte || []).map(r => {
@@ -13175,7 +13470,7 @@ function saveRun() {
           jackpotStacks: r.jackpotStacks || 0,
           items: [...r.items],
           itemLevels: [...(r.itemLevels || [null, null])],
-          moves: r.moves.map(m => ({ ...m })),
+          moves: r.moves.map(m => m ? { ...m } : null),
         };
       }),
     };
@@ -13242,11 +13537,11 @@ function deserializeRot(data, runLevel) {
     drugs: [...(data.drugs || []).filter(d => d !== 'OVERDOSE')],
     items: (() => { const n = rotItemSlotCount(level); const a = (data.items || []).slice(0, n); while (a.length < n) a.push(null); return a; })(),
     itemLevels: (() => { const n = rotItemSlotCount(level); const a = (data.itemLevels || []).slice(0, n); while (a.length < n) a.push(null); return a; })(),
-    moves: (data.moves || []).map(m => ({
+    moves: (data.moves || []).map(m => m && m.name ? {
       ...m,
       pp: m.pp == null ? Infinity : m.pp,
       curPp: m.curPp == null ? Infinity : m.curPp,
-    })),
+    } : null),
     isAlive: true,
     action: null,
     lastMove: null,
@@ -13368,13 +13663,13 @@ function applyBattleBackground() {
   }
 }
 
-let MUSIC_VOLUME = 0.5;
+let MUSIC_VOLUME = 0.1;
 const MUSIC_FADE_MS = 1200;
 
 // ── Effetti sonori: AudioContext dedicato, completamente separato dalla musica ──
 // così gli effetti non condividono buffer/elementi <audio> con le tracce musicali
 // e non possono causare interruzioni o sovrapposizioni con il crossfade musicale.
-let SFX_VOLUME = 0.5;
+let SFX_VOLUME = 0.15;
 const SFX_FILES = {
   click: 'sfx/click.mp3',
   hover: 'sfx/hover.wav',

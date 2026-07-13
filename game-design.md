@@ -120,7 +120,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** BASED
 **Stat base:** HP 60 / ATK 80 / SP.ATK 30 / DEF 50 / SP.DEF 30 / SPD 50 (TOT 300)
 **Mossa unica:** MANNAIA MANNAGGIA — Fisico, 40 danni, applica 1 stack FERITE al bersaglio
-**Talento (liv 50):** SOTTOVUOTO — FERITE viene applicato sempre con qualsiasi fonte di danno e con qualsiasi mossa usata da BRASATO. Scaling: ogni stack FERITE infligge +10% danno aggiuntivo extra ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
+**Talento (liv 50):** SOTTOVUOTO — FERITE viene applicato sempre con qualsiasi fonte di danno e con qualsiasi mossa usata da BRASATO. Applica 2 stack aggiuntivi di FERITE ogni 50 livelli (liv 50: +2 stack, liv 100: +4 stack, liv 150: +6 stack, liv 200: +8 stack...) infinito. Scaling danno: ogni stack FERITE infligge +10% danno aggiuntivo extra ogni 50 livelli (liv 50: +10%, liv 100: +20%, liv 150: +30%, liv 200: +40%...) infinito oltre il liv 200
 
 ### ROT #09 — MOG MOB
 **Tipo:** MOG
@@ -366,7 +366,7 @@ Le mosse acquistate vanno nel LIBRETTO — un magazzino visibile a destra nella 
 | UNO BRAVO | +1 SP.DEF personale | +1 SP.DEF tutto il team | +2 SP.DEF tutto il team | +4 SP.DEF tutto il team, si casta automaticamente all'inizio battaglia |
 | PIPPARE | +1 SP.ATK personale | +1 SP.ATK tutto il team | +2 SP.ATK tutto il team | +4 SP.ATK tutto il team, si casta automaticamente all'inizio battaglia |
 | MAKE UP | Scudo 15% HP personali | Scudo 15% HP tutto il team | Scudo 25% HP tutto il team | Scudo 50% HP tutto il team, si casta automaticamente all'inizio battaglia |
-| RICCIOLO (ex URCA) | -25% danno durante la prossima fase di attacco (riduce TUTTI gli attacchi della fase) | -50% danno durante la prossima fase di attacco | -50% danno ricevuto per 2 turni | -50% danno ricevuto per 2 turni a tutto il team |
+| RICCIOLO (ex URCA) | -25% danno durante la prossima fase di attacco (riduce TUTTI gli attacchi della fase) | -50% danno durante la prossima fase di attacco | -50% danno ricevuto per 2 turni | -50% danno ricevuto per 3 turni a tutto il team, si autocasta all'inizio della battaglia, icona ricciolo con numerino turni rimanenti sopra ogni ROT |
 | SCHEDINA | +5% gold posseduto | +10% gold posseduto | +50% gold posseduto | +100% gold posseduto, 5% probabilità JACKPOT!! — finestra animata con coriandoli e fuochi d'artificio, poi +50% a tutte le stats dei ROT in battaglia permanentemente |
 | TERME | Elimina status negativi inclusi abbassamenti stadi di un ROT | Elimina status negativi inclusi abbassamenti stadi di tutto il team | Elimina status negativi + abbassamenti stadi tutto il team + elimina tutti i buff del team avversario | Elimina status negativi + elimina tutti i buff avversari + raddoppia ogni buff della squadra alleata (aggiunge +1 turno agli effetti a durata) |
 | OFFRO IO | Recupera 15% HP di un singolo ROT | Team recupera 15% HP | Team recupera 25% HP | Team recupera 50% HP, l'eccesso si tramuta in scudo |
