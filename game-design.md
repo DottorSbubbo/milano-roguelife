@@ -114,7 +114,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** PSYCHO
 **Stat base:** HP 50 / ATK 70 / SP.ATK 50 / DEF 40 / SP.DEF 40 / SPD 50 (TOT 300)
 **Mossa unica:** FIRED! — Fisico, 50 danni, 30% di applicare BRUCIATO
-**Talento (liv 50):** FUMO TOSSICO — Il cap massimo di stack BRUCIATO applicabili ai nemici aumenta di +2 ogni 50 livelli (liv 50: 3 stack, liv 100: 5 stack, liv 150: 7 stack, liv 200: 9 stack...) infinito oltre il liv 200
+**Talento (liv 50):** FUMO TOSSICO — Il cap massimo di stack BRUCIATO applicabili ai nemici aumenta di +2 ogni 50 livelli (liv 50: 3 stack, liv 100: 5 stack, liv 150: 7 stack, liv 200: 9 stack...) infinito oltre il liv 200. Ogni stack di BRUCIATO applicato da ELONIO MUSCHIO toglie anche il 5% degli HP attuali del nemico per ogni stack presente (non HP massimi). Scaling: +5% ogni 50 livelli infinito (liv 50: 5% HP attuali per stack, liv 100: 10%, liv 150: 15%, liv 200: 20%...)
 
 ### ROT #08 — BRASATO
 **Tipo:** BASED
@@ -192,7 +192,7 @@ Ogni stadio modifica una stat del **±15%**, max **±3 stadi**
 **Tipo:** TRANS
 **Stat base:** HP 90 / ATK 50 / SP.ATK 40 / DEF 80 / SP.DEF 30 / SPD 10 (TOT 300)
 **Mossa unica:** MICRO PARTICELLE — Speciale, nube di smog che colpisce tutti i ROT nemici contemporaneamente, applica AVVELENATO, BRUCIATO e 1 stack di TRAFFICO a tutti
-**Talento (liv 50):** PERMESSO AREA C — Aumenta il cap massimo di stack di AVVELENATO, BRUCIATO e TRAFFICO di +1 ogni 50 livelli, infinito oltre il liv 200
+**Talento (liv 50):** PERMESSO AREA C — Aumenta il cap massimo di stack di AVVELENATO, BRUCIATO e TRAFFICO di +1 ogni 50 livelli, infinito oltre il liv 200. Finché EURO 0 è in campo, PELLE DI ROSPO perde completamente la sua immunità agli status negativi — nessuno status negativo presente sul team nemico può essere rimosso da PELLE DI ROSPO, indipendentemente da chi li ha applicati. Gli status negativi possono essere rimossi solo da mosse specifiche come NO VAX di LINO STAGNO
 
 ### ROT #21 — ARTMIR
 **Tipo:** MACHO
@@ -374,10 +374,14 @@ Le mosse acquistate vanno nel LIBRETTO — un magazzino visibile a destra nella 
 | BORDELLO | Speciale 20 danni a tutti i nemici | Speciale 40 danni a tutti i nemici | Speciale 60 danni a tutti i nemici + 15% STUN | Speciale 80 danni a tutti i nemici + 25% STUN |
 | CHINOTTO | +1 stadio elusività personale (1 stadio = 12.5% probabilità schivare) | +1 stadio elusività tutto il team | +2 stadi elusività tutto il team | +4 stadi elusività tutto il team, si casta automaticamente all'inizio battaglia |
 | PROVACI | +20% danno subito, restituisce 50% all'attaccante | +20% danno subito, restituisce 80% all'attaccante | +10% danno subito, restituisce 100% all'attaccante | Restituisce 200% del danno ricevuto all'attaccante |
-| LANDLORDARE | Team recupera 5% HP per 3 turni | Team recupera 10% HP per 3 turni | Team recupera 15% HP per 4 turni | Team recupera 20% HP per 5 turni, eccesso si tramuta in scudo |
-| GRANATALE | +1 stack FERITE a un ROT nemico | 1 stack FERITE a tutto il team nemico | 2 stack FERITE a tutto il team nemico | 4 stack FERITE a tutto il team nemico all'inizio della battaglia automaticamente |
+| LANDLORDARE | Team recupera 5% HP per 3 turni | Team recupera 10% HP per 3 turni | Team recupera 15% HP per 4 turni | GENTRIFICAZIONE — Team recupera 20% HP per 5 turni, eccesso si tramuta in scudo, si autocasta all'inizio della battaglia |
+| GRANATALE | +1 stack FERITE a un ROT nemico | 1 stack FERITE a tutto il team nemico | 2 stack FERITE a tutto il team nemico | 4 stack FERITE a tutto il team nemico all'inizio della battaglia automaticamente + ogni stack FERITE amplifica del 10% il danno degli effetti negativi (AVVELENATO, BRUCIATO ecc) sul ROT afflitto |
 
 ### MOSSE ATOMICHE — da definire
+
+### MOSSE — probabilità negozio
+- **COMBO** — 60% di probabilità
+- **TIPO** — 40% di probabilità, distribuite equamente tra tutti i tipi disponibili
 
 ### MOSSE TIPO — fondibili fino a liv 4
 

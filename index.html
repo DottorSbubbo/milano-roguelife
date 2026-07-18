@@ -2252,6 +2252,21 @@ body {
 .shop-drug-card .shop-card-top,
 .shop-move-card .shop-card-top { min-height: 36px; align-items: flex-start; }
 
+/* ── glow mossa già posseduta nel negozio ── */
+.shop-move-card.move-owned-once,
+.shop-item-card.move-owned-once {
+  box-shadow: 0 0 0 2px rgba(96,165,250,0.75), 0 0 18px rgba(96,165,250,0.45), inset 0 0 10px rgba(96,165,250,0.10);
+}
+.shop-move-card.move-owned-twice,
+.shop-item-card.move-owned-twice {
+  box-shadow: 0 0 0 2px rgba(147,197,253,0.9), 0 0 28px rgba(96,165,250,0.55), inset 0 0 14px rgba(96,165,250,0.15);
+  animation: move-fusion-pulse 1.5s ease-in-out infinite;
+}
+@keyframes move-fusion-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(147,197,253,0.9),  0 0 28px rgba(96,165,250,0.55), inset 0 0 14px rgba(96,165,250,0.15); }
+  50%       { box-shadow: 0 0 0 3px rgba(186,230,253,1.0),  0 0 44px rgba(96,165,250,0.90), inset 0 0 20px rgba(96,165,250,0.28); }
+}
+
 /* ── token tipo mossa: spazio fisso, sempre nella stessa posizione ── */
 .shop-move-type-row { display: flex; flex-shrink: 0; }
 .shop-move-type-token {
@@ -3296,6 +3311,7 @@ body {
 /* ── BOSS CARD ── */
 .boss-card {
   flex: 0 0 452px; width: 452px;
+  transform: translateX(-140px);
 }
 .boss-card .rot-sprite {
   width: 100%; height: 250px;
@@ -3725,6 +3741,199 @@ body {
 #shop-enc-btn .enc-icon { font-size: 26px; line-height: 1; }
 #shop-enc-btn:hover { background: rgba(80,180,140,0.3); border-color: #a7f3d0; box-shadow: 0 0 12px rgba(110,231,183,0.5); }
 
+/* ── FIND button ── */
+#shop-find-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  width: 64px; height: 64px; flex-shrink: 0;
+  background: rgba(30,20,60,0.7); border: 1px solid #a78bfa;
+  border-radius: 6px; cursor: pointer; color: #a78bfa;
+  font-family: 'Courier New', monospace; font-size: 10px; letter-spacing: 2px; font-weight: bold;
+  transition: background 0.12s, border-color 0.12s;
+  box-shadow: 0 0 6px rgba(167,139,250,0.25);
+}
+#shop-find-btn .find-icon { font-size: 26px; line-height: 1; }
+#shop-find-btn:hover { background: rgba(80,50,180,0.3); border-color: #c4b5fd; box-shadow: 0 0 12px rgba(167,139,250,0.5); }
+
+/* ── FIND overlay ── */
+#find-overlay {
+  display: none; position: fixed; inset: 0; z-index: 250;
+  background: rgba(2,2,5,0.94);
+  align-items: center; justify-content: center;
+  font-family: 'Courier New', monospace;
+}
+#find-overlay.on { display: flex; }
+#find-box {
+  background: #0d0d1a; border: 1px solid rgba(167,139,250,0.3);
+  border-radius: 8px; padding: 24px;
+  width: 90vw; max-width: 920px; max-height: 90vh;
+  display: flex; flex-direction: column; gap: 16px;
+}
+#find-header {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(167,139,250,0.2); padding-bottom: 12px;
+  flex-shrink: 0;
+}
+#find-title {
+  font-size: 20px; letter-spacing: 8px; color: #a78bfa; font-weight: bold;
+  font-family: 'Silkscreen', 'Courier New', monospace;
+}
+#find-close-btn {
+  background: none; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;
+  width: 32px; height: 32px; border-radius: 4px; cursor: pointer; font-size: 14px;
+}
+#find-close-btn:hover { background: rgba(167,139,250,0.12); }
+#find-body { display: flex; gap: 20px; }
+#find-sections { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+.find-section {
+  background: rgba(10,10,25,0.6); border: 1px solid rgba(167,139,250,0.1);
+  border-radius: 6px; padding: 10px 14px;
+  display: flex; align-items: center; gap: 10px;
+}
+.find-cat-label {
+  font-size: 9px; letter-spacing: 3px; color: #7c6aaa; font-weight: bold;
+  font-family: 'Silkscreen', monospace; width: 110px; flex-shrink: 0;
+}
+.find-slots { display: flex; gap: 8px; }
+.find-slot {
+  width: 138px; height: 44px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  cursor: pointer; font-size: 11px; font-family: 'Courier New', monospace;
+  flex-shrink: 0; padding: 0 8px; overflow: hidden;
+  transition: border-color 0.12s, background 0.12s;
+  box-sizing: border-box;
+}
+.find-slot-empty {
+  border: 2px dashed rgba(167,139,250,0.2); color: rgba(167,139,250,0.35);
+  background: rgba(15,15,30,0.4);
+}
+.find-slot-empty:hover { border-color: rgba(167,139,250,0.5); color: rgba(167,139,250,0.7); background: rgba(30,15,60,0.4); }
+.find-slot-filled {
+  border: 1px solid rgba(167,139,250,0.35); background: rgba(30,15,60,0.55); color: #e2d9ff;
+}
+.find-slot-filled:hover { border-color: rgba(248,113,113,0.55); background: rgba(60,15,15,0.55); }
+.find-slot-icon { font-size: 15px; flex-shrink: 0; }
+.find-slot-name { font-size: 8px; letter-spacing: 0.5px; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.find-slot-x { font-size: 10px; color: rgba(248,113,113,0.55); flex-shrink: 0; }
+.find-slot-plus { font-size: 22px; color: rgba(167,139,250,0.3); line-height: 1; }
+
+/* ── FIND sidebar ── */
+#find-sidebar {
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+  width: 120px; flex-shrink: 0;
+}
+#find-gold-label {
+  font-size: 9px; letter-spacing: 4px; color: #fde68a; font-weight: bold;
+  font-family: 'Silkscreen', monospace;
+}
+#find-gold-display {
+  font-size: 26px; letter-spacing: 2px; color: #fde68a; font-weight: bold;
+  background: rgba(80,55,15,0.4); border: 1px solid rgba(180,140,40,0.35);
+  padding: 10px 12px; border-radius: 4px; text-align: center;
+  width: 100%; box-sizing: border-box;
+}
+#find-gold-arrows { display: flex; gap: 8px; }
+#find-gold-up, #find-gold-down {
+  width: 48px; height: 38px; border-radius: 4px;
+  background: rgba(80,55,15,0.4); border: 1px solid rgba(180,140,40,0.35);
+  color: #fde68a; font-size: 15px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.1s; user-select: none;
+}
+#find-gold-up:hover, #find-gold-down:hover { background: rgba(120,80,20,0.55); }
+#find-run-btn {
+  margin-top: 8px; width: 100%; padding: 14px 8px;
+  background: rgba(100,50,200,0.25); border: 1px solid #a78bfa;
+  border-radius: 6px; color: #c4b5fd; cursor: pointer;
+  font-family: 'Silkscreen', 'Courier New', monospace;
+  font-size: 9px; letter-spacing: 2px; font-weight: bold;
+  text-align: center; line-height: 1.6;
+  transition: background 0.12s;
+}
+#find-run-btn:hover { background: rgba(140,70,255,0.22); }
+
+/* ── FIND picker overlay ── */
+#find-picker-overlay {
+  display: none; position: fixed; inset: 0; z-index: 320;
+  background: rgba(2,2,5,0.88);
+  align-items: center; justify-content: center;
+}
+#find-picker-overlay.on { display: flex; }
+#find-picker-box {
+  background: #0d0d1a; border: 1px solid rgba(167,139,250,0.35);
+  border-radius: 8px; width: 500px; max-height: 72vh;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+#find-picker-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid rgba(167,139,250,0.15);
+  flex-shrink: 0;
+}
+#find-picker-title {
+  font-family: 'Silkscreen', monospace; font-size: 11px; letter-spacing: 4px; color: #a78bfa;
+}
+#find-picker-header button {
+  background: none; border: 1px solid rgba(167,139,250,0.3); color: #a78bfa;
+  width: 28px; height: 28px; border-radius: 4px; cursor: pointer; font-size: 13px;
+}
+#find-picker-list { flex: 1; overflow-y: auto; padding: 10px 16px; }
+.find-picker-group { margin-bottom: 12px; }
+.find-picker-group-label {
+  font-size: 8px; letter-spacing: 4px; color: #7c6aaa;
+  font-family: 'Silkscreen', monospace; font-weight: bold;
+  padding: 4px 0; border-bottom: 1px solid rgba(167,139,250,0.1);
+  margin-bottom: 5px; text-transform: uppercase;
+}
+.find-picker-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: 4px; cursor: pointer;
+  font-size: 11px; color: #ccc; letter-spacing: 0.5px;
+  transition: background 0.1s;
+}
+.find-picker-item:hover { background: rgba(167,139,250,0.1); color: #fff; }
+
+/* ── FIND report overlay ── */
+#find-report-overlay {
+  display: none; position: fixed; inset: 0; z-index: 320;
+  background: rgba(2,2,5,0.92);
+  align-items: center; justify-content: center;
+}
+#find-report-overlay.on { display: flex; }
+#find-report-box {
+  background: #0d0d1a; border: 1px solid rgba(167,139,250,0.35);
+  border-radius: 8px; padding: 28px; min-width: 400px; max-width: 580px;
+  max-height: 80vh; overflow-y: auto;
+  font-family: 'Courier New', monospace;
+}
+.find-report-title {
+  font-family: 'Silkscreen', monospace; font-size: 13px; letter-spacing: 6px; color: #a78bfa;
+  margin-bottom: 10px; text-align: center;
+}
+.find-report-spent { font-size: 12px; color: #fde68a; text-align: center; margin-bottom: 18px; }
+.find-report-list { display: flex; flex-direction: column; gap: 5px; margin-bottom: 18px; }
+.find-report-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px; border-radius: 4px; font-size: 10px; letter-spacing: 0.5px;
+}
+.find-report-row.found { background: rgba(20,70,35,0.55); border: 1px solid rgba(50,150,70,0.3); }
+.find-report-row.not-found { background: rgba(55,18,18,0.4); border: 1px solid rgba(140,35,35,0.3); }
+.find-report-icon { font-size: 16px; flex-shrink: 0; }
+.find-report-name { flex: 1; color: #e2d9ff; font-size: 10px; }
+.find-report-detail { font-size: 9px; color: #fde68a; flex-shrink: 0; }
+.find-report-status { font-size: 9px; letter-spacing: 2px; flex-shrink: 0; margin-left: 4px; }
+.find-report-row.found .find-report-status { color: #4ade80; }
+.find-report-row.not-found .find-report-status { color: #f87171; }
+.find-report-summary {
+  text-align: center; font-size: 14px; color: #a78bfa;
+  font-family: 'Silkscreen', monospace; margin-bottom: 18px;
+}
+.find-report-close-btn {
+  display: block; width: 100%; padding: 12px;
+  background: rgba(100,50,200,0.25); border: 1px solid #a78bfa;
+  border-radius: 6px; color: #c4b5fd; cursor: pointer;
+  font-family: 'Silkscreen', monospace; font-size: 10px; letter-spacing: 3px;
+}
+.find-report-close-btn:hover { background: rgba(140,70,255,0.22); }
+
 /* ── Overlay Enciclopedia ── */
 #enc-overlay {
   display: none; position: fixed; inset: 0; z-index: 200;
@@ -3975,6 +4184,9 @@ body {
         <button id="shop-enc-btn" onclick="openEnciclopedia()" title="Enciclopedia — tutte le voci di gioco">
           <span class="enc-icon">📜</span><span>ENC</span>
         </button>
+        <button id="shop-find-btn" onclick="openFindOverlay()" title="FIND — simula reroll del negozio per trovare beni specifici">
+          <span class="find-icon">🧮</span><span>FIND</span>
+        </button>
       </div>
       <div id="shop-gold"></div>
     </div>
@@ -3986,6 +4198,53 @@ body {
     </div>
     <button id="shop-continue-btn" class="btn-3d-continue" onclick="shopContinue()">CONTINUA</button>
   </div>
+</div>
+
+<!-- FIND overlay -->
+<div id="find-overlay" onclick="closeFindOverlayOutside(event)">
+  <div id="find-box">
+    <div id="find-header">
+      <span id="find-title">🧮 FIND</span>
+      <button id="find-close-btn" onclick="closeFindOverlay()">✕</button>
+    </div>
+    <div id="find-body">
+      <div id="find-sections">
+        <div class="find-section" id="find-section-rot"></div>
+        <div class="find-section" id="find-section-items"></div>
+        <div class="find-section" id="find-section-drugs"></div>
+        <div class="find-section" id="find-section-moves"></div>
+      </div>
+      <div id="find-sidebar">
+        <div id="find-gold-label">ORO</div>
+        <div id="find-gold-display">10</div>
+        <div id="find-gold-arrows">
+          <button id="find-gold-up"
+            onmousedown="startFindGoldHold(1)" onmouseup="stopFindGoldHold()" onmouseleave="stopFindGoldHold()"
+            ontouchstart="startFindGoldHold(1)" ontouchend="stopFindGoldHold()">▲</button>
+          <button id="find-gold-down"
+            onmousedown="startFindGoldHold(-1)" onmouseup="stopFindGoldHold()" onmouseleave="stopFindGoldHold()"
+            ontouchstart="startFindGoldHold(-1)" ontouchend="stopFindGoldHold()">▼</button>
+        </div>
+        <button id="find-run-btn" onclick="runFindSearch()">AVVIA<br>LA RICERCA</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FIND picker overlay -->
+<div id="find-picker-overlay" onclick="closeFindPickerOutside(event)">
+  <div id="find-picker-box">
+    <div id="find-picker-header">
+      <span id="find-picker-title">SCEGLI</span>
+      <button onclick="closeFindPicker()">✕</button>
+    </div>
+    <div id="find-picker-list"></div>
+  </div>
+</div>
+
+<!-- FIND report overlay -->
+<div id="find-report-overlay">
+  <div id="find-report-box"></div>
 </div>
 
 <div id="rm-drug-tooltip"></div>
@@ -4282,7 +4541,7 @@ const ROT_DEFS = {
     uniqueMove:{ name:'FIRED!', type:'PSYCHO', cat:'PHYSICAL', power:50, pp:10,
       status:{ type:'BRUCIATO', chance:0.30 }, target:'ENEMY',
       desc:'50 danni fisici. 30% di probabilità di applicare BRUCIATO.' },
-    talent:{ name:'VISIONE DISRUPTIVA' },
+    talent:{ name:'FUMO TOSSICO' },
     sprite: { src:'spritesheet/rot/idle/elonio.png', cols:5, rows:13, frames:61, frameW:800, frameH:800, fps:12, mirrorWhen:'enemy', chromaKey:false }
   },
   BRASATO: {
@@ -4455,7 +4714,7 @@ function computeTalentInfo(rot) {
     case 4:  return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico vivo con STRAFATTO: CHEESECAKE guadagna +${t*50}% a tutte le stat (eccetto HP). Scaling: +50% per ROT strafatto ogni 50 lv.` };
     case 5:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli scudi del team alleato aumentati del ${t*10}%. Il cap massimo di scudo di tutta la squadra sale al ${200 + t*10}% degli HP. Scaling: +10% ogni 50 lv.` };
     case 6: { const kills = rot.trolloKills || 0; const bonusPct = (kills * t * 0.5).toFixed(1); return { name: talent.name, desc: t === 0 ? locked : `Per ogni ROT nemico eliminato in presenza di TROLLO: +${t*0.5}% permanente a tutte le stat (eccetto HP). Scaling: +0.5% per kill ogni 50 lv. — PUMP IT: +${bonusPct}% a tutte le stats (${kills} nemici eliminati in presenza di TROLLO).` }; }
-    case 7:  return { name: talent.name, desc: t === 0 ? locked : `BRUCIATO si accumula fino a ${3+t*2} stack (base 3). Ogni stack infligge 5 HP a fine turno. Scaling: +2 stack max ogni 50 lv.` };
+    case 7:  return { name: talent.name, desc: t === 0 ? locked : `BRUCIATO si accumula fino a ${3+t*2} stack (base 3). Scaling: +2 stack max ogni 50 lv. Ogni stack di BRUCIATO applicato da ELONIO MUSCHIO toglie il ${t*5}% degli HP attuali del nemico per stack. Scaling: +5% ogni 50 lv. (lv. 50: 5%, lv. 100: 10%, lv. 150: 15%...)` };
     case 8:  return { name: talent.name, desc: t === 0 ? locked : `Tutti gli attacchi di BRASATO applicano ${1 + t*2} stack di FERITE al bersaglio (base 1 + ${t*2} dal talento). Ogni stack FERITE: +${t*10}% danno subito da quel ROT. Scaling: +2 stack per colpo e +10% danno per stack ogni 50 lv.` };
     case 9:  return { name: talent.name, desc: t === 0 ? locked : `Cap stadi di MOG MOB e di tutti i suoi alleati: ±${8+t} (base ±8). Scaling: +1 al cap degli stadi ogni 50 lv.` };
     case 10: {
@@ -4476,7 +4735,7 @@ function computeTalentInfo(rot) {
       const traffReduction = 5 + t * 5;
       return { name: talent.name, desc: t === 0 ? locked : `Cap TRAFFICO: ${traffCap} stack (base 4, +${t}). Ogni stack riduce danno e velocità del ${traffReduction}% (base 5%). Scaling: +1 stack cap, +5% riduzione per stack ogni 50 lv.` };
     }
-    case 20: return { name: talent.name, desc: t === 0 ? locked : `Finché EURO 0 è in campo, PELLE DI ROSPO perde completamente la sua immunità agli status negativi — i ROT nemici con PELLE DI ROSPO possono ricevere AVVELENATO, BRUCIATO, TRAFFICO e qualsiasi altro status negativo normalmente. Gli status già applicati possono essere rimossi solo da mosse specifiche come NO VAX di LINO STAGNO.` };
+    case 20: return { name: talent.name, desc: t === 0 ? locked : `Aumenta il cap massimo di stack di AVVELENATO, BRUCIATO e TRAFFICO di +${t} (Scaling: +1 per status ogni 50 lv., infinito). Finché EURO 0 è in campo, PELLE DI ROSPO perde la sua immunità agli status negativi — i ROT nemici con PELLE DI ROSPO possono ricevere qualsiasi status negativo normalmente e non possono rimuoverli autonomamente (solo mosse specifiche come NO VAX di LINO STAGNO).` };
     case 21: {
       const shieldPct = 15 + t * 10;
       const redirectTurns = 3 + t;
@@ -5126,8 +5385,8 @@ const GENERIC_MOVE_DEFS = {
     fuseLevel:3, fuseBase:'LANDLORDARE', fusesInto:'LANDLORDARE_L4', shopSellable:false,
     effect:'team_regen', turns:4, healPct:0.15, desc:'Per 4 turni il team recupera il 15% degli HP massimi a fine turno.' },
   LANDLORDARE_L4:{ name:'GENTRIFICAZIONE', type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'combo',
-    fuseLevel:4, fuseBase:'LANDLORDARE', fusesInto:null, shopSellable:false,
-    effect:'team_regen', turns:5, healPct:0.20, overflowShield:true, desc:'Per 5 turni il team recupera il 20% degli HP massimi a fine turno; l\'eccesso si tramuta in scudo.' },
+    fuseLevel:4, fuseBase:'LANDLORDARE', fusesInto:null, shopSellable:false, autocast:true,
+    effect:'team_regen', turns:5, healPct:0.20, overflowShield:true, desc:'Per 5 turni il team recupera il 20% degli HP massimi a fine turno; l\'eccesso si tramuta in scudo. Si casta automaticamente a inizio battaglia.' },
 
   // GRANATALE — FERITE
   GRANATALE:    { name:'GRANATALE', type:null, cat:'UTILITY', power:0, pp:10, target:'ENEMY', rarity:'combo',
@@ -5141,7 +5400,7 @@ const GENERIC_MOVE_DEFS = {
     effect:'ferite_all', feriteStacks:2, allEnemies:true, desc:'Applica +2 stack FERITE a tutti i ROT nemici.' },
   GRANATALE_L4: { name:'BOMBARDAMENTO', type:null, cat:'UTILITY', power:0, pp:10, target:'ENEMY_ALL', rarity:'combo',
     fuseLevel:4, fuseBase:'GRANATALE', fusesInto:null, shopSellable:false, autocast:true,
-    effect:'ferite_all', feriteStacks:4, allEnemies:true, desc:'Applica +4 stack FERITE a tutti i ROT nemici. Si casta automaticamente a inizio battaglia.' },
+    effect:'ferite_all', feriteStacks:4, allEnemies:true, desc:'Applica +4 stack FERITE a tutti i ROT nemici. Si casta automaticamente a inizio battaglia. Passivo: ogni stack FERITE aumenta del 10% il danno di AVVELENATO e BRUCIATO sui ROT afflitti da FERITE.' },
 
   // ── escluse dal negozio ──
   CENTRO_SOCIALE: { name:'CENTRO SOCIALE', type:null, cat:'UTILITY', power:0, pp:10, target:'ALLY_ALL', rarity:'combo',
@@ -5892,17 +6151,23 @@ function addStatus(rot, type) {
   const ex = rot.statuses.find(s => s.type === type);
 
   if (type === 'BRUCIATO') {
-    // ELONIO MUSCHIO — VISIONE DISRUPTIVA: aumenta il cap di BRUCIATO sui nemici (additive per ogni ELONIO in squadra)
+    // ELONIO MUSCHIO — FUMO TOSSICO: +2/50lv per ogni ELONIO in squadra
+    // EURO 0 — PERMESSO AREA C: +1/50lv per ogni EURO 0 in squadra
     const bruCap = (!rot.isPlayer && B?.player)
-      ? 3 + B.player.filter(r => r.def === ROT_DEFS.ELONIO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0)
+      ? 3
+        + B.player.filter(r => r.def === ROT_DEFS.ELONIO && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0)
+        + B.player.filter(r => r.def === ROT_DEFS.EURO_0 && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0)
       : 3;
     if (ex) { if (ex.stacks < bruCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'AVVELENATO') {
-    // MIKEY TREMBOLONE — IPERTROFIA: AVVELENATO può accumularsi (additive per ogni MIKEY in squadra)
+    // MIKEY TREMBOLONE — IPERTROFIA: +2/50lv per ogni MIKEY in squadra
+    // EURO 0 — PERMESSO AREA C: +1/50lv per ogni EURO 0 in squadra
     const avvCap = (!rot.isPlayer && B?.player)
-      ? (() => { const mikeyBonus = B.player.filter(r => r.def === ROT_DEFS.MIKEY && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0); return Math.max(1, mikeyBonus); })()
+      ? 1
+        + B.player.filter(r => r.def === ROT_DEFS.MIKEY && r.isAlive).reduce((sum, r) => sum + talentTier(r) * 2, 0)
+        + B.player.filter(r => r.def === ROT_DEFS.EURO_0 && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0)
       : 1;
     if (ex) { if (ex.stacks < avvCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
@@ -5912,9 +6177,11 @@ function addStatus(rot, type) {
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
   if (type === 'TRAFFICO') {
-    // DIO PORSCHE — INGOMBRANTE: aumenta il cap di TRAFFICO (additive per ogni DIO PORSCHE in squadra)
+    // DIO PORSCHE — INGOMBRANTE: +1/50lv per ogni DIO PORSCHE in squadra
+    // EURO 0 — PERMESSO AREA C: +1/50lv per ogni EURO 0 in squadra
     const _ingombranteCap = B?.player?.filter(r => r.def === ROT_DEFS.DIO_PORSCHE && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
-    const trafficoCap = 4 + _ingombranteCap;
+    const _euro0CapT = B?.player?.filter(r => r.def === ROT_DEFS.EURO_0 && r.isAlive).reduce((sum, r) => sum + talentTier(r), 0) ?? 0;
+    const trafficoCap = 4 + _ingombranteCap + _euro0CapT;
     if (ex) { if (ex.stacks < trafficoCap) { ex.stacks++; return true; } return false; }
     rot.statuses.push({ type, stacks: 1 }); return true;
   }
@@ -5949,7 +6216,10 @@ async function endTurnStatuses(rot) {
     if (st.type === 'AVVELENATO') {
       const _francoVP = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
       const _vitaPazzaMult = _francoVP ? (1 + talentTier(_francoVP) * 0.10) : 1;
-      const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1) * _vitaPazzaMult));
+      const _hasGranatale4 = B?.player?.some(r => r.isAlive && r.moves.some(m => m && m.fuseBase === 'GRANATALE' && m.fuseLevel === 4));
+      const _fAvv = rot.statuses.find(s => s.type === 'FERITE');
+      const _feriteMult = (_hasGranatale4 && _fAvv) ? (1 + _fAvv.stacks * 0.10) : 1;
+      const d = Math.max(1, Math.floor(rot.maxHp * 0.10 * (st.stacks || 1) * _vitaPazzaMult * _feriteMult));
       takeDmg(rot, d);
       flashHit(rot.uid); hitRecoilAnim(rot);
       if (st.stacks > 1) {
@@ -5986,7 +6256,10 @@ async function endTurnStatuses(rot) {
     if (st.type === 'BRUCIATO') {
       const _francoVP2 = B?.player?.find(r => r.def === ROT_DEFS.FRANCO && r.isAlive);
       const _vitaPazzaMult2 = _francoVP2 ? (1 + talentTier(_francoVP2) * 0.10) : 1;
-      const d = Math.max(1, Math.floor(5 * (st.stacks || 1) * _vitaPazzaMult2));
+      const _hasGranatale4b = B?.player?.some(r => r.isAlive && r.moves.some(m => m && m.fuseBase === 'GRANATALE' && m.fuseLevel === 4));
+      const _fBru = rot.statuses.find(s => s.type === 'FERITE');
+      const _feriteMult2 = (_hasGranatale4b && _fBru) ? (1 + _fBru.stacks * 0.10) : 1;
+      const d = Math.max(1, Math.floor(5 * (st.stacks || 1) * _vitaPazzaMult2 * _feriteMult2));
       takeDmg(rot, d);
       flashHit(rot.uid); hitRecoilAnim(rot);
       logRich([
@@ -6996,7 +7269,7 @@ function openTalentOverlayForDef(event, defKey) {
   const def = ROT_DEFS[defKey];
   if (!def?.talent) return;
   const rosterMatch = runState?.roster?.find(r => r.def === def);
-  const mockRot = { def, level: rosterMatch?.level ?? Math.max(50, runState?.level ?? 50), trolloKills: rosterMatch?.trolloKills ?? 0 };
+  const mockRot = { def, level: Math.max(50, rosterMatch?.level ?? 50), trolloKills: rosterMatch?.trolloKills ?? 0 };
   const info = computeTalentInfo(mockRot);
   document.getElementById('talent-box-name').textContent = info.name;
   document.getElementById('talent-box-desc').textContent = info.desc;
@@ -9109,13 +9382,17 @@ function rollShopDrug() {
 }
 
 function rollShopMove() {
-  if (Math.random() < 0.15) {
-    const keys = Object.keys(TYPE_MOVE_DEFS).filter(k => (TYPE_MOVE_DEFS[k].fuseLevel || 1) === 1);
-    return { key: keys[Math.floor(Math.random() * keys.length)], pool:'type', price: MOVE_PRICE.tipo };
+  if (Math.random() < 0.40) {
+    // 40% TIPO: scegli un tipo a caso tra tutti i tipi disponibili, poi una mossa L1 di quel tipo
+    const l1Keys = Object.keys(TYPE_MOVE_DEFS).filter(k => (TYPE_MOVE_DEFS[k].fuseLevel || 1) === 1);
+    const types = [...new Set(l1Keys.map(k => TYPE_MOVE_DEFS[k].type))];
+    const chosenType = types[Math.floor(Math.random() * types.length)];
+    const ofType = l1Keys.filter(k => TYPE_MOVE_DEFS[k].type === chosenType);
+    return { key: ofType[Math.floor(Math.random() * ofType.length)], pool:'type', price: MOVE_PRICE.tipo };
   }
+  // 60% COMBO
   const keys = Object.keys(GENERIC_MOVE_DEFS).filter(k => {
     const d = GENERIC_MOVE_DEFS[k];
-    // Solo mosse L1 (o non fondibili) e non escluse dal negozio
     return !d.shopExcluded && (!d.fuseLevel || d.fuseLevel === 1);
   });
   return { key: keys[Math.floor(Math.random() * keys.length)], pool:'generic', price: MOVE_PRICE.combo };
@@ -9123,6 +9400,43 @@ function rollShopMove() {
 
 function shopMoveDef(offer) {
   return offer.pool === 'type' ? TYPE_MOVE_DEFS[offer.key] : GENERIC_MOVE_DEFS[offer.key];
+}
+
+// Ritorna: -1 = versione max già posseduta (nessun glow), 0 = non posseduta, 1 = 1 copia, 2+ = 2+ copie (fusione vicina)
+// Usa fuseBase per il matching così cattura tutte le versioni EVO (L1/L2/L3/L4) della stessa famiglia.
+function ownedMoveCopies(offer) {
+  const def = shopMoveDef(offer);
+  if (!def || !def.fuseBase) return 0;
+  const fuseBase = def.fuseBase;
+  let count = 0, hasMax = false;
+  for (const item of runState.libretto) {
+    if (!item) continue;
+    const d = (item.pool === 'type' ? TYPE_MOVE_DEFS : GENERIC_MOVE_DEFS)[item.key];
+    if (!d || d.fuseBase !== fuseBase) continue;
+    if (d.fusesInto === null) hasMax = true;
+    count++;
+  }
+  for (const rot of runState.roster) {
+    for (const m of rot.moves) {
+      if (!m || m.fuseBase !== fuseBase) continue;
+      if (m.fusesInto === null) hasMax = true;
+      count++;
+    }
+  }
+  return hasMax ? -1 : count;
+}
+
+// Glow solo per oggetti fusibili (COMBO e APOCALITTICO).
+// Ritorna: 0 = nessun glow, 1 = 1 copia posseduta, 2+ = 2+ copie (fusione vicina)
+function ownedItemCopies(itemKey) {
+  const item = ITEM_DEFS[itemKey];
+  if (!item || (item.rarity !== 'combo' && item.rarity !== 'apocalittico')) return 0;
+  let count = 0;
+  for (const k of (runState.marsupio || [])) { if (k === itemKey) count++; }
+  for (const rot of runState.roster) {
+    for (const k of (rot.items || [])) { if (k === itemKey) count++; }
+  }
+  return count;
 }
 
 function rollShopOffers() {
@@ -9135,6 +9449,453 @@ function rollShopOffers() {
     bought: { rot:false, items:[false,false], drugs:[false], moves:[false,false] },
     pendingPurchase: null,
   };
+}
+
+// ══════════════════════════════════════════════════
+// FIND — shop simulator
+// ══════════════════════════════════════════════════
+let findState = null;
+let _findDrugQueue = [];
+let _findGoldTimer = null;
+let _findGoldTickCount = 0;
+
+function _initFindState() {
+  findState = {
+    targets: { rot:[null,null,null], items:[null,null,null], drugs:[null,null,null], moves:[null,null,null] },
+    gold: 10,
+    _picking: null,
+  };
+}
+
+function openFindOverlay() {
+  if (!findState) _initFindState();
+  document.getElementById('find-overlay').classList.add('on');
+  renderFindOverlay();
+}
+
+function closeFindOverlay() {
+  stopFindGoldHold();
+  document.getElementById('find-overlay').classList.remove('on');
+  document.getElementById('find-picker-overlay').classList.remove('on');
+  document.getElementById('find-report-overlay').classList.remove('on');
+}
+
+function closeFindOverlayOutside(e) {
+  if (e.target === document.getElementById('find-overlay')) closeFindOverlay();
+}
+
+function closeFindPickerOutside(e) {
+  if (e.target === document.getElementById('find-picker-overlay')) closeFindPicker();
+}
+
+function renderFindOverlay() {
+  const catLabels = { rot:'CERCA ROT', items:'CERCA OGGETTO', drugs:'CERCA DROGA', moves:'CERCA MOSSA' };
+  for (const cat of ['rot','items','drugs','moves']) {
+    const el = document.getElementById('find-section-' + cat);
+    if (!el) continue;
+    const slots = findState.targets[cat];
+    let html = `<div class="find-cat-label">${catLabels[cat]}</div><div class="find-slots">`;
+    for (let i = 0; i < 3; i++) {
+      const t = slots[i];
+      if (t) {
+        const info = _findItemInfo(cat, t);
+        html += `<div class="find-slot find-slot-filled" onclick="clearFindSlot('${cat}',${i})" title="${info.name} — clicca per rimuovere">
+          <span class="find-slot-icon">${info.icon}</span>
+          <span class="find-slot-name" style="color:${info.color}">${info.name}</span>
+          <span class="find-slot-x">✕</span></div>`;
+      } else {
+        html += `<div class="find-slot find-slot-empty" onclick="openFindPicker('${cat}',${i})"><span class="find-slot-plus">+</span></div>`;
+      }
+    }
+    el.innerHTML = html + '</div>';
+  }
+  document.getElementById('find-gold-display').textContent = findState.gold;
+}
+
+function _findItemInfo(cat, target) {
+  if (cat === 'rot') {
+    const def = ROT_DEFS[target.key];
+    return { name: def?.name || target.key, icon: '👾', color: '#c4b5fd' };
+  }
+  if (cat === 'items') {
+    const def = ITEM_DEFS[target.key];
+    return { name: def?.name || target.key, icon: def?.icon || '📦', color: def?.color || '#9ca3af' };
+  }
+  if (cat === 'drugs') {
+    const def = DRUG_DEFS[target.key];
+    return { name: def?.name || target.key, icon: '💊', color: def?.color || '#9ca3af' };
+  }
+  if (cat === 'moves') {
+    const pool = target.pool || 'generic';
+    const def = pool === 'type' ? TYPE_MOVE_DEFS[target.key] : GENERIC_MOVE_DEFS[target.key];
+    return { name: def?.name || target.key, icon: '⚡', color: '#fde68a' };
+  }
+  return { name: target.key, icon: '?', color: '#9ca3af' };
+}
+
+function clearFindSlot(cat, idx) {
+  findState.targets[cat][idx] = null;
+  renderFindOverlay();
+}
+
+function openFindPicker(cat, idx) {
+  if (!findState) return;
+  findState._picking = { cat, idx };
+  const catLabels = { rot:'ROT', items:'OGGETTO', drugs:'DROGA', moves:'MOSSA' };
+  document.getElementById('find-picker-title').textContent = 'SCEGLI ' + catLabels[cat];
+  document.getElementById('find-picker-list').innerHTML = _buildPickerList(cat);
+  document.getElementById('find-picker-overlay').classList.add('on');
+}
+
+function closeFindPicker() {
+  if (findState) findState._picking = null;
+  document.getElementById('find-picker-overlay').classList.remove('on');
+}
+
+function _buildPickerList(cat) {
+  let html = '';
+  if (cat === 'rot') {
+    const byType = {};
+    for (const [key, def] of Object.entries(ROT_DEFS)) {
+      if (!byType[def.type]) byType[def.type] = [];
+      byType[def.type].push({ key, def });
+    }
+    for (const type of Object.keys(byType).sort()) {
+      html += `<div class="find-picker-group"><div class="find-picker-group-label">${type}</div>`;
+      for (const { key, def } of byType[type]) {
+        html += `<div class="find-picker-item" onclick="selectFindItem('rot','${key}')"><span>👾</span><span>${def.name}</span></div>`;
+      }
+      html += '</div>';
+    }
+  } else if (cat === 'items') {
+    for (const rarity of ['comune','combo','atomico','apocalittico']) {
+      const items = Object.entries(ITEM_DEFS).filter(([,d]) => d.rarity === rarity);
+      if (!items.length) continue;
+      const lbl = { comune:'COMUNE', combo:'COMBO', atomico:'ATOMICO', apocalittico:'APOCALITTICO' }[rarity];
+      html += `<div class="find-picker-group"><div class="find-picker-group-label" style="color:${RARITY_COLOR[rarity]}">${lbl}</div>`;
+      for (const [key, def] of items) {
+        html += `<div class="find-picker-item" onclick="selectFindItem('items','${key}')"><span>${def.icon}</span><span style="color:${def.color}">${def.name}</span></div>`;
+      }
+      html += '</div>';
+    }
+  } else if (cat === 'drugs') {
+    for (const rarity of ['comune','rara','atomica']) {
+      const drugs = Object.entries(DRUG_DEFS).filter(([,d]) => d.rarity === rarity);
+      if (!drugs.length) continue;
+      const lbl = { comune:'COMUNE', rara:'RARA', atomica:'ATOMICA' }[rarity];
+      html += `<div class="find-picker-group"><div class="find-picker-group-label">${lbl}</div>`;
+      for (const [key, def] of drugs) {
+        html += `<div class="find-picker-item" onclick="selectFindItem('drugs','${key}')"><span>💊</span><span style="color:${def.color}">${def.name}</span></div>`;
+      }
+      html += '</div>';
+    }
+  } else if (cat === 'moves') {
+    const comboMoves = Object.entries(GENERIC_MOVE_DEFS).filter(([,d]) => !d.shopExcluded && (!d.fuseLevel || d.fuseLevel === 1));
+    html += `<div class="find-picker-group"><div class="find-picker-group-label">COMBO</div>`;
+    for (const [key, def] of comboMoves) {
+      html += `<div class="find-picker-item" onclick="selectFindItem('moves','${key}','generic')"><span>⚡</span><span style="color:#fde68a">${def.name}</span></div>`;
+    }
+    html += '</div>';
+    const l1Type = Object.entries(TYPE_MOVE_DEFS).filter(([,d]) => (d.fuseLevel || 1) === 1);
+    const byType = {};
+    for (const [key, def] of l1Type) {
+      if (!byType[def.type]) byType[def.type] = [];
+      byType[def.type].push({ key, def });
+    }
+    for (const type of Object.keys(byType).sort()) {
+      const tc = TYPE_COLORS[type]?.text || '#ccc';
+      html += `<div class="find-picker-group"><div class="find-picker-group-label" style="color:${tc}">TIPO: ${type}</div>`;
+      for (const { key, def } of byType[type]) {
+        html += `<div class="find-picker-item" onclick="selectFindItem('moves','${key}','type')"><span>⚡</span><span style="color:${tc}">${def.name}</span></div>`;
+      }
+      html += '</div>';
+    }
+  }
+  return html;
+}
+
+function selectFindItem(cat, key, pool) {
+  if (!findState?._picking) return;
+  const { idx } = findState._picking;
+  findState.targets[cat][idx] = cat === 'moves' ? { key, pool: pool || 'generic' } : { key };
+  findState._picking = null;
+  document.getElementById('find-picker-overlay').classList.remove('on');
+  renderFindOverlay();
+}
+
+function findGoldSet(v) {
+  findState.gold = Math.max(0, Math.min(99999, Math.floor(v)));
+  document.getElementById('find-gold-display').textContent = findState.gold;
+}
+
+function startFindGoldHold(dir) {
+  stopFindGoldHold();
+  _findGoldTickCount = 0;
+  findGoldSet(findState.gold + dir * 10);
+  function tick() {
+    _findGoldTickCount++;
+    const amount = 10 * Math.pow(2, Math.floor(_findGoldTickCount / 5));
+    findGoldSet(findState.gold + dir * Math.min(amount, 1000));
+    _findGoldTimer = setTimeout(tick, Math.max(50, 180 - _findGoldTickCount * 10));
+  }
+  _findGoldTimer = setTimeout(tick, 320);
+}
+
+function stopFindGoldHold() {
+  if (_findGoldTimer) { clearTimeout(_findGoldTimer); _findGoldTimer = null; }
+  _findGoldTickCount = 0;
+}
+
+// Item fusion: 3^(lv-1) copies of L1 → 1 copy of Lv
+function _computeItemFusion(key, totalCount) {
+  const maxFusion = ITEM_DEFS[key]?.maxFusion || 1;
+  if (maxFusion <= 1 || totalCount <= 0) return totalCount > 0 ? [{ key, level: 1, count: totalCount }] : [];
+  const results = [];
+  let rem = totalCount;
+  for (let lv = maxFusion; lv >= 2; lv--) {
+    const per = Math.pow(3, lv - 1);
+    const n = Math.floor(rem / per);
+    if (n > 0) { results.push({ key, level: lv, count: n }); rem -= n * per; }
+  }
+  if (rem > 0) results.push({ key, level: 1, count: rem });
+  return results;
+}
+
+// Move fusion: 2^(lv-1) copies of L1 → 1 copy of Lv
+function _computeMoveFusion(l1Key, pool, totalCount) {
+  if (totalCount <= 0) return [];
+  const defs = pool === 'type' ? TYPE_MOVE_DEFS : GENERIC_MOVE_DEFS;
+  const l1Def = defs[l1Key];
+  if (!l1Def || l1Def.fusesInto === undefined || l1Def.fusesInto === null) {
+    return l1Def ? [{ key: l1Key, pool, level: 1, count: totalCount, name: l1Def.name }] : [];
+  }
+  // Find max level
+  let maxLv = 1, cur = l1Key;
+  while (defs[cur]?.fusesInto) { maxLv++; cur = defs[cur].fusesInto; }
+  const fuseBase = l1Def.fuseBase || l1Key;
+  const results = [];
+  let rem = totalCount;
+  for (let lv = maxLv; lv >= 2; lv--) {
+    const per = Math.pow(2, lv - 1);
+    const n = Math.floor(rem / per);
+    if (n > 0) {
+      const lvKey = lv === 1 ? l1Key : fuseBase + '_L' + lv;
+      const def = defs[lvKey];
+      if (def) { results.push({ key: lvKey, pool, level: lv, count: n, name: def.name }); rem -= n * per; }
+    }
+  }
+  if (rem > 0) results.push({ key: l1Key, pool, level: 1, count: rem, name: l1Def.name });
+  return results;
+}
+
+function runFindSearch() {
+  if (!findState) return;
+  const goldAvail = Math.min(findState.gold, runState.gold);
+  if (goldAvail <= 0) { alert('Gold insufficiente!'); return; }
+  const hasTargets = ['rot','items','drugs','moves'].some(cat => findState.targets[cat].some(t => t !== null));
+  if (!hasTargets) { alert('Nessun bene selezionato!'); return; }
+
+  const counts = { rot:[0,0,0], items:[0,0,0], drugs:[0,0,0], moves:[0,0,0] };
+  // Determina quali sezioni hanno almeno un target attivo
+  const active = {
+    rot:   findState.targets.rot.some(t => t !== null),
+    items: findState.targets.items.some(t => t !== null),
+    drugs: findState.targets.drugs.some(t => t !== null),
+    moves: findState.targets.moves.some(t => t !== null),
+  };
+  // Parte dai contatori reali del negozio: identico a premere REROLL nella sezione corrispondente
+  const rerollC = {
+    rot:   shopState?.rerollCounts?.rot   ?? 0,
+    items: shopState?.rerollCounts?.items ?? 0,
+    drugs: shopState?.rerollCounts?.drugs ?? 0,
+    moves: shopState?.rerollCounts?.moves ?? 0,
+  };
+  let remaining = goldAvail;
+  while (true) {
+    // Costo del round = somma dei costi di reroll di ogni sezione attiva (rerollC[s] + 1, uguale alla formula del negozio)
+    const roundCost = ['rot','items','drugs','moves'].reduce((sum, s) => sum + (active[s] ? rerollC[s] + 1 : 0), 0);
+    if (remaining < roundCost) break; // gold residuo non sufficiente — viene restituito
+    remaining -= roundCost;
+    for (const s of ['rot','items','drugs','moves']) { if (active[s]) rerollC[s]++; }
+    if (active.rot) {
+      const rotO = rollShopRot();
+      for (let i = 0; i < 3; i++) {
+        if (findState.targets.rot[i] && rotO.key === findState.targets.rot[i].key) counts.rot[i]++;
+      }
+    }
+    if (active.items) {
+      const itemO = [rollShopItem(), rollShopItem()];
+      for (let i = 0; i < 3; i++) {
+        if (findState.targets.items[i] && itemO.some(o => o.key === findState.targets.items[i].key)) counts.items[i]++;
+      }
+    }
+    if (active.drugs) {
+      const drugO = rollShopDrug();
+      for (let i = 0; i < 3; i++) {
+        if (findState.targets.drugs[i] && drugO.key === findState.targets.drugs[i].key) counts.drugs[i]++;
+      }
+    }
+    if (active.moves) {
+      const moveO = [rollShopMove(), rollShopMove()];
+      for (let i = 0; i < 3; i++) {
+        const t = findState.targets.moves[i];
+        if (t && moveO.some(o => o.key === t.key && o.pool === t.pool)) counts.moves[i]++;
+      }
+    }
+  }
+
+  const spent = goldAvail - remaining;
+  runState.gold -= spent;
+  // Aggiorna i contatori reali del negozio con i reroll simulati da FIND
+  if (shopState?.rerollCounts) {
+    for (const s of ['rot','items','drugs','moves']) {
+      if (active[s]) shopState.rerollCounts[s] = rerollC[s];
+    }
+  }
+  updateHud();
+
+  if (!runState.casaforte)     runState.casaforte     = new Array(16).fill(null);
+  if (!runState.marsupio)      runState.marsupio      = new Array(9).fill(null);
+  if (!runState.marsupioLevels) runState.marsupioLevels = new Array(9).fill(null);
+
+  // ROT: add each found copy to roster/casaforte
+  const rotResults = [];
+  for (let i = 0; i < 3; i++) {
+    const t = findState.targets.rot[i]; const n = counts.rot[i];
+    if (!t || n === 0) { rotResults.push(null); continue; }
+    let added = 0;
+    for (let c = 0; c < n; c++) {
+      const def = ROT_DEFS[t.key]; if (!def) break;
+      if (runState.roster.length < 3) { runState.roster.push(mkRot(def, runState.level, true, false)); added++; }
+      else { const s = runState.casaforte.findIndex(x => x === null); if (s !== -1) { runState.casaforte[s] = mkRot(def, runState.level, true, false); added++; } else break; }
+    }
+    rotResults.push({ key: t.key, found: n, added });
+  }
+
+  // Items: apply fusion, add to marsupio
+  const itemResults = [];
+  for (let i = 0; i < 3; i++) {
+    const t = findState.targets.items[i]; const n = counts.items[i];
+    if (!t || n === 0) { itemResults.push(null); continue; }
+    const fused = _computeItemFusion(t.key, n);
+    const added = [];
+    for (const { key, level, count } of fused) {
+      for (let c = 0; c < count; c++) {
+        const s = runState.marsupio.findIndex(x => x === null);
+        if (s !== -1) { runState.marsupio[s] = key; runState.marsupioLevels[s] = level; added.push({ key, level }); }
+      }
+    }
+    itemResults.push({ key: t.key, fused, added });
+  }
+
+  // Moves: apply fusion, add to libretto
+  const moveResults = [];
+  for (let i = 0; i < 3; i++) {
+    const t = findState.targets.moves[i]; const n = counts.moves[i];
+    if (!t || n === 0) { moveResults.push(null); continue; }
+    const fused = _computeMoveFusion(t.key, t.pool, n);
+    const added = [];
+    for (const { key, pool, level, count } of fused) {
+      for (let c = 0; c < count; c++) {
+        if (_libroAddItem({ key, pool })) added.push({ key, pool, level });
+        else break;
+      }
+    }
+    moveResults.push({ key: t.key, pool: t.pool, fused, added });
+  }
+
+  // Drugs: queue for assignment
+  _findDrugQueue = [];
+  const drugResults = [];
+  for (let i = 0; i < 3; i++) {
+    const t = findState.targets.drugs[i]; const n = counts.drugs[i];
+    if (!t || n === 0) { drugResults.push(null); continue; }
+    _findDrugQueue.push({ key: t.key, count: n });
+    drugResults.push({ key: t.key, count: n });
+  }
+
+  saveRun();
+  renderShop();
+  _showFindReport(rotResults, itemResults, drugResults, moveResults, spent);
+}
+
+function _showFindReport(rotResults, itemResults, drugResults, moveResults, spent) {
+  const box = document.getElementById('find-report-box');
+  let html = `<div class="find-report-title">RISULTATI RICERCA</div>`;
+  html += `<div class="find-report-spent">💰 ORO SPESO: ${spent}</div>`;
+  html += '<div class="find-report-list">';
+  let found = 0, total = 0;
+
+  for (const r of rotResults) {
+    if (!r) continue; total++;
+    const def = ROT_DEFS[r.key];
+    const ok = r.added > 0;
+    if (ok) found++;
+    html += `<div class="find-report-row ${ok?'found':'not-found'}">
+      <span class="find-report-icon">👾</span>
+      <span class="find-report-name">${def?.name||r.key}</span>
+      ${ok ? `<span class="find-report-detail">${r.added}× aggiunto (trovato ${r.found}×)</span>` : ''}
+      <span class="find-report-status">${ok?'✓':'✗ NON TROVATO'}</span></div>`;
+  }
+  for (const r of itemResults) {
+    if (!r) continue; total++;
+    const def = ITEM_DEFS[r.key];
+    const ok = r.added.length > 0;
+    if (ok) found++;
+    const detail = r.fused.map(f => `${f.count}× Lv${f.level}`).join(', ');
+    html += `<div class="find-report-row ${ok?'found':'not-found'}">
+      <span class="find-report-icon">${def?.icon||'📦'}</span>
+      <span class="find-report-name" style="color:${def?.color||'#9ca3af'}">${def?.name||r.key}</span>
+      ${ok ? `<span class="find-report-detail">${detail}</span>` : ''}
+      <span class="find-report-status">${ok?'✓':'✗ NON TROVATO'}</span></div>`;
+  }
+  for (const r of drugResults) {
+    if (!r) continue; total++;
+    const def = DRUG_DEFS[r.key];
+    const ok = r.count > 0;
+    if (ok) found++;
+    html += `<div class="find-report-row ${ok?'found':'not-found'}">
+      <span class="find-report-icon">💊</span>
+      <span class="find-report-name" style="color:${def?.color||'#9ca3af'}">${def?.name||r.key}</span>
+      ${ok ? `<span class="find-report-detail">${r.count}× da assegnare</span>` : ''}
+      <span class="find-report-status">${ok?'✓':'✗ NON TROVATO'}</span></div>`;
+  }
+  for (const r of moveResults) {
+    if (!r) continue; total++;
+    const defs = r.pool === 'type' ? TYPE_MOVE_DEFS : GENERIC_MOVE_DEFS;
+    const def = defs[r.key];
+    const ok = r.added.length > 0;
+    if (ok) found++;
+    const detail = r.fused.map(f => `${f.count}× Lv${f.level}`).join(', ');
+    html += `<div class="find-report-row ${ok?'found':'not-found'}">
+      <span class="find-report-icon">⚡</span>
+      <span class="find-report-name" style="color:#fde68a">${def?.name||r.key}</span>
+      ${ok ? `<span class="find-report-detail">${detail}</span>` : ''}
+      <span class="find-report-status">${ok?'✓':'✗ NON TROVATO'}</span></div>`;
+  }
+
+  html += `</div><div class="find-report-summary">${found}/${total} trovati</div>`;
+  if (_findDrugQueue.length > 0) {
+    html += `<div style="font-size:10px;color:#a78bfa;text-align:center;margin-bottom:12px">Clicca OK per assegnare ${_findDrugQueue.length} drug ai ROT</div>`;
+  }
+  html += `<button class="find-report-close-btn" onclick="closeFindReport()">OK</button>`;
+  box.innerHTML = html;
+  document.getElementById('find-report-overlay').classList.add('on');
+}
+
+function closeFindReport() {
+  document.getElementById('find-report-overlay').classList.remove('on');
+  if (_findDrugQueue.length > 0) setTimeout(_processFindDrugQueue, 80);
+}
+
+function _processFindDrugQueue() {
+  if (_findDrugQueue.length === 0) return;
+  const { key: drugKey, count: drugCount } = _findDrugQueue.shift();
+  shopState.drugs[0] = { key: drugKey, price: 0, findCount: drugCount };
+  shopState.bought.drugs[0] = false;
+  shopState.pendingPurchase = { type: 'drug', idx: 0 };
+  renderShop();
+  openRotManager();
 }
 
 function openShop() {
@@ -10473,7 +11234,11 @@ function assignDrugToRot(uid) {
   if (!rot) return;
   const offer = shopState.drugs[0];
   runState.gold -= offer.price;
-  giveDrug(rot, offer.key);
+  const drugDoses = offer.findCount || 1;
+  for (let d = 0; d < drugDoses; d++) {
+    giveDrug(rot, offer.key);
+    if (!rot.isAlive) break; // OVERDOSE letale: interrompi le dosi successive
+  }
   shopState.bought.drugs[0] = true;
   shopState.pendingPurchase = null;
   // OVERDOSE: se il ROT è morto, trasferisci oggetti al marsupio e rimuovilo dal roster
@@ -10501,6 +11266,7 @@ function assignDrugToRot(uid) {
   closeRotManager();
   renderShop();
   saveRun();
+  if (_findDrugQueue.length > 0) setTimeout(_processFindDrugQueue, 80);
 }
 
 function showOverdoseDeathOverlay(rotName) {
@@ -10961,8 +11727,10 @@ function renderShop() {
       const item = ITEM_DEFS[offer.key];
       const bought = shopState.bought.items[idx];
       const disabled = bought || runState.gold < offer.price;
+      const ownedI = ownedItemCopies(offer.key);
+      const ownedIClass = ownedI === 1 ? ' move-owned-once' : ownedI >= 2 ? ' move-owned-twice' : '';
       return `
-        <div class="shop-card shop-item-card" style="${rarityCardStyle(item.rarity)}">
+        <div class="shop-card shop-item-card${ownedIClass}" style="${rarityCardStyle(item.rarity)}">
           <div class="shop-card-top">
             <span class="shop-card-name" style="color:${item.color};${item.name.includes(' ') ? 'font-size:13px' : `font-size:${shopNameFontSize(item.name)}px;white-space:nowrap`}">${item.name}</span>
             ${rarityBadge(item.rarity)}
@@ -11020,8 +11788,10 @@ function renderShop() {
       const bought = shopState.bought.moves[idx];
       const disabled = bought || runState.gold < offer.price;
       const catInfo = CATEGORY_INFO[def.cat];
+      const ownedN = ownedMoveCopies(offer);
+      const ownedClass = ownedN === 1 ? ' move-owned-once' : ownedN >= 2 ? ' move-owned-twice' : '';
       return `
-        <div class="shop-card shop-move-card" style="${rarityCardStyle(rarity)};cursor:pointer" onclick="showShopMoveCardInfo(event, ${idx})">
+        <div class="shop-card shop-move-card${ownedClass}" style="${rarityCardStyle(rarity)};cursor:pointer" onclick="showShopMoveCardInfo(event, ${idx})">
           <div class="shop-card-top">
             <span class="shop-card-name shop-move-name-clickable" style="color:${tc.text};font-size:${shopNameFontSize(def.name)}px" onclick="showShopMoveOfferInfo(event, ${idx})">${def.name}${def.power ? `<span class="shop-move-power"> · POT ${def.power}</span>` : ''}</span>
             <div style="display:flex; align-items:center; gap:8px;">
@@ -11101,7 +11871,15 @@ function startNextBattle() {
     r.scarpeActedThisBattle = false;
     r.cer8UsedThisBattle = false;
     r.savedByAssicurazione = false;
-    r.moves.forEach(m => { if (m && m.curPp !== Infinity) m.curPp = m.pp; });
+    r.moves.forEach(m => {
+      if (!m) return;
+      if (m.curPp !== Infinity) m.curPp = m.pp;
+      // Sync autocast dalla definizione corrente (compatibilità con save precedenti)
+      if (!m.autocast && m.fuseBase) {
+        const fkey = m.fuseLevel > 1 ? `${m.fuseBase}_L${m.fuseLevel}` : m.fuseBase;
+        if (GENERIC_MOVE_DEFS[fkey]?.autocast) m.autocast = true;
+      }
+    });
     // CRYPTOBISMOL — AIRDROP: buff casuali agli stadi all'inizio della battaglia
     if (r.def === ROT_DEFS.CRYPTOBISMOL) {
       const t = talentTier(r);
@@ -11187,6 +11965,14 @@ async function playAutocastAnims() {
       }
     }
   }
+  for (const rot of B.enemy.filter(r => r.isAlive && r.def?.isBoss)) {
+    for (const move of rot.moves) {
+      if (!move || !move.autocast) continue;
+      playSfx('buff');
+      buffHopAnim([rot]);
+      await wait(350);
+    }
+  }
 }
 
 // ── Mosse con autocast:true (L4 di alcune combo) applicate silenziosamente a inizio battaglia ──
@@ -11228,6 +12014,32 @@ function applyBattleAutocasts() {
       } else if (move.effect === 'guard_phase') {
         const gpTeam = (move.team || move.target === 'ALLY_ALL') ? B.player.filter(r => r.isAlive) : [rot];
         for (const r of gpTeam) r.guardPhase = { reduction: move.reduction, turns: move.turns };
+      } else if (move.effect === 'team_regen') {
+        const regenTeam = move.target === 'ALLY_ALL' ? B.player.filter(r => r.isAlive) : [rot];
+        for (const r of regenTeam) {
+          r.landlordareTurns = move.turns;
+          r.landlordarePct = move.healPct;
+          r.landlordareOverflow = !!move.overflowShield;
+        }
+      }
+      logRich([
+        { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
+        { text: ' attiva ' },
+        { text: move.name, onclick: () => showMoveInfo(move) },
+        { text: ' (automatica)!' }
+      ], 'status');
+    }
+  }
+  for (const rot of B.enemy.filter(r => r.isAlive && r.def?.isBoss)) {
+    for (const move of rot.moves) {
+      if (!move || !move.autocast) continue;
+      if (move.effect === 'stage') {
+        for (const stg of move.stages) {
+          const team = stg.team === 'SELF' ? [rot] : B.enemy.filter(r => r.isAlive);
+          for (const r of team) {
+            r.stages[stg.stat] = Math.max(-cap, Math.min(cap, (r.stages[stg.stat] || 0) + stg.delta));
+          }
+        }
       }
       logRich([
         { text: rot.def.name, onclick: () => showRotInfo(rot.def) },
@@ -11496,6 +12308,7 @@ function initRotSpriteCanvas(canvas, spriteCfg) {
       }
       dy = canvas.height - dh; // ancora al basso — tutti i ROT sulla stessa linea di terra
       if (spriteCfg.anchorOffsetY) dy += spriteCfg.anchorOffsetY * dh;
+      if (spriteCfg.anchorOffsetX) dx += spriteCfg.anchorOffsetX * dw;
       ctx.drawImage(
         entry.canvas,
         col * spriteCfg.frameW, row * spriteCfg.frameH, spriteCfg.frameW, spriteCfg.frameH,
